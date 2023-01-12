@@ -7,31 +7,21 @@ __all__ = (
 
 
 class _BaseImputer(Step):
-    def __init__(self, *, on_cols=None, on_type=None):
-        self.on_cols = on_cols
-        self.on_type = on_type
-
     def _stat(self, col):
         pass
 
-    def fit(self, X, y=None):
-        columns = self._select_columns(X)
+    def do_fit(self, table, columns, y_columns=None):
         stats = (
-            X.aggregate([self._stat(X[c]).name(c) for c in columns])
+            table.aggregate([self._stat(table[c]).name(c) for c in columns])
             .execute()
             .to_dict("records")[0]
         )
-        fill_values = tuple(stats[c] for c in columns)
+        self.fill_values_ = tuple(stats[c] for c in columns)
 
-        self.input_columns_ = columns
-        self.fill_values_ = fill_values
-
-        return self
-
-    def transform(self, X):
-        return X.mutate(
+    def do_transform(self, table):
+        return table.mutate(
             [
-                X[c].coalesce(v).name(c)
+                table[c].coalesce(v).name(c)
                 for c, v in zip(self.input_columns_, self.fill_values_)
             ]
         )

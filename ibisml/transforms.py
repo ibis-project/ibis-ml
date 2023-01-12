@@ -12,15 +12,14 @@ class StandardScaler(Step):
         self.scale = scale
         super().__init__(on_cols=on_cols, on_type=on_type)
 
-    def fit(self, X, y=None):
-        columns = self._select_columns(X)
+    def do_fit(self, table, columns, y_columns=None):
         stats = []
         if self.center:
-            stats.extend(X[c].mean().name(f"{c}_mean") for c in columns)
+            stats.extend(table[c].mean().name(f"{c}_mean") for c in columns)
         if self.scale:
-            stats.extend(X[c].std(how="pop").name(f"{c}_std") for c in columns)
+            stats.extend(table[c].std(how="pop").name(f"{c}_std") for c in columns)
         if stats:
-            results = X.aggregate(stats).execute().to_dict("records")[0]
+            results = table.aggregate(stats).execute().to_dict("records")[0]
 
             if self.scale:
                 scale = tuple(results[f"{c}_std"] for c in columns)
@@ -32,42 +31,38 @@ class StandardScaler(Step):
             else:
                 center = None
 
-        self.input_columns_ = columns
         self.scales_ = scale
         self.centers_ = center
 
-        return self
-
-    def transform(self, X):
+    def do_transform(self, table):
         if not self.center and not self.scale:
-            return X
+            return table
 
-        out = [X[c] for c in self.input_columns_]
+        out = [table[c] for c in self.input_columns_]
         if self.center:
             out = [x - center for (x, center) in zip(out, self.centers_)]
         if self.scale:
             out = [x / scale for (x, scale) in zip(out, self.scales_)]
-        return X.mutate([x.name(c) for x, c in zip(out, self.input_columns_)])
+        return table.mutate([x.name(c) for x, c in zip(out, self.input_columns_)])
 
 
 class OneHotEncoder(Step):
     def __init__(self, *, on_cols=None, on_type="string"):
         super().__init__(on_cols=on_cols, on_type=on_type)
 
-    def fit(self, X, y=None):
-        columns = self._select_columns(X)
+    def do_fit(self, table, columns, y_columns=None):
         categories = []
         for c in columns:
-            categories.append(tuple(X.select(c).distinct().order_by(c).execute()[c]))
+            categories.append(
+                tuple(table.select(c).distinct().order_by(c).execute()[c])
+            )
 
-        self.input_columns_ = columns
         self.categories_ = tuple(categories)
-        return self
 
-    def transform(self, X):
-        return X.mutate(
+    def do_transform(self, table):
+        return table.mutate(
             [
-                (X[col] == cat).cast("int8").name(f"{col}_{cat}")
+                (table[col] == cat).cast("int8").name(f"{col}_{cat}")
                 for col, cats in zip(self.input_columns_, self.categories_)
                 for cat in cats
             ]
