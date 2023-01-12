@@ -1,12 +1,12 @@
 from .core import Step
 
 __all__ = (
-    "ImputeMean",
-    "ImputeMode",
+    "MeanImputer",
+    "ModeImputer",
 )
 
 
-class _ImputeBase(Step):
+class _BaseImputer(Step):
     def __init__(self, *, on_cols=None, on_type=None):
         self.on_cols = on_cols
         self.on_type = on_type
@@ -37,7 +37,7 @@ class _ImputeBase(Step):
         )
 
 
-class ImputeMean(_ImputeBase):
+class MeanImputer(_BaseImputer):
     def __init__(self, *, on_cols=None, on_type="numeric"):
         super().__init__(on_cols=on_cols, on_type=on_type)
 
@@ -45,7 +45,7 @@ class ImputeMean(_ImputeBase):
         return col.mean()
 
 
-class ImputeMode(_ImputeBase):
+class ModeImputer(_BaseImputer):
     def __init__(self, on_cols=None, on_type="string"):
         super().__init__(on_cols=on_cols, on_type=on_type)
 
