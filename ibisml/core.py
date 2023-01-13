@@ -17,6 +17,38 @@ _type_filters = {
 }
 
 
+def normalize_X_y(X, y=None):
+    if y is None:
+        table = X
+        y_cols = None
+    elif isinstance(y, Iterable):
+        if isinstance(y, str):
+            y_cols = (y,)
+        else:
+            y_cols = tuple(y)
+        for col in y_cols:
+            if col not in X.columns:
+                raise ValueError(f"Column {col!r} does not exist")
+        table = X
+    else:
+        if isinstance(y, ir.Column):
+            y_cols = (y.get_name(),)
+        else:
+            y_cols = tuple(y.columns)
+        overlap = sorted(set(X.columns).intersection(y_cols))
+        if overlap:
+            raise ValueError(
+                "Columns {overlap!r} in `y` have conflicting names with "
+                "columns in X, please explicitly rename to no longer conflict"
+            )
+        if isinstance(y, ir.Column):
+            table = X.mutate(y)
+        else:
+            table = X.mutate(y[c] for c in y_cols)
+
+    return table, y_cols
+
+
 class Step:
     def __init__(self, *, on_cols=None, on_type=None):
         self.on_cols = on_cols
@@ -32,42 +64,9 @@ class Step:
             parts.append(f"on_cols={self.on_cols!r}")
         return f"{name}<{', '.join(parts)}>"
 
-    def _normalize_X_y(self, X, y=None):
-        if y is None:
-            table = X
-            X_cols = tuple(X.columns)
-            y_cols = None
-        elif isinstance(y, Iterable):
-            if isinstance(y, str):
-                y_cols = (y,)
-            else:
-                y_cols = tuple(y)
-            for col in y_cols:
-                if col not in X.columns:
-                    raise ValueError(f"Column {col!r} does not exist")
-            table = X
-            X_cols = [c for c in table.columns if c not in y_cols]
-        else:
-            if isinstance(y, ir.Column):
-                y_cols = (y.get_name(),)
-            else:
-                y_cols = tuple(y.columns)
-            X_cols = tuple(X.columns)
-            overlap = sorted(set(X_cols).intersection(y_cols))
-            if overlap:
-                raise ValueError(
-                    "Columns {overlap!r} in `y` have conflicting names with "
-                    "columns in X, please explicitly rename to no longer conflict"
-                )
-            if isinstance(y, ir.Column):
-                table = X.mutate(y)
-            else:
-                table = X.mutate(y[c] for c in y_cols)
-
-        return table, X_cols, y_cols
-
-    def _select_columns(self, table, X_cols):
-        cols = set(X_cols)
+    def select_columns(self, table, y_columns=None):
+        x_columns = set(table.columns).difference(y_columns or ())
+        out = set(x_columns)
         if self.on_type is not None:
             if callable(self.on_type):
                 preds = [self.on_type]
@@ -84,43 +83,49 @@ class Step:
             subset = set()
             schema = table.schema()
             for pred in preds:
-                subset |= {c for c in X_cols if pred(schema[c])}
+                subset |= {c for c in x_columns if pred(schema[c])}
 
-            cols &= subset
+            out &= subset
 
         if self.on_cols is not None:
             if callable(self.on_cols):
-                subset = {c for c in X_cols if self.on_cols(c)}
+                subset = {c for c in x_columns if self.on_cols(c)}
             else:
                 on_cols = (
                     [self.on_cols] if isinstance(self.on_cols, str) else self.on_cols
                 )
-                missing = sorted(set(on_cols).difference(X_cols))
+                missing = sorted(set(on_cols).difference(table.columns))
                 if missing:
                     raise ValueError(f"Columns {missing!r} are missing from table")
                 subset = set(on_cols)
 
-            cols &= subset
+            out &= subset
 
-        return tuple(c for c in X_cols if c in cols)
+        return tuple(c for c in table.columns if c in out)
 
-    def do_fit(
-        self, table: ir.Table, columns: tuple[str], y_columns: tuple[str] | None = None
-    ) -> ir.Table:
-        pass
-
-    def do_transform(self, table: ir.Table) -> ir.Table:
-        pass
-
-    def fit(self, X, y=None):
-        table, x_columns, y_columns = self._normalize_X_y(X, y)
-        columns = self._select_columns(table, x_columns)
-        self.do_fit(table, columns, y_columns=y_columns)
+    def table_fit(self, table: ir.Table, y_columns: tuple[str] | None = None) -> Step:
+        columns = self.select_columns(table, y_columns)
+        self.do_fit(table, columns, y_columns)
         self.input_columns_ = columns
         return self
 
+    def table_transform(self, table: ir.Table) -> ir.Table:
+        return self.do_transform(table)
+
+    def do_fit(
+        self, table: ir.Table, columns: tuple[str], y_columns: tuple[str] | None = None
+    ) -> None:
+        raise NotImplementedError
+
+    def do_transform(self, table: ir.Table) -> ir.Table:
+        raise NotImplementedError
+
+    def fit(self, X, y=None):
+        table, y_columns = normalize_X_y(X, y)
+        return self.table_fit(table, y_columns=y_columns)
+
     def transform(self, X):
-        return self.do_transform(X)
+        return self.table_transform(X)
 
     def fit_transform(self, X, y=None):
         self.fit(X, y)
@@ -140,20 +145,90 @@ class Pipeline:
             X = step.fit_transform(X, y)
         return X
 
+    def _split_steps(self):
+        steps = []
+        ests = []
+        for step in self.steps:
+            if isinstance(step, Step):
+                if ests:
+                    raise ValueError(
+                        "Cannot have ibisml steps in a pipeline after non-ibisml steps"
+                    )
+                steps.append(step)
+            else:
+                ests.append(step)
+        return steps, ests
+
+    def _fit_estimators(self, estimators, table, y_columns=None):
+        exclude = set(y_columns)
+        x_columns = [c for c in table.columns if c not in exclude]
+        y_columns = list(y_columns)
+        if all(hasattr(e, "partial_fit") for e in estimators):
+            for batch in table.to_pyarrow_batches():
+                df = batch.to_pandas(self_destruct=True)
+                X = df[x_columns].to_numpy()
+                y = df[y_columns].to_numpy()
+                # TODO
+        else:
+            df = table.execute()
+            X = df[x_columns].to_numpy()
+            y = df[y_columns].to_numpy()
+            if len(y_columns) == 1:
+                y = y.ravel()
+
+            last = estimators[-1]
+            for est in estimators[:-1]:
+                if hasattr(est, "fit_transform"):
+                    est.fit_transform(X, y)
+                else:
+                    est.fit(X, y)
+                    X = est.transform(X)
+            last.fit(X, y)
+
     def fit(self, X, y=None):
-        last_step = self.steps[-1]
-        for step in self.steps[:-1]:
-            X = step.fit_transform(X, y)
-        last_step.fit(X, y)
+        table, y_columns = normalize_X_y(X, y)
+
+        steps, estimators = self._split_steps()
+
+        for step in steps:
+            step.table_fit(table, y_columns)
+            table = step.table_transform(table)
+
+        if estimators:
+            self._fit_estimators(estimators, table, y_columns)
+
         return self
 
     def transform(self, X):
-        for step in self.steps:
-            X = step.transform(X)
-        return X
+        steps, estimators = self._split_steps()
+        if estimators and not hasattr(estimators[-1], "transform"):
+            raise ValueError("`transform` is not available on this pipeline")
+
+        table, _ = normalize_X_y(X)
+
+        for step in steps:
+            table = step.transform(table)
+
+        if estimators:
+            X = table.execute().to_numpy()
+            for est in estimators:
+                X = est.transform(X)
+            return X
+        else:
+            return table
 
     def predict(self, X):
-        last_step = self.steps[-1]
-        for step in self.steps[:-1]:
-            X = step.transform(X)
-        return last_step.predict(X)
+        steps, estimators = self._split_steps()
+        if not estimators or not hasattr(estimators[-1], "predict"):
+            raise ValueError("`predict` is not available on this pipeline")
+
+        table, _ = normalize_X_y(X)
+
+        for step in steps:
+            table = step.transform(table)
+
+        X = table.execute().to_numpy()
+        last = estimators[-1]
+        for est in estimators[:-1]:
+            X = est.transform(X)
+        return last.predict(X)
