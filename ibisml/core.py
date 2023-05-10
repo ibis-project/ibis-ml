@@ -4,6 +4,7 @@ import operator
 from functools import partial
 from collections.abc import Iterable
 
+import ibis
 import ibis.expr.types as ir
 
 
@@ -18,6 +19,9 @@ _type_filters = {
 
 
 def normalize_X_y(X, y=None):
+    if not isinstance(X, ir.Table):
+        X = ibis.memtable(X)
+
     if y is None:
         table = X
         y_cols = None
