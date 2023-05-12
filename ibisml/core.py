@@ -1,21 +1,11 @@
 from __future__ import annotations
 
-import operator
-from functools import partial
 from collections.abc import Iterable
 
 import ibis
 import ibis.expr.types as ir
 
-
-_type_filters = {
-    "numeric": lambda t: t.is_numeric(),
-    "string": lambda t: t.is_string(),
-    "int": lambda t: t.is_integer(),
-    "float": lambda t: t.is_floating(),
-    "timestamp": lambda t: t.is_timestamp(),
-    "all": lambda t: True,
-}
+from . import select
 
 
 def normalize_X_y(X, y=None):
@@ -54,63 +44,38 @@ def normalize_X_y(X, y=None):
 
 
 class Step:
-    def __init__(self, *, on_cols=None, on_type=None):
-        self.on_cols = on_cols
-        self.on_type = on_type
+    def __init__(self, inputs):
+        if isinstance(inputs, str):
+            inputs = select.cols(inputs)
+        elif isinstance(inputs, (list, tuple)):
+            inputs = select.cols(*inputs)
+        elif callable(inputs):
+            inputs = select.where(inputs)
+        elif not isinstance(inputs, select.Selector):
+            raise TypeError(
+                "inputs must be a str, list of strings, callable, or selector"
+            )
+        self.inputs = inputs
 
     def __repr__(self):
         name = type(self).__name__
-        parts = []
+        return f"{name}<{self.inputs}>"
 
-        if self.on_type is not None:
-            parts.append(f"on_type={self.on_type!r}")
-        if self.on_cols is not None:
-            parts.append(f"on_cols={self.on_cols!r}")
-        return f"{name}<{', '.join(parts)}>"
-
-    def select_columns(self, table, y_columns=None):
-        x_columns = set(table.columns).difference(y_columns or ())
-        out = set(x_columns)
-        if self.on_type is not None:
-            if callable(self.on_type):
-                preds = [self.on_type]
-            else:
-                on_type = (
-                    [self.on_type] if isinstance(self.on_type, str) else self.on_type
-                )
-                preds = [
-                    _type_filters[ot]
-                    if isinstance(ot, str)
-                    else partial(operator.eq, ot)
-                    for ot in on_type
-                ]
-            subset = set()
-            schema = table.schema()
-            for pred in preds:
-                subset |= {c for c in x_columns if pred(schema[c])}
-
-            out &= subset
-
-        if self.on_cols is not None:
-            if callable(self.on_cols):
-                subset = {c for c in x_columns if self.on_cols(c)}
-            else:
-                on_cols = (
-                    [self.on_cols] if isinstance(self.on_cols, str) else self.on_cols
-                )
-                missing = sorted(set(on_cols).difference(table.columns))
-                if missing:
-                    raise ValueError(f"Columns {missing!r} are missing from table")
-                subset = set(on_cols)
-
-            out &= subset
-
-        return tuple(c for c in table.columns if c in out)
+    def determine_inputs(
+        self, table: ir.Table, y_columns: tuple[str] | None = None
+    ) -> tuple[str]:
+        exclude = y_columns or ()
+        return tuple(
+            name
+            for name in table.columns
+            if self.inputs.matches(table[name])
+            and name not in exclude
+        )
 
     def table_fit(self, table: ir.Table, y_columns: tuple[str] | None = None) -> Step:
-        columns = self.select_columns(table, y_columns)
-        self.do_fit(table, columns, y_columns)
-        self.input_columns_ = columns
+        input_columns = self.determine_inputs(table, y_columns)
+        self.do_fit(table, input_columns, y_columns)
+        self.input_columns_ = input_columns
         return self
 
     def table_transform(self, table: ir.Table) -> ir.Table:

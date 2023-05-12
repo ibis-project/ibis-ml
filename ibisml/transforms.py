@@ -7,10 +7,10 @@ __all__ = (
 
 
 class StandardScaler(Step):
-    def __init__(self, *, center=True, scale=True, on_cols=None, on_type="numeric"):
+    def __init__(self, inputs, *, center=True, scale=True):
         self.center = center
         self.scale = scale
-        super().__init__(on_cols=on_cols, on_type=on_type)
+        super().__init__(inputs)
 
     def do_fit(self, table, columns, y_columns=None):
         stats = []
@@ -47,9 +47,6 @@ class StandardScaler(Step):
 
 
 class OneHotEncoder(Step):
-    def __init__(self, *, on_cols=None, on_type="string"):
-        super().__init__(on_cols=on_cols, on_type=on_type)
-
     def do_fit(self, table, columns, y_columns=None):
         categories = []
         for c in columns:

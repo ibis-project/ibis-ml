@@ -28,16 +28,10 @@ class _BaseImputer(Step):
 
 
 class MeanImputer(_BaseImputer):
-    def __init__(self, *, on_cols=None, on_type="numeric"):
-        super().__init__(on_cols=on_cols, on_type=on_type)
-
     def _stat(self, col):
         return col.mean()
 
 
 class ModeImputer(_BaseImputer):
-    def __init__(self, on_cols=None, on_type="string"):
-        super().__init__(on_cols=on_cols, on_type=on_type)
-
     def _stat(self, col):
         return col.mode()
