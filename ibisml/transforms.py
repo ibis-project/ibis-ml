@@ -1,66 +1,72 @@
-from .core import Step
+from __future__ import annotations
+
+from typing import Any
+
+from .core import Step, Transform
+from .select import SelectionType, selector
+
+import ibis.expr.types as ir
+
 
 __all__ = (
-    "StandardScaler",
-    "OneHotEncoder",
+    "Normalize",
+    "OneHotEncode",
 )
 
 
-class StandardScaler(Step):
-    def __init__(self, inputs, *, center=True, scale=True):
-        self.center = center
-        self.scale = scale
-        super().__init__(inputs)
+class NormalizeTransform(Transform):
+    def __init__(self, stats: dict[str, tuple[float, float]]):
+        self.stats = stats
 
-    def do_fit(self, table, columns, y_columns=None):
-        stats = []
-        if self.center:
-            stats.extend(table[c].mean().name(f"{c}_mean") for c in columns)
-        if self.scale:
-            stats.extend(table[c].std(how="pop").name(f"{c}_std") for c in columns)
-        if stats:
-            results = table.aggregate(stats).execute().to_dict("records")[0]
+    def transform(self, table: ir.Table) -> ir.Table:
+        return table.mutate(
+            ((table[c] - center) / scale).name(c)
+            for c, (center, scale) in self.stats.items()
+        )
 
-            if self.scale:
-                scale = tuple(results[f"{c}_std"] for c in columns)
-            else:
-                scale = None
 
-            if self.center:
-                center = tuple(results[f"{c}_mean"] for c in columns)
-            else:
-                center = None
+class Normalize(Step):
+    def __init__(self, inputs: SelectionType):
+        self.inputs = selector(inputs)
 
-        self.scales_ = scale
-        self.centers_ = center
+    def fit(self, table: ir.Table, outcomes: list[str]) -> NormalizeTransform:
+        columns = (self.inputs - outcomes).select_columns(table)
 
-    def do_transform(self, table):
-        if not self.center and not self.scale:
+        stats = {}
+        if columns:
+            aggs = [table[c].mean().name(f"{c}_mean") for c in columns]
+            aggs.extend(table[c].std(how="pop").name(f"{c}_std") for c in columns)
+            results = table.aggregate(aggs).execute().to_dict("records")[0]
+            for c in columns:
+                stats[c] = (results[f"{c}_mean"], results[f"{c}_std"])
+        return NormalizeTransform(stats)
+
+
+class OneHotEncodeTransform(Transform):
+    def __init__(self, categories: dict[str, list[Any]]):
+        self.categories = categories
+
+    def transform(self, table):
+        if not self.categories:
             return table
-
-        out = [table[c] for c in self.input_columns_]
-        if self.center:
-            out = [x - center for (x, center) in zip(out, self.centers_)]
-        if self.scale:
-            out = [x / scale for (x, scale) in zip(out, self.scales_)]
-        return table.mutate([x.name(c) for x, c in zip(out, self.input_columns_)])
-
-
-class OneHotEncoder(Step):
-    def do_fit(self, table, columns, y_columns=None):
-        categories = []
-        for c in columns:
-            categories.append(
-                tuple(table.select(c).distinct().order_by(c).execute()[c])
-            )
-
-        self.categories_ = tuple(categories)
-
-    def do_transform(self, table):
         return table.mutate(
             [
                 (table[col] == cat).cast("int8").name(f"{col}_{cat}")
-                for col, cats in zip(self.input_columns_, self.categories_)
+                for col, cats in self.categories.items()
                 for cat in cats
             ]
-        ).drop(*self.input_columns_)
+        ).drop(*self.categories)
+
+
+class OneHotEncode(Step):
+    def __init__(self, inputs: SelectionType):
+        self.inputs = selector(inputs)
+
+    def fit(self, table: ir.Table, outcomes: list[str]) -> OneHotEncodeTransform:
+        columns = (self.inputs - outcomes).select_columns(table)
+
+        categories = {}
+        for c in columns:
+            categories[c] = list(table.select(c).distinct().order_by(c).execute()[c])
+
+        return OneHotEncodeTransform(categories)

@@ -1,9 +1,26 @@
+from __future__ import annotations
+
 import re
-from collections.abc import Sequence
-from typing import Callable
+from collections.abc import Collection
+from typing import Callable, Union
 
 import ibis.expr.types as ir
 import ibis.expr.datatypes as dt
+
+
+__all__ = (
+    "selector",
+    "everything",
+    "cols",
+    "contains",
+    "endswith",
+    "startswith",
+    "matches",
+    "has_type",
+    "numeric",
+    "nominal",
+    "where",
+)
 
 
 class Selector:
@@ -16,7 +33,7 @@ class Selector:
         args = ",".join(repr(getattr(self, n)) for n in self.__slots__)
         return f"{name}({args})"
 
-    def __and__(self, other):
+    def __and__(self, other: SelectionType) -> Selector:
         selectors = []
         for part in [self, other]:
             if isinstance(part, and_):
@@ -25,7 +42,7 @@ class Selector:
                 selectors.append(part)
         return and_(*selectors)
 
-    def __or__(self, other):
+    def __or__(self, other: SelectionType) -> Selector:
         selectors = []
         for part in [self, other]:
             if isinstance(part, or_):
@@ -34,7 +51,10 @@ class Selector:
                 selectors.append(part)
         return or_(*selectors)
 
-    def __invert__(self):
+    def __sub__(self, other: SelectionType) -> Selector:
+        return self & ~selector(other)
+
+    def __invert__(self) -> Selector:
         if isinstance(self, not_):
             return self.selector
         return not_(self)
@@ -42,6 +62,26 @@ class Selector:
     def matches(self, col: ir.Column) -> bool:
         """Whether the selector matches a given column"""
         raise NotImplementedError
+
+    def select_columns(self, table: ir.Table) -> list[str]:
+        """Return a list of column names matching this selector."""
+        return [c for c in table.columns if self.matches(table[c])]
+
+
+SelectionType = Union[str, Collection[str], Callable[[ir.Column], bool], Selector]
+
+
+def selector(obj: SelectionType) -> Selector:
+    """Convert `obj` to a Selector"""
+    if isinstance(obj, str):
+        return cols(obj)
+    elif isinstance(obj, Collection):
+        return cols(*obj)
+    elif callable(obj):
+        return where(obj)
+    elif isinstance(obj, Selector):
+        return obj
+    raise TypeError("Expected a str, list of strings, callable, or Selector")
 
 
 class and_(Selector):
@@ -85,7 +125,7 @@ class not_(Selector):
         return not self.selector.matches(col)
 
 
-class all(Selector):
+class everything(Selector):
     __slots__ = ()
 
     def matches(self, col: ir.Column) -> bool:
@@ -95,13 +135,13 @@ class all(Selector):
 class cols(Selector):
     __slots__ = ("columns",)
 
-    def __init__(self, columns: str | Sequence[str]):
+    def __init__(self, columns: str | Collection[str]):
         if not isinstance(columns, str):
             columns = tuple(columns)
         self.columns = columns
 
     def matches(self, col: ir.Column) -> bool:
-        return col in self.columns
+        return col.get_name() in self.columns
 
 
 class _StrMatcher(Selector):
@@ -131,7 +171,7 @@ class matches(_StrMatcher):
         return re.search(self.pattern, col.name) is not None
 
 
-class of_type(Selector):
+class has_type(Selector):
     __slots__ = ("type",)
 
     def __init__(self, type: dt.DataType | str | type[dt.DataType]):
