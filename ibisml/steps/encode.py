@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from collections import defaultdict
+
+import ibis
+import ibis.expr.types as ir
+
 import ibisml as ml
 from ibisml.core import Step, Transform
 from ibisml.select import SelectionType, selector
-
-import ibis.expr.types as ir
 
 
 class OneHotEncode(Step):
@@ -14,8 +17,35 @@ class OneHotEncode(Step):
     def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
         columns = (self.inputs - outcomes).select_columns(table)
 
-        categories = {}
+        # We execute once for each type kind in the inputs. In the common case
+        # (only string inputs) this means a single execution even for multiple
+        # columns.
+        groups = defaultdict(list)
         for c in columns:
-            categories[c] = list(table.select(c).distinct().order_by(c).execute()[c])
+            groups[table[c].type()].append(c)
+
+        categories = {}
+        for group_type, group_cols in groups.items():
+            # Results in a frame like:
+            # value | column
+            # --------------
+            # A     | col1
+            # B     | col1
+            # X     | col2
+            # ...   | ...
+            query = ibis.union(
+                *(
+                    (
+                        table.select(value=col, column=ibis.literal(col))
+                        .distinct()
+                        .order_by("value")
+                    )
+                    for col in group_cols
+                )
+            )
+            result_groups = query.execute().groupby("column")
+
+            for col in group_cols:
+                categories[col] = result_groups.get_group(col)["value"].to_list()
 
         return ml.transforms.OneHotEncode(categories)
