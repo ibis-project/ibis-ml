@@ -26,12 +26,12 @@ def normalize_inputs(inputs: InputsType):
 
 class Transform:
     def transform(self, table: ir.Table) -> ir.Table:
-        ...
+        raise NotImplementedError
 
 
 class Step:
     def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
-        ...
+        raise NotImplementedError
 
 
 class Recipe:

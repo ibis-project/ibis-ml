@@ -65,7 +65,7 @@ class Selector:
 
     def select_columns(self, table: ir.Table) -> list[str]:
         """Return a list of column names matching this selector."""
-        return [c for c in table.columns if self.matches(table[c])]
+        return [c for c in table.columns if self.matches(table[c])]  # type: ignore
 
 
 SelectionType = Union[str, Collection[str], Callable[[ir.Column], bool], Selector]
@@ -153,22 +153,22 @@ class _StrMatcher(Selector):
 
 class contains(_StrMatcher):
     def matches(self, col: ir.Column) -> bool:
-        return self.pattern in col.name
+        return self.pattern in col.get_name()
 
 
 class endswith(_StrMatcher):
     def matches(self, col: ir.Column) -> bool:
-        return col.name.endswith(self.pattern)
+        return col.get_name().endswith(self.pattern)
 
 
 class startswith(_StrMatcher):
     def matches(self, col: ir.Column) -> bool:
-        return col.name.startswith(self.pattern)
+        return col.get_name().startswith(self.pattern)
 
 
 class matches(_StrMatcher):
     def matches(self, col: ir.Column) -> bool:
-        return re.search(self.pattern, col.name) is not None
+        return re.search(self.pattern, col.get_name()) is not None
 
 
 class has_type(Selector):
@@ -193,7 +193,7 @@ class has_type(Selector):
             "temporal": dt.Temporal,
         }
         if isinstance(self.type, str) and self.type.lower() in abstract:
-            cls = abstract.get(self.type.lower())
+            cls = abstract[self.type.lower()]
             return isinstance(col.type(), cls)
         elif isinstance(self.type, type):
             return isinstance(col.type(), self.type)
