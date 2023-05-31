@@ -5,9 +5,6 @@ from ibisml.core import Transform
 import ibis.expr.types as ir
 
 
-__all__ = ("ScaleStandard",)
-
-
 class ScaleStandard(Transform):
     def __init__(self, stats: dict[str, tuple[float, float]]):
         self.stats = stats

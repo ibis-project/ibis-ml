@@ -8,21 +8,6 @@ import ibis.expr.types as ir
 import ibis.expr.datatypes as dt
 
 
-__all__ = (
-    "selector",
-    "everything",
-    "cols",
-    "contains",
-    "endswith",
-    "startswith",
-    "matches",
-    "has_type",
-    "numeric",
-    "nominal",
-    "where",
-)
-
-
 class Selector:
     """The base selector class"""
 

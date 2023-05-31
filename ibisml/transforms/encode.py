@@ -7,9 +7,6 @@ from ibisml.core import Transform
 import ibis.expr.types as ir
 
 
-__all__ = ("OneHotEncode",)
-
-
 class OneHotEncode(Transform):
     def __init__(self, categories: dict[str, list[Any]]):
         self.categories = categories

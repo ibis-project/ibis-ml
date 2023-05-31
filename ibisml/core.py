@@ -1,27 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Callable, Union
 
 import ibis.expr.types as ir
-
-from . import select
-
-
-InputsType = Union[str, Sequence[str], select.Selector, Callable[[ir.Column], bool]]
-
-
-def normalize_inputs(inputs: InputsType):
-    if isinstance(inputs, str):
-        return select.cols(inputs)
-    elif isinstance(inputs, (list, tuple)):
-        return select.cols(*inputs)
-    elif callable(inputs):
-        return select.where(inputs)
-    elif isinstance(inputs, select.Selector):
-        return inputs
-    else:
-        raise TypeError("inputs must be a str, list of strings, callable, or selector")
 
 
 class Transform:

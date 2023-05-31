@@ -6,8 +6,6 @@ from ibisml.select import SelectionType, selector
 
 import ibis.expr.types as ir
 
-__all__ = ("ScaleStandard",)
-
 
 class ScaleStandard(Step):
     def __init__(self, inputs: SelectionType):
