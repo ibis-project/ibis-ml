@@ -41,9 +41,20 @@ class ImputeMean(_BaseImpute):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
-                f"Cannot compute mean of {col.get_name()} - this column is not numeric"
+                f"Cannot compute mean of {col.get_name()} - "
+                "this column is not numeric"
             )
         return col.mean()
+
+
+class ImputeMedian(_BaseImpute):
+    def _stat(self, col: ir.Column) -> ir.Scalar:
+        if not isinstance(col, ir.NumericColumn):
+            raise ValueError(
+                f"Cannot compute median of {col.get_name()} - "
+                "this column is not numeric"
+            )
+        return col.median()
 
 
 class ImputeMode(_BaseImpute):
