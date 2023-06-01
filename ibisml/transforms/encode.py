@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import uuid
 from typing import Any
+from functools import cached_property
+
+import ibis
+import ibis.expr.types as ir
 
 from ibisml.core import Transform
-
-import ibis.expr.types as ir
 
 
 class OneHotEncode(Transform):
@@ -25,19 +28,36 @@ class OneHotEncode(Transform):
 
 class OrdinalEncode(Transform):
     def __init__(
-        self, categories: dict[str, list[Any]], unknown_value: int | None = None
+        self,
+        categories: dict[str, list[Any]],
     ):
         self.categories = categories
-        self.unknown_value = unknown_value
+        # TODO: standardize IDs across steps/transforms
+        self._rand_id = uuid.uuid4().hex[:6]
+
+    @cached_property
+    def lookup_memtables(self):
+        import pyarrow as pa
+
+        out = {}
+        for col, cats in self.categories.items():
+            table = pa.Table.from_pydict(
+                {f"key_{self._rand_id}": cats, col: list(range(len(cats)))}
+            )
+            memtable = ibis.memtable(table, name=f"{col}_cats_{self._rand_id}")
+            out[col] = memtable
+
+        return out
 
     def transform(self, table: ir.Table) -> ir.Table:
         if not self.categories:
             return table
 
-        mutations = []
-        for col, cats in self.categories.items():
-            new = table[col].find_in_set(cats)
-            if self.unknown_value != -1:
-                new = (new == -1).ifelse(self.unknown_value, new)
-            mutations.append(new.name(col))
-        return table.mutate(mutations)
+        for col, lookup in self.lookup_memtables.items():
+            table = table.left_join(
+                lookup,
+                table[col] == lookup[f"key_{self._rand_id}"],
+                lname="{name}_left",
+                rname="",
+            ).drop(f"key_{self._rand_id}", f"{col}_left")
+        return table

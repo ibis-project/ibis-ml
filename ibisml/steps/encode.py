@@ -99,12 +99,10 @@ class OrdinalEncode(Step):
         *,
         min_frequency: int | float | None = None,
         max_categories: int | None = None,
-        unknown_value: int | None = None,
     ):
         self.inputs = selector(inputs)
         self.min_frequency = min_frequency
         self.max_categories = max_categories
-        self.unknown_value = unknown_value
 
     def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
         columns = (self.inputs - outcomes).select_columns(table)
@@ -112,4 +110,4 @@ class OrdinalEncode(Step):
         categories = _compute_categories(
             table, columns, self.min_frequency, self.max_categories
         )
-        return ml.transforms.OrdinalEncode(categories, self.unknown_value)
+        return ml.transforms.OrdinalEncode(categories)
