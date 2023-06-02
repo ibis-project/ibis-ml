@@ -37,7 +37,7 @@ class OrdinalEncode(Transform):
 
     @cached_property
     def lookup_memtables(self):
-        import pyarrow as pa
+        import pyarrow as pa  # type: ignore
 
         out = {}
         for col, cats in self.categories.items():
