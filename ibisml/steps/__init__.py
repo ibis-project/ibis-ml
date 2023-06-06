@@ -1,6 +1,6 @@
 from ibisml.steps.impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
 from ibisml.steps.standardize import ScaleStandard
-from ibisml.steps.encode import OneHotEncode, OrdinalEncode
+from ibisml.steps.encode import OneHotEncode, CategoricalEncode
 
 
 __all__ = (
@@ -10,5 +10,5 @@ __all__ = (
     "ImputeMode",
     "ScaleStandard",
     "OneHotEncode",
-    "OrdinalEncode",
+    "CategoricalEncode",
 )

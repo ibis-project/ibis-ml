@@ -11,6 +11,7 @@ from ibisml.select import (
     has_type,
     numeric,
     nominal,
+    categorical,
     where,
 )
 from ibisml.steps import *  # noqa: F403

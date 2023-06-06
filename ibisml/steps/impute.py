@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import ibisml as ml
-from ibisml.core import Step, Transform
+from ibisml.core import Metadata, Step, Transform
 from ibisml.select import SelectionType, selector
 
 import ibis.expr.types as ir
@@ -14,8 +14,8 @@ class FillNA(Step):
         self.inputs = selector(inputs)
         self.fill_value = fill_value
 
-    def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
-        columns = (self.inputs - outcomes).select_columns(table)
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
         return ml.transforms.FillNA({c: self.fill_value for c in columns})
 
 
@@ -26,8 +26,8 @@ class _BaseImpute(Step):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         raise NotImplementedError
 
-    def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
-        columns = (self.inputs - outcomes).select_columns(table)
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
 
         stats = (
             table.aggregate([self._stat(table[c]).name(c) for c in columns])

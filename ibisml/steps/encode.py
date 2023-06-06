@@ -7,7 +7,7 @@ import ibis
 import ibis.expr.types as ir
 
 import ibisml as ml
-from ibisml.core import Step, Transform
+from ibisml.core import Metadata, Step, Transform
 from ibisml.select import SelectionType, selector
 
 
@@ -83,8 +83,8 @@ class OneHotEncode(Step):
         self.min_frequency = min_frequency
         self.max_categories = max_categories
 
-    def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
-        columns = (self.inputs - outcomes).select_columns(table)
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
 
         categories = _compute_categories(
             table, columns, self.min_frequency, self.max_categories
@@ -92,7 +92,7 @@ class OneHotEncode(Step):
         return ml.transforms.OneHotEncode(categories)
 
 
-class OrdinalEncode(Step):
+class CategoricalEncode(Step):
     def __init__(
         self,
         inputs: SelectionType,
@@ -104,10 +104,12 @@ class OrdinalEncode(Step):
         self.min_frequency = min_frequency
         self.max_categories = max_categories
 
-    def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
-        columns = (self.inputs - outcomes).select_columns(table)
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
 
         categories = _compute_categories(
             table, columns, self.min_frequency, self.max_categories
         )
-        return ml.transforms.OrdinalEncode(categories)
+        for col, cats in categories.items():
+            metadata.set_categories(col, cats)
+        return ml.transforms.CategoricalEncode(categories)

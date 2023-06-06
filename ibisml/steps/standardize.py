@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import ibisml as ml
-from ibisml.core import Step, Transform
+from ibisml.core import Metadata, Step, Transform
 from ibisml.select import SelectionType, selector
 
 import ibis.expr.types as ir
@@ -11,8 +11,8 @@ class ScaleStandard(Step):
     def __init__(self, inputs: SelectionType):
         self.inputs = selector(inputs)
 
-    def fit(self, table: ir.Table, outcomes: list[str]) -> Transform:
-        columns = (self.inputs - outcomes).select_columns(table)
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
 
         stats = {}
         if columns:

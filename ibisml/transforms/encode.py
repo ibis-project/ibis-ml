@@ -26,7 +26,7 @@ class OneHotEncode(Transform):
         ).drop(*self.categories)
 
 
-class OrdinalEncode(Transform):
+class CategoricalEncode(Transform):
     def __init__(
         self,
         categories: dict[str, list[Any]],
