@@ -181,6 +181,9 @@ class RecipeTransform:
         parts = "\n".join(f"- {s!r}" for s in self.transforms)
         return f"RecipeTransform:\n{parts}"
 
+    def __call__(self, table: ir.Table) -> Dataset:
+        return self.transform(table)
+
     def transform(self, table: ir.Table) -> Dataset:
         for transform in self.transforms:
             table = transform.transform(table)
