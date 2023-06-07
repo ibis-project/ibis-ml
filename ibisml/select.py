@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Collection
-from typing import Callable, Union
+from typing import Callable, Union, ClassVar
 
 import ibis.expr.types as ir
 import ibis.expr.datatypes as dt
@@ -190,6 +190,49 @@ class has_type(Selector):
             return col.type() == dt.dtype(self.type)
 
 
+class _TypeSelector(Selector):
+    __slots__ = ()
+    _type: ClassVar[type]
+
+    def matches(self, col: ir.Column, metadata: Metadata) -> bool:
+        return isinstance(col.type(), self._type)
+
+
+class integer(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Integer
+
+
+class floating(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Floating
+
+
+class temporal(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Temporal
+
+
+class date(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Date
+
+
+class time(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Time
+
+
+class timestamp(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Timestamp
+
+
+class string(_TypeSelector):
+    __slots__ = ()
+    _type = dt.String
+
+
 class numeric(Selector):
     __slots__ = ()
 
@@ -202,7 +245,10 @@ class nominal(Selector):
     __slots__ = ()
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
-        return not isinstance(col.type(), dt.Numeric)
+        return (
+            isinstance(col.type(), dt.String)
+            or metadata.get_categories(col.get_name()) is not None
+        )
 
 
 class categorical(Selector):
@@ -210,6 +256,11 @@ class categorical(Selector):
 
     def __init__(self, ordered: bool | None = None):
         self.ordered = ordered
+
+    def __repr__(self):
+        if self.ordered is None:
+            return "categorical()"
+        return f"categorical(ordered={self.ordered})"
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         categories = metadata.get_categories(col.get_name())

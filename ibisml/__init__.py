@@ -12,6 +12,13 @@ from ibisml.select import (
     numeric,
     nominal,
     categorical,
+    string,
+    integer,
+    floating,
+    temporal,
+    date,
+    time,
+    timestamp,
     where,
 )
 from ibisml.steps import *  # noqa: F403
