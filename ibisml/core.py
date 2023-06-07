@@ -17,9 +17,13 @@ class Categories:
 
 
 class Metadata:
-    def __init__(self, outcomes: list[str] | None = None):
+    def __init__(
+        self,
+        outcomes: list[str] | None = None,
+        categories: dict[str, Categories] | None = None,
+    ):
         self.outcomes = outcomes or []
-        self.categories: dict[str, Categories] = {}
+        self.categories = categories or {}
 
     def get_categories(self, column: str) -> Categories | None:
         return self.categories.get(column)

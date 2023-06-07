@@ -14,15 +14,28 @@ class Selector:
     """The base selector class"""
 
     __slots__ = ()
+    _fields: ClassVar[tuple[str, ...]] = ()
+
+    def __init_subclass__(cls):
+        slots = []
+        for base in cls.__mro__:
+            if base is not object:
+                slots.extend(reversed(base.__slots__))
+        cls._fields = tuple(reversed(slots))
 
     def __repr__(self):
         name = type(self).__name__
-        args = ",".join(repr(getattr(self, n)) for n in self.__slots__)
+        args = ",".join(repr(getattr(self, n)) for n in self._fields)
         return f"{name}({args})"
+
+    def __eq__(self, other):
+        return type(self) == type(other) and all(
+            getattr(self, name) == getattr(other, name) for name in self._fields
+        )
 
     def __and__(self, other: SelectionType) -> Selector:
         selectors = []
-        for part in [self, other]:
+        for part in [self, selector(other)]:
             if isinstance(part, and_):
                 selectors.extend(part.selectors)
             else:
@@ -31,7 +44,7 @@ class Selector:
 
     def __or__(self, other: SelectionType) -> Selector:
         selectors = []
-        for part in [self, other]:
+        for part in [self, selector(other)]:
             if isinstance(part, or_):
                 selectors.extend(part.selectors)
             else:
@@ -53,7 +66,10 @@ class Selector:
     def select_columns(self, table: ir.Table, metadata: Metadata) -> list[str]:
         """Return a list of column names matching this selector."""
         return [
-            c for c in table.columns if self.matches(table[c], metadata)  # type: ignore
+            c
+            for c in table.columns
+            if c not in metadata.outcomes
+            and self.matches(table[c], metadata)  # type: ignore
         ]
 
 
@@ -62,14 +78,14 @@ SelectionType = Union[str, Collection[str], Callable[[ir.Column], bool], Selecto
 
 def selector(obj: SelectionType) -> Selector:
     """Convert `obj` to a Selector"""
-    if isinstance(obj, str):
+    if isinstance(obj, Selector):
+        return obj
+    elif isinstance(obj, str):
         return cols(obj)
     elif isinstance(obj, Collection):
         return cols(*obj)
     elif callable(obj):
         return where(obj)
-    elif isinstance(obj, Selector):
-        return obj
     raise TypeError("Expected a str, list of strings, callable, or Selector")
 
 
@@ -124,10 +140,8 @@ class everything(Selector):
 class cols(Selector):
     __slots__ = ("columns",)
 
-    def __init__(self, columns: str | Collection[str]):
-        if not isinstance(columns, str):
-            columns = tuple(columns)
-        self.columns = columns
+    def __init__(self, *columns: str):
+        self.columns = tuple(columns)
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return col.get_name() in self.columns
@@ -141,53 +155,50 @@ class _StrMatcher(Selector):
 
 
 class contains(_StrMatcher):
+    __slots__ = ()
+
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return self.pattern in col.get_name()
 
 
 class endswith(_StrMatcher):
+    __slots__ = ()
+
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return col.get_name().endswith(self.pattern)
 
 
 class startswith(_StrMatcher):
+    __slots__ = ()
+
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return col.get_name().startswith(self.pattern)
 
 
 class matches(_StrMatcher):
+    __slots__ = ()
+
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return re.search(self.pattern, col.get_name()) is not None
 
 
 class has_type(Selector):
-    __slots__ = ("type",)
+    __slots__ = ("dtype",)
 
-    def __init__(self, type: dt.DataType | str | type[dt.DataType]):
-        self.type = type
+    dtype: dt.DataType | type[dt.DataType]
+
+    def __init__(self, dtype: dt.DataType | str | type[dt.DataType]):
+        if isinstance(dtype, type):
+            self.dtype = dtype
+        else:
+            self.dtype = dt.dtype(dtype)
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
-        # A mapping of abstract or parametric types, to allow selecting all
-        # subclasses/parametrizations of these types, rather than only a
-        # specific instance.
-        abstract = {
-            "array": dt.Array,
-            "decimal": dt.Decimal,
-            "floating": dt.Floating,
-            "geospatial": dt.GeoSpatial,
-            "integer": dt.Integer,
-            "map": dt.Map,
-            "numeric": dt.Numeric,
-            "struct": dt.Struct,
-            "temporal": dt.Temporal,
-        }
-        if isinstance(self.type, str) and self.type.lower() in abstract:
-            cls = abstract[self.type.lower()]
-            return isinstance(col.type(), cls)
-        elif isinstance(self.type, type):
-            return isinstance(col.type(), self.type)
-        else:
-            return col.type() == dt.dtype(self.type)
+        if metadata.get_categories(col.get_name()) is not None:
+            return False
+        if isinstance(self.dtype, type):
+            return isinstance(col.type(), self.dtype)
+        return col.type() == self.dtype
 
 
 class _TypeSelector(Selector):
@@ -195,7 +206,9 @@ class _TypeSelector(Selector):
     _type: ClassVar[type]
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
-        return isinstance(col.type(), self._type)
+        return metadata.get_categories(col.get_name()) is None and isinstance(
+            col.type(), self._type
+        )
 
 
 class integer(_TypeSelector):
@@ -206,6 +219,11 @@ class integer(_TypeSelector):
 class floating(_TypeSelector):
     __slots__ = ()
     _type = dt.Floating
+
+
+class numeric(_TypeSelector):
+    __slots__ = ()
+    _type = dt.Numeric
 
 
 class temporal(_TypeSelector):
@@ -231,14 +249,6 @@ class timestamp(_TypeSelector):
 class string(_TypeSelector):
     __slots__ = ()
     _type = dt.String
-
-
-class numeric(Selector):
-    __slots__ = ()
-
-    def matches(self, col: ir.Column, metadata: Metadata) -> bool:
-        categories = metadata.get_categories(col.get_name())
-        return isinstance(col.type(), dt.Numeric) and categories is None
 
 
 class nominal(Selector):
