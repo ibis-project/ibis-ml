@@ -53,7 +53,7 @@ def _categorize_wrap_reader(
         yield pa.RecordBatch.from_pydict(out)
 
 
-class TransformedTable:
+class TransformResult:
     def __init__(
         self,
         table: ir.Table,
@@ -61,17 +61,25 @@ class TransformedTable:
         outcomes: list[str] | None = None,
         categories: dict[str, Categories] | None = None,
     ):
-        if outcomes is None:
-            outcomes = []
-        if features is None:
-            features = [c for c in table.columns if c not in outcomes]
-        if categories is None:
-            categories = {}
-
         self.table = table
-        self.features = features
-        self.outcomes = outcomes
-        self.categories = categories
+        self.features = features or []
+        self.outcomes = outcomes or []
+        self.categories = categories or {}
+
+    def __repr__(self):
+        schema = self.schema
+        parts = ["TransformResult:"]
+        for group in ("features", "outcomes"):
+            columns = getattr(self, group)
+            if not columns:
+                continue
+            width = max(len(c) for c in columns)
+            rows = "".join(
+                f"    {col.ljust(width)}  {schema[col]}\n" for col in columns
+            )
+            parts.append(f"- {group.capitalize()} {{\n{rows}}}")
+
+        return "\n".join(parts)
 
     @property
     def schema(self) -> ibis.Schema:
@@ -250,10 +258,10 @@ class RecipeTransform:
         parts = "\n".join(f"- {s!r}" for s in self.transforms)
         return f"RecipeTransform:\n{parts}"
 
-    def __call__(self, table: ir.Table) -> TransformedTable:
+    def __call__(self, table: ir.Table) -> TransformResult:
         return self.transform(table)
 
-    def transform(self, table: ir.Table) -> TransformedTable:
+    def transform(self, table: ir.Table) -> TransformResult:
         if table.schema() != self.input_schema:
             # Schemas don't match, cast, erroring if not possible
             table = table.cast(self.input_schema)
@@ -271,7 +279,7 @@ class RecipeTransform:
         if table.columns != ordered_cols:
             table = table.select(ordered_cols)
 
-        return TransformedTable(
+        return TransformResult(
             table,
             features,
             outcomes,
