@@ -7,7 +7,7 @@ import ibisml as ml
 
 
 def eval_select(selector):
-    metadata = ml.Metadata(outcomes=["y_1", "y_2"])
+    metadata = ml.core.Metadata(outcomes=["y_1", "y_2"])
     metadata.set_categories("a_nominal", ["a", "b"])
     metadata.set_categories("b_ordinal", ["c", "d"], True)
 
