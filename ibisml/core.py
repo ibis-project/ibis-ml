@@ -132,11 +132,39 @@ class Dataset:
 
 
 class Transform:
+    def __repr__(self) -> str:
+        cls_name = type(self).__name__
+        parts = []
+
+        def quote(col: str):
+            return repr(col) if " " in col else col
+
+        if len(self.input_columns) <= 4:
+            parts = [quote(c) for c in self.input_columns]
+        else:
+            parts = [quote(c) for c in self.input_columns[:2]]
+            parts.append("...")
+            parts.extend(quote(c) for c in self.input_columns[-2:])
+        return f"{cls_name}<{', '.join(parts)}>"
+
+    @property
+    def input_columns(self) -> list[str]:
+        raise NotImplementedError
+
     def transform(self, table: ir.Table) -> ir.Table:
         raise NotImplementedError
 
 
 class Step:
+    def _repr(self, *args: str, **kwargs: Any) -> str:
+        parts = [repr(getattr(self, name)) for name in args]
+        for name, default in kwargs.items():
+            value = getattr(self, name)
+            if value != default:
+                parts.append(f"{name}={value!r}")
+        cls_name = type(self).__name__
+        return f"{cls_name}({', '.join(parts)})"
+
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         raise NotImplementedError
 

@@ -10,9 +10,12 @@ import ibis.expr.types as ir
 
 
 class FillNA(Step):
-    def __init__(self, inputs: SelectionType, fill_value: Any = None):
+    def __init__(self, inputs: SelectionType, fill_value: Any):
         self.inputs = selector(inputs)
         self.fill_value = fill_value
+
+    def __repr__(self) -> str:
+        return self._repr("inputs", "fill_value")
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
@@ -22,6 +25,9 @@ class FillNA(Step):
 class _BaseImpute(Step):
     def __init__(self, inputs: SelectionType):
         self.inputs = selector(inputs)
+
+    def __repr__(self) -> str:
+        return self._repr("inputs")
 
     def _stat(self, col: ir.Column) -> ir.Scalar:
         raise NotImplementedError

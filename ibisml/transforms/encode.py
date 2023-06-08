@@ -14,6 +14,10 @@ class OneHotEncode(Transform):
     def __init__(self, categories: dict[str, list[Any]]):
         self.categories = categories
 
+    @property
+    def input_columns(self) -> list[str]:
+        return list(self.categories)
+
     def transform(self, table: ir.Table) -> ir.Table:
         if not self.categories:
             return table
@@ -27,13 +31,14 @@ class OneHotEncode(Transform):
 
 
 class CategoricalEncode(Transform):
-    def __init__(
-        self,
-        categories: dict[str, list[Any]],
-    ):
+    def __init__(self, categories: dict[str, list[Any]]):
         self.categories = categories
         # TODO: standardize IDs across steps/transforms
         self._rand_id = uuid.uuid4().hex[:6]
+
+    @property
+    def input_columns(self) -> list[str]:
+        return list(self.categories)
 
     @cached_property
     def lookup_memtables(self):

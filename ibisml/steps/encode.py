@@ -83,6 +83,9 @@ class OneHotEncode(Step):
         self.min_frequency = min_frequency
         self.max_categories = max_categories
 
+    def __repr__(self) -> str:
+        return self._repr("inputs", min_frequency=None, max_categories=None)
+
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
 
@@ -103,6 +106,9 @@ class CategoricalEncode(Step):
         self.inputs = selector(inputs)
         self.min_frequency = min_frequency
         self.max_categories = max_categories
+
+    def __repr__(self) -> str:
+        return self._repr("inputs", min_frequency=None, max_categories=None)
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
