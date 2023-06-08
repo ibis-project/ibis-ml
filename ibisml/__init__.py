@@ -1,5 +1,5 @@
 from ._version import __version__
-from ibisml.core import Recipe, RecipeTransform, Step, Transform, Metadata
+from ibisml.core import Recipe, RecipeTransform, Step, Transform, TransformedTable
 from ibisml.select import (
     selector,
     everything,
