@@ -63,3 +63,22 @@ class MutateAt(Transform):
                 func(table[c]).name(f"{c}_{suffix}") for c in self.columns  # type: ignore
             )
         return table.mutate(mutations)
+
+
+class Mutate(Transform):
+    def __init__(
+        self,
+        *exprs: Callable[[ir.Table], ir.Column] | Deferred,
+        **named_exprs: Callable[[ir.Table], ir.Column] | Deferred,
+    ):
+        self.exprs = exprs
+        self.named_exprs = named_exprs
+
+    @property
+    def input_columns(self) -> list[str]:
+        # TODO: not all transforms have known input columns
+        # need to rethink this interface
+        return ["..."]
+
+    def transform(self, table: ir.Table) -> ir.Table:
+        return table.mutate(*self.exprs, **self.named_exprs)  # type: ignore

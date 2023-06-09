@@ -64,3 +64,22 @@ class MutateAt(Step):
         return ml.transforms.MutateAt(
             columns, expr=self.expr, named_exprs=self.named_exprs
         )
+
+
+class Mutate(Step):
+    def __init__(
+        self,
+        *exprs: Callable[[ir.Table], ir.Column] | Deferred,
+        **named_exprs: Callable[[ir.Table], ir.Column] | Deferred,
+    ):
+        self.exprs = exprs
+        self.named_exprs = named_exprs
+
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        for expr in self.exprs:
+            yield "", expr
+        for name, expr in self.named_exprs.items():
+            yield name, expr
+
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        return ml.transforms.Mutate(*self.exprs, **self.named_exprs)

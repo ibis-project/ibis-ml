@@ -11,12 +11,17 @@ def myfunc(col):
     pass
 
 
+def myfunc2(col):
+    pass
+
+
 @pytest.mark.parametrize(
     "step, sol",
     [
         (ml.Drop(ml.string()), "Drop(string())"),
         (ml.Cast(ml.integer(), "float"), "Cast(integer(), 'float64')"),
         (ml.MutateAt(ml.integer(), myfunc), f"MutateAt(integer(), {myfunc!r})"),
+        (ml.Mutate(myfunc, x=myfunc2), f"Mutate({myfunc!r}, x={myfunc2!r})"),
     ],
 )
 def test_step_repr(step, sol):
@@ -29,6 +34,7 @@ def test_step_repr(step, sol):
         (ml.transforms.Drop(["x", "y"]), "Drop<x, y>"),
         (ml.transforms.Cast(["x", "y"], dt.dtype("int")), "Cast<x, y>"),
         (ml.transforms.MutateAt(["x", "y"], myfunc), "MutateAt<x, y>"),
+        (ml.transforms.Mutate(myfunc), "Mutate<...>"),
     ],
 )
 def test_transform_repr(transform, sol):
@@ -85,4 +91,14 @@ def test_mutate_at_named_exprs():
     transform = step.fit(t, ml.core.Metadata())
     res = transform.transform(t)
     sol = t.mutate(x=_.x.abs(), y=_.y.abs(), x_log=_.x.log(), y_log=_.y.log())
+    assert res.equals(sol)
+
+
+def test_mutate():
+    t = ibis.table({"x": "int", "y": "int", "z": "string"})
+
+    step = ml.Mutate(_.x.abs().name("x_abs"), y_log=lambda t: t.y.log())
+    transform = step.fit(t, ml.core.Metadata())
+    res = transform.transform(t)
+    sol = t.mutate(_.x.abs().name("x_abs"), y_log=lambda t: t.y.log())
     assert res.equals(sol)
