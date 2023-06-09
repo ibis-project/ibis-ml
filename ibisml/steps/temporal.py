@@ -29,3 +29,25 @@ class ExpandDate(Step):
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
         return ml.transforms.ExpandDate(columns, self.components)
+
+
+class ExpandTime(Step):
+    def __init__(
+        self,
+        inputs: SelectionType,
+        components: Sequence[Literal["hour", "minute", "second", "millisecond"]] = (
+            "hour",
+            "minute",
+            "second",
+        ),
+    ):
+        self.inputs = selector(inputs)
+        self.components = list(components)
+
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        yield ("components", self.components)
+
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
+        return ml.transforms.ExpandTime(columns, self.components)
