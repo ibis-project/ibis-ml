@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Iterable
 
 import ibisml as ml
 from ibisml.core import Metadata, Step, Transform
@@ -14,8 +14,9 @@ class FillNA(Step):
         self.inputs = selector(inputs)
         self.fill_value = fill_value
 
-    def __repr__(self) -> str:
-        return self._repr("inputs", "fill_value")
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        yield ("", self.fill_value)
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
@@ -26,8 +27,8 @@ class _BaseImpute(Step):
     def __init__(self, inputs: SelectionType):
         self.inputs = selector(inputs)
 
-    def __repr__(self) -> str:
-        return self._repr("inputs")
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
 
     def _stat(self, col: ir.Column) -> ir.Scalar:
         raise NotImplementedError

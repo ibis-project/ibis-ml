@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any
+from typing import Any, Iterable
 
 import ibis
 import ibis.expr.types as ir
@@ -83,8 +83,12 @@ class OneHotEncode(Step):
         self.min_frequency = min_frequency
         self.max_categories = max_categories
 
-    def __repr__(self) -> str:
-        return self._repr("inputs", min_frequency=None, max_categories=None)
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        if self.min_frequency is not None:
+            yield ("min_frequency", self.min_frequency)
+        if self.max_categories is not None:
+            yield ("max_categories", self.max_categories)
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
@@ -107,8 +111,12 @@ class CategoricalEncode(Step):
         self.min_frequency = min_frequency
         self.max_categories = max_categories
 
-    def __repr__(self) -> str:
-        return self._repr("inputs", min_frequency=None, max_categories=None)
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        if self.min_frequency is not None:
+            yield ("min_frequency", self.min_frequency)
+        if self.max_categories is not None:
+            yield ("max_categories", self.max_categories)
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)

@@ -2,15 +2,21 @@ import pytest
 
 import ibis
 import ibis.expr.datatypes as dt
+from ibis import _
 
 import ibisml as ml
+
+
+def myfunc(col):
+    pass
 
 
 @pytest.mark.parametrize(
     "step, sol",
     [
         (ml.Drop(ml.string()), "Drop(string())"),
-        (ml.Cast(ml.integer(), "float"), "Cast(integer(), Float64(nullable=True))"),
+        (ml.Cast(ml.integer(), "float"), "Cast(integer(), 'float64')"),
+        (ml.MutateAt(ml.integer(), myfunc), f"MutateAt(integer(), {myfunc!r})"),
     ],
 )
 def test_step_repr(step, sol):
@@ -22,6 +28,7 @@ def test_step_repr(step, sol):
     [
         (ml.transforms.Drop(["x", "y"]), "Drop<x, y>"),
         (ml.transforms.Cast(["x", "y"], dt.dtype("int")), "Cast<x, y>"),
+        (ml.transforms.MutateAt(["x", "y"], myfunc), "MutateAt<x, y>"),
     ],
 )
 def test_transform_repr(transform, sol):
@@ -54,4 +61,28 @@ def test_cast():
 
     res = transform.transform(t)
     sol = t.mutate(x=t.x.cast("float"))
+    assert res.equals(sol)
+
+
+def test_mutate_at_expr():
+    t = ibis.table({"x": "int", "y": "int", "z": "string"})
+
+    step = ml.MutateAt(ml.integer(), _.abs())
+    transform = step.fit(t, ml.core.Metadata())
+
+    assert isinstance(transform, ml.transforms.MutateAt)
+    assert transform.columns == ["x", "y"]
+
+    res = transform.transform(t)
+    sol = t.mutate(x=_.x.abs(), y=_.y.abs())
+    assert res.equals(sol)
+
+
+def test_mutate_at_named_exprs():
+    t = ibis.table({"x": "int", "y": "int", "z": "string"})
+
+    step = ml.MutateAt(ml.integer(), _.abs(), log=_.log())
+    transform = step.fit(t, ml.core.Metadata())
+    res = transform.transform(t)
+    sol = t.mutate(x=_.x.abs(), y=_.y.abs(), x_log=_.x.log(), y_log=_.y.log())
     assert res.equals(sol)

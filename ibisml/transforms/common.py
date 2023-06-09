@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from ibisml.core import Transform
 
 import ibis.expr.types as ir
 import ibis.expr.datatypes as dt
+from ibis.expr.deferred import Deferred
 
 
 class Drop(Transform):
@@ -29,3 +32,34 @@ class Cast(Transform):
 
     def transform(self, table: ir.Table) -> ir.Table:
         return table.cast(dict.fromkeys(self.columns, self.dtype))
+
+
+class MutateAt(Transform):
+    def __init__(
+        self,
+        columns: list[str],
+        expr: Callable[[ir.Column], ir.Column] | Deferred | None = None,
+        named_exprs: dict[str, Callable[[ir.Column], ir.Column] | Deferred]
+        | None = None,
+    ):
+        self.columns = columns
+        self.expr = expr
+        self.named_exprs = named_exprs or {}
+
+    @property
+    def input_columns(self) -> list[str]:
+        return self.columns
+
+    def transform(self, table: ir.Table) -> ir.Table:
+        mutations: list[ir.Value] = []
+        if self.expr is not None:
+            func = self.expr.resolve if isinstance(self.expr, Deferred) else self.expr
+            mutations.extend(
+                func(table[c]).name(c) for c in self.columns  # type: ignore
+            )
+        for suffix, expr in self.named_exprs.items():
+            func = expr.resolve if isinstance(expr, Deferred) else expr
+            mutations.extend(
+                func(table[c]).name(f"{c}_{suffix}") for c in self.columns  # type: ignore
+            )
+        return table.mutate(mutations)

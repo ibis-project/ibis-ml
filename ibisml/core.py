@@ -184,17 +184,21 @@ class Transform:
 
 
 class Step:
-    def _repr(self, *args: str, **kwargs: Any) -> str:
-        parts = [repr(getattr(self, name)) for name in args]
-        for name, default in kwargs.items():
-            value = getattr(self, name)
-            if value != default:
-                parts.append(f"{name}={value!r}")
-        cls_name = type(self).__name__
-        return f"{cls_name}({', '.join(parts)})"
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        raise NotImplementedError
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         raise NotImplementedError
+
+    def __repr__(self) -> str:
+        parts = []
+        for name, value in self._repr():
+            if name:
+                parts.append(f"{name}={value!r}")
+            else:
+                parts.append(repr(value))
+        cls_name = type(self).__name__
+        return f"{cls_name}({', '.join(parts)})"
 
 
 class Recipe:

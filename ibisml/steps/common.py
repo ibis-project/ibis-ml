@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-import ibis.expr.types as ir
+from typing import Callable, Iterable, Any
+
 import ibis.expr.datatypes as dt
+import ibis.expr.types as ir
+from ibis.expr.deferred import Deferred
 
 import ibisml as ml
 from ibisml.core import Metadata, Step, Transform
@@ -12,8 +15,8 @@ class Drop(Step):
     def __init__(self, inputs: SelectionType):
         self.inputs = selector(inputs)
 
-    def __repr__(self) -> str:
-        return self._repr("inputs")
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
@@ -29,9 +32,35 @@ class Cast(Step):
         self.inputs = selector(inputs)
         self.dtype = dt.dtype(dtype)
 
-    def __repr__(self) -> str:
-        return self._repr("inputs", "dtype")
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        yield ("", str(self.dtype))
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
         return ml.transforms.Cast(columns, self.dtype)
+
+
+class MutateAt(Step):
+    def __init__(
+        self,
+        inputs: SelectionType,
+        _expr: Callable[[ir.Column], ir.Column] | Deferred | None = None,
+        **named_exprs: Callable[[ir.Column], ir.Column] | Deferred,
+    ):
+        self.inputs = selector(inputs)
+        self.expr = _expr
+        self.named_exprs = named_exprs
+
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        if self.expr is not None:
+            yield ("", self.expr)
+        for name, expr in self.named_exprs.items():
+            yield name, expr
+
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
+        return ml.transforms.MutateAt(
+            columns, expr=self.expr, named_exprs=self.named_exprs
+        )
