@@ -28,6 +28,39 @@ class ExpandDate(Step):
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
+        if "month" in self.components:
+            for col in columns:
+                metadata.set_categories(
+                    f"{col}_month",
+                    [
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December",
+                    ],
+                )
+        if "dow" in self.components:
+            for col in columns:
+                metadata.set_categories(
+                    f"{col}_dow",
+                    [
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thurday",
+                        "Friday",
+                        "Saturday",
+                        "Sunday",
+                    ],
+                )
         return ml.transforms.ExpandDate(columns, self.components)
 
 
