@@ -11,6 +11,7 @@ import ibis.expr.types as ir
 if TYPE_CHECKING:
     import pandas as pd
     import dask.dataframe as dd
+    import xgboost as xgb
 
 
 class Categories:
@@ -212,6 +213,26 @@ class TransformResult:
             # expect the dask conversion path to be used for backends where dask
             # integration makes sense.
             return dd.from_pandas(self.to_pandas(categories=categories), npartitions=1)
+
+    def to_dmatrix(self) -> xgb.DMatrix:
+        import xgboost as xgb
+
+        df = self.to_pandas(categories=True)
+        return xgb.DMatrix(
+            df[self.features], df[self.outcomes], enable_categorical=True
+        )
+
+    def to_dask_dmatrix(self) -> xgb.dask.DaskDMatrix:
+        import xgboost as xgb
+        from dask.distributed import get_client
+
+        ddf = self.to_dask_dataframe(categories=True)
+        return xgb.dask.DaskDMatrix(
+            get_client(),
+            ddf[self.features],
+            ddf[self.outcomes],
+            enable_categorical=True,
+        )
 
 
 class Transform:
