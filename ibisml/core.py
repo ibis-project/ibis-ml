@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Sequence, Iterable
-from typing import Any, cast, TYPE_CHECKING
+from typing import Any, Callable, cast, TYPE_CHECKING
+from functools import cache
 
 import pyarrow as pa
 import ibis
@@ -9,6 +10,7 @@ import ibis.expr.types as ir
 
 if TYPE_CHECKING:
     import pandas as pd
+    import dask.dataframe as dd
 
 
 class Categories:
@@ -51,6 +53,33 @@ def _categorize_wrap_reader(
                 )
             out[name] = col
         yield pa.RecordBatch.from_pydict(out)
+
+
+@cache
+def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
+    """Wrap the `categorize` function in a closure, so cloudpickle will encode
+    the full function.
+
+    This avoids requiring `ibisml` or `ibis` exist on the worker nodes of the
+    dask cluster.
+    """
+
+    def categorize(
+        df: pd.DataFrame,
+        categories: dict[str, tuple[list[Any], bool]],
+    ) -> pd.DataFrame:
+        import pandas as pd
+
+        new = {}
+        for col, (cats, ordered) in categories.items():
+            codes = df[col].fillna(-1)
+            if not pd.api.types.is_integer_dtype(codes):
+                codes = codes.astype("int64")
+            new[col] = pd.Categorical.from_codes(codes, cats, ordered=ordered)
+
+        return df.assign(**new)
+
+    return categorize
 
 
 class TransformResult:
@@ -125,6 +154,17 @@ class TransformResult:
             out[name] = col
         return pa.Table.from_pydict(out)
 
+    def _categorize_dask_dataframe(self, ddf: dd.DataFrame) -> dd.DataFrame:
+        if not self.categories:
+            return ddf
+
+        categorize = _get_categorize_chunk()
+
+        categories = {
+            col: (cats.values, cats.ordered) for col, cats in self.categories.items()
+        }
+        return ddf.map_partitions(categorize, categories)
+
     def _categorize_pyarrow_batches(
         self, reader: pa.RecordBatchReader
     ) -> pa.RecordBatchReader:
@@ -157,6 +197,21 @@ class TransformResult:
         if categories:
             return self._categorize_pyarrow_batches(reader)
         return reader
+
+    def to_dask_dataframe(self, categories: bool = False) -> dd.DataFrame:
+        import dask.dataframe as dd
+
+        con = ibis.get_backend(self.table)
+        if hasattr(con, "to_dask"):
+            ddf = con.to_dask(self.table)
+            if categories:
+                return self._categorize_dask_dataframe(ddf)
+            return ddf
+        else:
+            # TODO: this is suboptimal, but may not matter. In practice I'd only
+            # expect the dask conversion path to be used for backends where dask
+            # integration makes sense.
+            return dd.from_pandas(self.to_pandas(categories=categories), npartitions=1)
 
 
 class Transform:
