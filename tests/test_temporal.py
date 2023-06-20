@@ -46,7 +46,7 @@ def test_expand_date():
         x_doy=_.x.day_of_year(),
         x_day=_.x.day(),
         x_week=_.x.week_of_year(),
-        x_month=_.x.month(),
+        x_month=_.x.month() - 1,
         x_year=_.x.year(),
     )
     assert res.equals(sol)

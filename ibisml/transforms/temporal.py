@@ -30,7 +30,7 @@ class ExpandDate(Transform):
                 elif comp == "week":
                     feat = col.week_of_year()
                 elif comp == "month":
-                    feat = col.month()
+                    feat = col.month() - 1
                 elif comp == "year":
                     feat = col.year()
                 elif comp == "dow":

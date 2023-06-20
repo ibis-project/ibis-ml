@@ -93,9 +93,21 @@ class OneHotEncode(Step):
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
 
-        categories = _compute_categories(
-            table, columns, self.min_frequency, self.max_categories
+        categories = {}
+
+        to_compute = []
+        for column in columns:
+            if cats := metadata.get_categories(column):
+                categories[column] = list(range(len(cats.values)))
+            else:
+                to_compute.append(column)
+
+        categories.update(
+            _compute_categories(
+                table, to_compute, self.min_frequency, self.max_categories
+            )
         )
+
         return ml.transforms.OneHotEncode(categories)
 
 
@@ -120,7 +132,10 @@ class CategoricalEncode(Step):
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
         columns = self.inputs.select_columns(table, metadata)
-
+        # Filter out already categorized columns
+        columns = [
+            column for column in columns if metadata.get_categories(column) is None
+        ]
         categories = _compute_categories(
             table, columns, self.min_frequency, self.max_categories
         )
