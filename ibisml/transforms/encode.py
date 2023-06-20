@@ -59,10 +59,11 @@ class CategoricalEncode(Transform):
             return table
 
         for col, lookup in self.lookup_memtables.items():
+            if ibis.__version__[0] < "6":
+                join_kwargs = {"suffixes": ("_left", "")}
+            else:
+                join_kwargs = {"lname": "{name}_left", "rname": ""}
             table = table.left_join(
-                lookup,
-                table[col] == lookup[f"key_{self._rand_id}"],
-                lname="{name}_left",
-                rname="",
+                lookup, table[col] == lookup[f"key_{self._rand_id}"], **join_kwargs
             ).drop(f"key_{self._rand_id}", f"{col}_left")
         return table
