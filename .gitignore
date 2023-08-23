@@ -7,6 +7,7 @@ docs/build/
 .cache/
 .coverage
 .pytest_cache/
+.ipynb_checkpoints/
 .eggs/
 .DS_Store
 htmlcov/
