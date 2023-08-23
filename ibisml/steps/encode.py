@@ -72,6 +72,45 @@ def _compute_categories(
 
 
 class OneHotEncode(Step):
+    """A step for one-hot encoding select columns.
+
+    The original input column is dropped, and N-category new columns are
+    created with names like ``{input_column}_{category}``.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to one-hot encode.
+    min_frequency
+        A minimum frequency of elements in the training set required to treat a
+        column as a distinct category. May be either:
+
+        - an integer, representing a minimum number of samples required.
+        - a float in ``[0, 1]``, representing a minimum fraction of samples required.
+
+        Defaults to ``None`` for no minimum frequency.
+    max_categories
+        A maximum number of categories to include. If set, only the most
+        frequent ``max_categories`` categories are kept.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    One-hot encode all string columns
+
+    >>> step = ml.OneHotEncode(ml.string())
+
+    One-hot encode a specific column, only including categories with at least
+    20 samples.
+
+    >>> step = ml.OneHotEncode("x", min_frequency=20)
+
+    One-hot encode a specific column, including at most 10 categories.
+
+    >>> step = ml.OneHotEncode("x", max_categories=10)
+    """
+
     def __init__(
         self,
         inputs: SelectionType,
@@ -112,6 +151,42 @@ class OneHotEncode(Step):
 
 
 class CategoricalEncode(Step):
+    """A step for categorical encoding select columns.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to categorical encode.
+    min_frequency
+        A minimum frequency of elements in the training set required to treat a
+        column as a distinct category. May be either:
+
+        - an integer, representing a minimum number of samples required.
+        - a float in ``[0, 1]``, representing a minimum fraction of samples required.
+
+        Defaults to ``None`` for no minimum frequency.
+    max_categories
+        A maximum number of categories to include. If set, only the most
+        frequent ``max_categories`` categories are kept.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Categorical encode all string columns
+
+    >>> step = ml.CategoricalEncode(ml.string())
+
+    Categorical encode a specific column, only including categories with at
+    least 20 samples.
+
+    >>> step = ml.CategoricalEncode("x", min_frequency=20)
+
+    Categorical encode a specific column, including at most 10 categories.
+
+    >>> step = ml.CategoricalEncode("x", max_categories=10)
+    """
+
     def __init__(
         self,
         inputs: SelectionType,
