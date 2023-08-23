@@ -10,6 +10,29 @@ import ibis.expr.types as ir
 
 
 class FillNA(Step):
+    """A step for filling NULL values in the input with a specific value.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to fillna.
+    fill_value
+        The fill value to use. Must be castable to the dtype of all columns in
+        inputs.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Fill all NULL values in numeric columns with 0.
+
+    >>> step = ml.FillNA(ml.numeric(), 0)
+
+    Fill all NULL values in specific columns with 1.
+
+    >>> step = ml.FillNA(["x", "y"], 1)
+    """
+
     def __init__(self, inputs: SelectionType, fill_value: Any):
         self.inputs = selector(inputs)
         self.fill_value = fill_value
@@ -45,6 +68,24 @@ class _BaseImpute(Step):
 
 
 class ImputeMean(_BaseImpute):
+    """A step for replacing NULL values in select columns with their
+    respective mean in the training set.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to impute. All columns must be numeric.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Replace NULL values in all numeric columns with their respective means,
+    computed from the training dataset.
+
+    >>> step = ml.ImputeMean(ml.numeric())
+    """
+
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
@@ -55,6 +96,24 @@ class ImputeMean(_BaseImpute):
 
 
 class ImputeMedian(_BaseImpute):
+    """A step for replacing NULL values in select columns with their
+    respective medians in the training set.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to impute. All columns must be numeric.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Replace NULL values in all numeric columns with their respective medians,
+    computed from the training dataset.
+
+    >>> step = ml.ImputeMedian(ml.numeric())
+    """
+
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
@@ -65,5 +124,23 @@ class ImputeMedian(_BaseImpute):
 
 
 class ImputeMode(_BaseImpute):
+    """A step for replacing NULL values in select columns with their
+    respective modes in the training set.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to impute.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Replace NULL values in all numeric columns with their respective modes,
+    computed from the training dataset.
+
+    >>> step = ml.ImputeMode(ml.numeric())
+    """
+
     def _stat(self, col: ir.Column) -> ir.Scalar:
         return col.mode()
