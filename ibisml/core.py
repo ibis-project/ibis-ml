@@ -84,6 +84,14 @@ def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
 
 
 class TransformResult:
+    """The result of applying a RecipeTransform.
+
+    This is a wrapper around an ibis Table containing an expression describing
+    the full preprocessing pipeline. Use one of the `to_*` methods to execute
+    the expression and convert the result into an input type usable for fitting
+    your model.
+    """
+
     def __init__(
         self,
         table: ir.Table,
@@ -113,16 +121,8 @@ class TransformResult:
 
     @property
     def schema(self) -> ibis.Schema:
+        """The transformed table schema"""
         return self.table.schema()
-
-    def to_table(self) -> ir.Table:
-        return self.table
-
-    def to_pandas(self, categories: bool = False) -> pd.DataFrame:
-        df = self.table.to_pandas()
-        if categories:
-            return self._categorize_pandas(df)
-        return df
 
     def _categorize_pandas(self, df: pd.DataFrame) -> pd.DataFrame:
         import pandas as pd
@@ -187,19 +187,69 @@ class TransformResult:
             pa.schema(fields), _categorize_wrap_reader(reader, self.categories)
         )
 
+    def to_table(self) -> ir.Table:
+        """Convert to an ibis Table"""
+        return self.table
+
+    def to_pandas(self, categories: bool = False) -> pd.DataFrame:
+        """Convert to a ``pandas.DataFrame``.
+
+        Parameters
+        ----------
+        categories
+            Whether to return any categorical columns as pandas categorical
+            series. If False (the default) these columns will be returned
+            as numeric columns containing only their integral categorical
+            codes.
+        """
+        df = self.table.to_pandas()
+        if categories:
+            return self._categorize_pandas(df)
+        return df
+
     def to_pyarrow(self, categories: bool = False) -> pa.Table:
+        """Convert to a ``pyarrow.Table``.
+
+        Parameters
+        ----------
+        categories
+            Whether to return any categorical columns as dictionary-encoded
+            columns. If False (the default) these columns will be returned
+            as numeric columns containing only their integral categorical
+            codes.
+        """
         table = self.table.to_pyarrow()
         if categories:
             table = self._categorize_pyarrow(table)
         return table
 
     def to_pyarrow_batches(self, categories: bool = False) -> pa.RecordBatchReader:
+        """Convert to a ``pyarrow.RecordBatchReader``.
+
+        Parameters
+        ----------
+        categories
+            Whether to return any categorical columns as dictionary-encoded
+            columns. If False (the default) these columns will be returned
+            as numeric columns containing only their integral categorical
+            codes.
+        """
         reader = self.table.to_pyarrow_batches()
         if categories:
             return self._categorize_pyarrow_batches(reader)
         return reader
 
     def to_dask_dataframe(self, categories: bool = False) -> dd.DataFrame:
+        """Convert to a ``dask.dataframe.DataFrame``.
+
+        Parameters
+        ----------
+        categories
+            Whether to return any categorical columns as dask categorical
+            series. If False (the default) these columns will be returned
+            as numeric columns containing only their integral categorical
+            codes.
+        """
         import dask.dataframe as dd
 
         con = ibis.get_backend(self.table)
@@ -215,6 +265,7 @@ class TransformResult:
             return dd.from_pandas(self.to_pandas(categories=categories), npartitions=1)
 
     def to_dmatrix(self) -> xgb.DMatrix:
+        """Convert to a ``xgboost.DMatrix``"""
         import xgboost as xgb
 
         df = self.to_pandas(categories=True)
@@ -223,6 +274,7 @@ class TransformResult:
         )
 
     def to_dask_dmatrix(self) -> xgb.dask.DaskDMatrix:
+        """Convert to a ``xgboost.dask.DMatrix``"""
         import xgboost as xgb
         from dask.distributed import get_client
 
@@ -236,6 +288,8 @@ class TransformResult:
 
 
 class Transform:
+    """The base Transform."""
+
     def __repr__(self) -> str:
         cls_name = type(self).__name__
         parts = []
@@ -260,6 +314,8 @@ class Transform:
 
 
 class Step:
+    """The base Step."""
+
     def _repr(self) -> Iterable[tuple[str, Any]]:
         raise NotImplementedError
 
@@ -278,6 +334,16 @@ class Step:
 
 
 class Recipe:
+    """A recipe for fitting a preprocessing transform.
+
+    Recipes combine one or more preprocessing steps, applied in series.
+
+    Parameters
+    ----------
+    steps
+        A sequence of one or more preprocessing steps.
+    """
+
     steps: list[Step | Transform]
 
     def __init__(self, steps: Sequence[Step | Transform]):
@@ -290,6 +356,20 @@ class Recipe:
     def fit(
         self, table: ir.Table, outcomes: str | Sequence[str] | None = None
     ) -> RecipeTransform:
+        """Fit the recipe.
+
+        Parameters
+        ----------
+        table
+            The training data
+        outcomes
+            The column (or columns) to use as outcome variables.
+
+        Returns
+        -------
+        RecipeTransform
+        """
+
         if outcomes is None:
             outcomes = []
         elif isinstance(outcomes, str):
@@ -322,6 +402,8 @@ class Recipe:
 
 
 class RecipeTransform:
+    """The result of fitting a Recipe."""
+
     def __init__(
         self,
         transforms: Sequence[Transform],
@@ -339,9 +421,21 @@ class RecipeTransform:
         return f"RecipeTransform:\n{parts}"
 
     def __call__(self, table: ir.Table) -> TransformResult:
+        """Apply the transform to new data."""
         return self.transform(table)
 
     def transform(self, table: ir.Table) -> TransformResult:
+        """Apply the transform to new data.
+
+        Parameters
+        ----------
+        table
+            An ibis table.
+
+        Returns
+        -------
+        TransformResult
+        """
         if table.schema() != self.input_schema:
             # Schemas don't match, cast, erroring if not possible
             table = table.cast(self.input_schema)
