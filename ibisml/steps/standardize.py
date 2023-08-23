@@ -10,6 +10,27 @@ import ibis.expr.types as ir
 
 
 class ScaleStandard(Step):
+    """A step for normalizing select numeric columns to have a standard
+    deviation of one and a mean of zero.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to normalize. All columns must be numeric.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Normalize all numeric columns.
+
+    >>> step = ml.ScaleStandard(ml.numeric())
+
+    Normalize a specific set of columns.
+
+    >>> step = ml.ScaleStandard(["x", "y"])
+    """
+
     def __init__(self, inputs: SelectionType):
         self.inputs = selector(inputs)
 
