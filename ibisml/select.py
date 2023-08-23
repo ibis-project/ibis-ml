@@ -90,6 +90,14 @@ def selector(obj: SelectionType) -> Selector:
 
 
 class and_(Selector):
+    """Select only columns selected by all selectors.
+
+    Parameters
+    ----------
+    selectors
+        One or more selectors to combine.
+    """
+
     __slots__ = ("selectors",)
 
     def __init__(self, *selectors):
@@ -104,6 +112,14 @@ class and_(Selector):
 
 
 class or_(Selector):
+    """Select all columns selected by at least one selector.
+
+    Parameters
+    ----------
+    selectors
+        One or more selectors to combine.
+    """
+
     __slots__ = ("selectors",)
 
     def __init__(self, *selectors):
@@ -118,6 +134,14 @@ class or_(Selector):
 
 
 class not_(Selector):
+    """Select all columns not selected by the wrapped selector.
+
+    Parameters
+    ----------
+    selector
+        The selector to wrap.
+    """
+
     __slots__ = ("selector",)
 
     def __init__(self, selector):
@@ -131,6 +155,8 @@ class not_(Selector):
 
 
 class everything(Selector):
+    """Select all columns"""
+
     __slots__ = ()
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
@@ -138,6 +164,14 @@ class everything(Selector):
 
 
 class cols(Selector):
+    """Select columns by name.
+
+    Parameters
+    ----------
+    columns
+        Names of the columns to select.
+    """
+
     __slots__ = ("columns",)
 
     def __init__(self, *columns: str):
@@ -154,14 +188,33 @@ class _StrMatcher(Selector):
         self.pattern = pattern
 
 
-class contains(_StrMatcher):
-    __slots__ = ()
+class contains(Selector):
+    """Select all columns whose names contain a specific string.
+
+    Parameters
+    ----------
+    pattern
+        The string to search for in column names.
+    """
+
+    __slots__ = ("pattern",)
+
+    def __init__(self, pattern: str):
+        self.pattern = pattern
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return self.pattern in col.get_name()
 
 
 class endswith(_StrMatcher):
+    """Select all columns whose names end with a specific string.
+
+    Parameters
+    ----------
+    pattern
+        The string to search for in column names.
+    """
+
     __slots__ = ()
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
@@ -169,6 +222,14 @@ class endswith(_StrMatcher):
 
 
 class startswith(_StrMatcher):
+    """Select all columns whose names start with a specific string.
+
+    Parameters
+    ----------
+    pattern
+        The string to search for in column names.
+    """
+
     __slots__ = ()
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
@@ -176,6 +237,14 @@ class startswith(_StrMatcher):
 
 
 class matches(_StrMatcher):
+    """Select all columns whose names match a specific regex.
+
+    Parameters
+    ----------
+    pattern
+        The pattern to search for in column names.
+    """
+
     __slots__ = ()
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
@@ -183,6 +252,14 @@ class matches(_StrMatcher):
 
 
 class has_type(Selector):
+    """Select all columns matching a specified dtype.
+
+    Parameters
+    ----------
+    dtype
+        The dtype to match. May be a dtype instance, string, or dtype class.
+    """
+
     __slots__ = ("dtype",)
 
     dtype: dt.DataType | type[dt.DataType]
@@ -212,46 +289,64 @@ class _TypeSelector(Selector):
 
 
 class integer(_TypeSelector):
+    """Select all integral columns"""
+
     __slots__ = ()
     _type = dt.Integer
 
 
 class floating(_TypeSelector):
+    """Select all floating columns"""
+
     __slots__ = ()
     _type = dt.Floating
 
 
 class numeric(_TypeSelector):
+    """Select all numeric columns"""
+
     __slots__ = ()
     _type = dt.Numeric
 
 
 class temporal(_TypeSelector):
+    """Select all temporal columns"""
+
     __slots__ = ()
     _type = dt.Temporal
 
 
 class date(_TypeSelector):
+    """Select all date columns"""
+
     __slots__ = ()
     _type = dt.Date
 
 
 class time(_TypeSelector):
+    """Select all time columns"""
+
     __slots__ = ()
     _type = dt.Time
 
 
 class timestamp(_TypeSelector):
+    """Select all timestamp columns"""
+
     __slots__ = ()
     _type = dt.Timestamp
 
 
 class string(_TypeSelector):
+    """Select all string columns"""
+
     __slots__ = ()
     _type = dt.String
 
 
 class nominal(Selector):
+    """Select all nominal (string or categorical) columns"""
+
     __slots__ = ()
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
@@ -262,6 +357,15 @@ class nominal(Selector):
 
 
 class categorical(Selector):
+    """Select all categorical columns.
+
+    Parameters
+    ----------
+    ordered
+        Selects only ordered categoricals if True, and only unordered
+        categoricals if False. Defaults to None, to select all categoricals.
+    """
+
     __slots__ = ("ordered",)
 
     def __init__(self, ordered: bool | None = None):
@@ -282,6 +386,15 @@ class categorical(Selector):
 
 
 class where(Selector):
+    """Select all columns matching a specific predicate function.
+
+    Parameters
+    ----------
+    predicate
+        A predicate function from ``Column`` to ``bool``. Only columns where
+        ``predicate`` returns ``True`` will be selected.
+    """
+
     __slots__ = ("predicate",)
 
     def __init__(self, predicate: Callable[[ir.Column], bool]):
