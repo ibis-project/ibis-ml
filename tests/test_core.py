@@ -37,7 +37,7 @@ def test_transform_result_repr():
         }"""
     )
 
-    res = ml.TransformResult(t, features=["a", "b", "c"])
+    res = ml.TransformResult(t, features=["a", "b", "c"], other=["d"])
     assert repr(res) == dedent(
         """\
         TransformResult:
@@ -45,5 +45,8 @@ def test_transform_result_repr():
             a  int64
             b  float64
             c  int64
+        }
+        - Other {
+            d  int64
         }"""
     )
