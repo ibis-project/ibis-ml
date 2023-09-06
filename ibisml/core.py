@@ -19,6 +19,14 @@ class Categories:
         self.values = values
         self.ordered = ordered
 
+    def __repr__(self):
+        items = [repr(v) for v in self.values[:3].to_pylist()]
+        if len(self.values) > 3:
+            items.append("...")
+        items.append(f"ordered={self.ordered}")
+        values = ", ".join(items)
+        return f"Categories<{values}>"
+
 
 class Metadata:
     def __init__(
