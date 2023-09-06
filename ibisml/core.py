@@ -105,17 +105,19 @@ class TransformResult:
         table: ir.Table,
         features: list[str] | None = None,
         outcomes: list[str] | None = None,
+        other: list[str] | None = None,
         categories: dict[str, Categories] | None = None,
     ):
         self.table = table
         self.features = features or []
         self.outcomes = outcomes or []
+        self.other = other or []
         self.categories = categories or {}
 
     def __repr__(self):
         schema = self.schema
         parts = ["TransformResult:"]
-        for group in ("features", "outcomes"):
+        for group in ("features", "outcomes", "other"):
             columns = getattr(self, group)
             if not columns:
                 continue
@@ -454,8 +456,8 @@ class RecipeTransform:
         features = list(self.output_schema.names)
         outcomes = [col for col in self.metadata.outcomes if col in table.columns]
         seen = set(features).union(outcomes)
-        extra = [col for col in table.columns if col not in seen]
-        ordered_cols = [*features, *outcomes, *extra]
+        other = [col for col in table.columns if col not in seen]
+        ordered_cols = [*features, *outcomes, *other]
 
         # Reorder the columns to a consistent order
         if table.columns != ordered_cols:
@@ -465,5 +467,6 @@ class RecipeTransform:
             table,
             features,
             outcomes,
+            other,
             self.metadata.categories,
         )
