@@ -340,13 +340,13 @@ class Recipe:
 
     Parameters
     ----------
-    steps
-        A sequence of one or more preprocessing steps.
+    *steps
+        One or more preprocessing steps.
     """
 
     steps: list[Step | Transform]
 
-    def __init__(self, steps: Sequence[Step | Transform]):
+    def __init__(self, *steps: Step | Transform):
         self.steps = list(steps)
 
     def __repr__(self) -> str:
