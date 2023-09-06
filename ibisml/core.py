@@ -446,6 +446,10 @@ class RecipeTransform:
         -------
         TransformResult
         """
+        missing = set(self.input_schema).difference(table.columns)
+        if missing:
+            formatted_cols = "\n".join(f"- {c!r}" for c in sorted(missing))
+            raise ValueError(f"Missing required columns:\n{formatted_cols}")
         if table.schema() != self.input_schema:
             # Schemas don't match, cast, erroring if not possible
             table = table.cast(self.input_schema)
