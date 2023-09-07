@@ -1,0 +1,183 @@
+project:
+  type: website
+  preview:
+    port: 8000
+
+highlight-style: ayu
+code-annotations: hover
+
+metadata-files:
+  - _sidebar.yml
+
+website:
+  title: "ibisml"
+  description: "portable feature engineering pipelines"
+  favicon: logo.svg
+
+  # search
+  search:
+    location: navbar
+    type: overlay
+
+  # options
+  reader-mode: false
+  twitter-card: true
+  back-to-top-navigation: true
+  repo-url: https://github.com/ibis-project/ibisml
+  repo-actions: [edit, issue]
+  repo-branch: main
+  repo-subdir: docs
+  issue-url: https://github.com/ibis-project/ibisml/issues
+
+  # footer
+  page-footer:
+    border: false
+    left: ""
+    right:
+      - icon: github
+        href: https://github.com/ibis-project
+      - icon: slack
+        href: https://gitter.im/ibis-dev/Lobby
+
+  # nav
+  navbar:
+    logo: logo.svg
+    tools:
+      - icon: github
+        menu:
+          - text: Source code
+            url: https://github.com/ibis-project/ibisml
+          - text: Open an issue
+            url: https://github.com/ibis-project/ibisml/issues
+
+    left:
+      - sidebar:reference
+
+  sidebar:
+    - id: ""
+    - id: reference
+      title: "Reference"
+      style: "docked"
+      collapse-level: 2
+      contents:
+        - section: Core API
+          contents:
+            - reference/core.qmd
+            - reference/selectors.qmd
+
+        - section: Steps
+          contents:
+            - reference/steps-imputation.qmd
+            - reference/steps-encoding.qmd
+            - reference/steps-standardization.qmd
+            - reference/steps-temporal.qmd
+            - reference/steps-other.qmd
+
+format:
+  html:
+    theme:
+      light: [flatly, theme-light.scss]
+      dark: [darkly, theme-dark.scss]
+    toc: true
+    css: styles.css
+
+quartodoc:
+  package: ibisml
+  title: Reference
+  sidebar: reference/_sidebar.yml
+  dynamic: true
+  render_interlinks: true
+  options:
+    member_options:
+      signature_name: short
+  sections:
+    - title: Core
+      package: ibisml
+      contents:
+      - kind: page
+        path: core
+        summary:
+          name: Common
+          desc: Core APIs
+        contents:
+          - Recipe
+          - RecipeTransform
+          - TransformResult
+
+      - kind: page
+        path: selectors
+        summary:
+          name: Selectors
+          desc: Select sets of columns by name, type, or other properties
+        contents:
+          - cols
+          - contains
+          - endswith
+          - startswith
+          - matches
+          - numeric
+          - nominal
+          - categorical
+          - string
+          - integer
+          - floating
+          - temporal
+          - date
+          - time
+          - timestamp
+          - has_type
+          - where
+          - everything
+          - selector
+
+    - title: Steps
+      desc: Define steps in a recipe
+      package: ibisml
+      contents:
+      - kind: page
+        path: steps-imputation
+        summary:
+          name: Imputation
+          desc: Imputation and handling of missing values
+        contents:
+          - ImputeMean
+          - ImputeMode
+          - ImputeMedian
+          - FillNA
+
+      - kind: page
+        path: steps-encoding
+        summary:
+          name: Encoding
+          desc: Encoding of categorical and string columns
+        contents:
+          - OneHotEncode
+          - CategoricalEncode
+
+      - kind: page
+        path: steps-standardization
+        summary:
+          name: Standardization
+          desc: Standardization and normalization of numeric columns
+        contents:
+          - ScaleStandard
+
+      - kind: page
+        path: steps-temporal
+        summary:
+          name: Temporal
+          desc: Feature extraction for temporal columns
+        contents:
+          - ExpandDate
+          - ExpandTime
+
+      - kind: page
+        path: steps-other
+        summary:
+          name: Other
+          desc: Other common tabular operations
+        contents:
+          - Cast
+          - Drop
+          - MutateAt
+          - Mutate

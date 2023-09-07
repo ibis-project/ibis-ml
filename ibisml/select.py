@@ -181,13 +181,6 @@ class cols(Selector):
         return col.get_name() in self.columns
 
 
-class _StrMatcher(Selector):
-    __slots__ = ("pattern",)
-
-    def __init__(self, pattern: str):
-        self.pattern = pattern
-
-
 class contains(Selector):
     """Select all columns whose names contain a specific string.
 
@@ -206,37 +199,43 @@ class contains(Selector):
         return self.pattern in col.get_name()
 
 
-class endswith(_StrMatcher):
+class endswith(Selector):
     """Select all columns whose names end with a specific string.
 
     Parameters
     ----------
-    pattern
-        The string to search for in column names.
+    suffix
+        The column name suffix to match.
     """
 
-    __slots__ = ()
+    __slots__ = ("suffix",)
+
+    def __init__(self, suffix: str):
+        self.suffix = suffix
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
-        return col.get_name().endswith(self.pattern)
+        return col.get_name().endswith(self.suffix)
 
 
-class startswith(_StrMatcher):
+class startswith(Selector):
     """Select all columns whose names start with a specific string.
 
     Parameters
     ----------
-    pattern
-        The string to search for in column names.
+    prefix
+        The column name prefix to match.
     """
 
-    __slots__ = ()
+    __slots__ = ("prefix",)
+
+    def __init__(self, prefix: str):
+        self.prefix = prefix
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
-        return col.get_name().startswith(self.pattern)
+        return col.get_name().startswith(self.prefix)
 
 
-class matches(_StrMatcher):
+class matches(Selector):
     """Select all columns whose names match a specific regex.
 
     Parameters
@@ -245,7 +244,10 @@ class matches(_StrMatcher):
         The pattern to search for in column names.
     """
 
-    __slots__ = ()
+    __slots__ = ("pattern",)
+
+    def __init__(self, pattern: str):
+        self.pattern = pattern
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return re.search(self.pattern, col.get_name()) is not None
