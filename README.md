@@ -1,5 +1,7 @@
 # Ibis-ML
 
+[![Build status](https://github.com/ibis-project/ibisml/actions/workflows/ci.yml/badge.svg)](https://github.com/ibis-project/ibisml/actions/workflows/ci.yml)
+
 `ibisml` is a *work-in-progress* library for developing Machine Learning
 feature engineering pipelines using [ibis](https://ibis-project.org/). These
 pipelines can then be used to transform and feed data to other machine learning
