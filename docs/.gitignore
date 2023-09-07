@@ -1,0 +1,6 @@
+.quarto
+_site
+reference/
+objects.json
+
+/.quarto/
