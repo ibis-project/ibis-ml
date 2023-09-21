@@ -1,6 +1,9 @@
 # Ibis-ML
 
 [![Build status](https://github.com/ibis-project/ibisml/actions/workflows/ci.yml/badge.svg)](https://github.com/ibis-project/ibisml/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ibis-project.github.io/ibisml/)
+[![License](https://img.shields.io/github/license/ibis-project/ibisml.svg)](https://github.com/ibis-project/ibisml/blob/main/LICENSE.txt)
+[![PyPI](https://img.shields.io/pypi/v/ibisml.svg)](https://pypi.org/project/ibisml/)
 
 `ibisml` is a *work-in-progress* library for developing Machine Learning
 feature engineering pipelines using [ibis](https://ibis-project.org/). These
