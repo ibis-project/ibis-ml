@@ -1,0 +1,7 @@
+prune *
+exclude *
+recursive-include ibisml *.py
+include pyproject.toml
+include README.md
+include LICENSE.txt
+include MANIFEST.in

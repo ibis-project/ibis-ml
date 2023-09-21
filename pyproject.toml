@@ -1,17 +1,25 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ibisml"
 description = "Tools for developing ML pipelines using Ibis"
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">= 3.8"
 license = {text = "Apache 2.0"}
 dynamic = ["version"]
 dependencies = [
     "ibis-framework"
 ]
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ["ibisml*"]
+
+[tool.setuptools_scm]
 
 [tool.ruff]
 line-length = 92
