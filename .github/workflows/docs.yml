@@ -1,0 +1,39 @@
+name: documentation
+
+on:
+  push:
+    branches: [main]
+  pull_request: null
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install ibisml and dependencies
+        run: |
+          pip install -e "."
+          pip install quartodoc
+
+      - name: Build Docs
+        run: |
+          pushd docs
+          quartodoc build
+          quarto render
+          popd
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_site
