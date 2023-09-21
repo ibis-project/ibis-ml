@@ -86,7 +86,7 @@ quartodoc:
   title: Reference
   sidebar: reference/_sidebar.yml
   dynamic: true
-  render_interlinks: true
+  render_interlinks: false
   options:
     member_options:
       signature_name: short
