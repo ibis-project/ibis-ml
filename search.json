@@ -1,129 +1,94 @@
 [
   {
-    "objectID": "reference/steps-other.html",
-    "href": "reference/steps-other.html",
-    "title": "Other",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ibisml",
     "section": "",
-    "text": "Other common tabular operations"
+    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
   },
   {
-    "objectID": "reference/steps-other.html#parameters",
-    "href": "reference/steps-other.html#parameters",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to cast.\nrequired\n\n\ndtype\ndt.DataType | type[dt.DataType] | str\nThe dtype to cast to. May be a dtype instance, class, or a string representation of one.\nrequired"
+    "objectID": "index.html#help-wanted",
+    "href": "index.html#help-wanted",
+    "title": "ibisml",
+    "section": "Help Wanted!",
+    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
   },
   {
-    "objectID": "reference/steps-other.html#examples",
-    "href": "reference/steps-other.html#examples",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCast all numeric columns to float64\n&gt;&gt;&gt; step = ml.Cast(ml.numeric(), \"float64\")\nCast specific columns to int64 by name\n&gt;&gt;&gt; step = ml.Cast([\"x\", \"y\"], \"int64\")"
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters-1",
-    "href": "reference/steps-other.html#parameters-1",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to drop.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-other.html#examples-1",
-    "href": "reference/steps-other.html#examples-1",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nDrop all non-numeric columns\n&gt;&gt;&gt; step = ml.Drop(~ml.numeric())\nDrop specific columns by name\n&gt;&gt;&gt; step = ml.Drop([\"x\", \"y\"])"
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters-2",
-    "href": "reference/steps-other.html#parameters-2",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to use as inputs to expr/named_exprs.\nrequired\n\n\nexpr\nCallable[[ir.Column], ir.Column] | Deferred | None\nAn optional callable (Column -&gt; Column) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).\nNone\n\n\nnamed_exprs\nCallable[[ir.Column], ir.Column] | Deferred\nNamed callables (Column -&gt; Column) or deferred expressions to apply to all columns in inputs. Output columns will be named {column}_{name} where column is the input column name and name is the expression/callable name.\n{}"
-  },
-  {
-    "objectID": "reference/steps-other.html#examples-2",
-    "href": "reference/steps-other.html#examples-2",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\n&gt;&gt;&gt; from ibis import _\nReplace all numeric columns with their absolute values.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), _.abs())\nSame as the above, but instead create new columns with _abs suffixes.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), abs=_.abs())"
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters-3",
-    "href": "reference/steps-other.html#parameters-3",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nexprs\nCallable[[ir.Table], ir.Column] | Deferred\nCallables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n()\n\n\nnamed_exprs\nCallable[[ir.Table], ir.Column] | Deferred\nNamed callables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n{}"
-  },
-  {
-    "objectID": "reference/steps-other.html#examples-3",
-    "href": "reference/steps-other.html#examples-3",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\n&gt;&gt;&gt; from ibis import _\nDefine a new column c as a**2 + b**2\n&gt;&gt;&gt; step = ml.Mutate(c=_.a**2 + _.b**2)"
-  },
-  {
-    "objectID": "reference/steps-imputation.html",
-    "href": "reference/steps-imputation.html",
-    "title": "Imputation",
+    "objectID": "reference/core.html",
+    "href": "reference/core.html",
+    "title": "Common",
     "section": "",
-    "text": "Imputation and handling of missing values"
+    "text": "Core APIs"
   },
   {
-    "objectID": "reference/steps-imputation.html#parameters",
-    "href": "reference/steps-imputation.html#parameters",
-    "title": "Imputation",
+    "objectID": "reference/core.html#parameters",
+    "href": "reference/core.html#parameters",
+    "title": "Common",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\n\nA selection of columns to impute. All columns must be numeric.\nrequired"
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n*steps\nStep | Transform\nOne or more preprocessing steps.\n()"
   },
   {
-    "objectID": "reference/steps-imputation.html#examples",
-    "href": "reference/steps-imputation.html#examples",
-    "title": "Imputation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective means, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMean(ml.numeric())"
+    "objectID": "reference/core.html#methods",
+    "href": "reference/core.html#methods",
+    "title": "Common",
+    "section": "Methods",
+    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\nfit\nFit the recipe.\n\n\n\n\nfit\nfit(self, table, outcomes=None)\nFit the recipe.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntable\nir.Table\nThe training data\nrequired\n\n\noutcomes\nstr | Sequence[str] | None\nThe column (or columns) to use as outcome variables.\nNone\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nRecipeTransform"
   },
   {
-    "objectID": "reference/steps-imputation.html#parameters-1",
-    "href": "reference/steps-imputation.html#parameters-1",
-    "title": "Imputation",
+    "objectID": "reference/core.html#methods-1",
+    "href": "reference/core.html#methods-1",
+    "title": "Common",
+    "section": "Methods",
+    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\ntransform\nApply the transform to new data.\n\n\n\n\ntransform\ntransform(self, table)\nApply the transform to new data.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntable\nir.Table\nAn ibis table.\nrequired\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nTransformResult"
+  },
+  {
+    "objectID": "reference/core.html#attributes",
+    "href": "reference/core.html#attributes",
+    "title": "Common",
+    "section": "Attributes",
+    "text": "Attributes\n\n\n\nName\nDescription\n\n\n\n\nschema\nThe transformed table schema"
+  },
+  {
+    "objectID": "reference/core.html#methods-2",
+    "href": "reference/core.html#methods-2",
+    "title": "Common",
+    "section": "Methods",
+    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\nto_dask_dataframe\nConvert to a dask.dataframe.DataFrame.\n\n\nto_dask_dmatrix\nConvert to a xgboost.dask.DMatrix\n\n\nto_dmatrix\nConvert to a xgboost.DMatrix\n\n\nto_pandas\nConvert to a pandas.DataFrame.\n\n\nto_pyarrow\nConvert to a pyarrow.Table.\n\n\nto_pyarrow_batches\nConvert to a pyarrow.RecordBatchReader.\n\n\nto_table\nConvert to an ibis Table\n\n\n\n\nto_dask_dataframe\nto_dask_dataframe(self, categories=False)\nConvert to a dask.dataframe.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_dask_dmatrix\nto_dask_dmatrix(self)\nConvert to a xgboost.dask.DMatrix\n\n\nto_dmatrix\nto_dmatrix(self)\nConvert to a xgboost.DMatrix\n\n\nto_pandas\nto_pandas(self, categories=False)\nConvert to a pandas.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_pyarrow\nto_pyarrow(self, categories=False)\nConvert to a pyarrow.Table.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_pyarrow_batches\nto_pyarrow_batches(self, categories=False)\nConvert to a pyarrow.RecordBatchReader.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_table\nto_table(self)\nConvert to an ibis Table"
+  },
+  {
+    "objectID": "reference/steps-encoding.html",
+    "href": "reference/steps-encoding.html",
+    "title": "Encoding",
+    "section": "",
+    "text": "Encoding of categorical and string columns"
+  },
+  {
+    "objectID": "reference/steps-encoding.html#parameters",
+    "href": "reference/steps-encoding.html#parameters",
+    "title": "Encoding",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\n\nA selection of columns to impute.\nrequired"
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to one-hot encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone"
   },
   {
-    "objectID": "reference/steps-imputation.html#examples-1",
-    "href": "reference/steps-imputation.html#examples-1",
-    "title": "Imputation",
+    "objectID": "reference/steps-encoding.html#examples",
+    "href": "reference/steps-encoding.html#examples",
+    "title": "Encoding",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective modes, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMode(ml.numeric())"
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nOne-hot encode all string columns\n&gt;&gt;&gt; step = ml.OneHotEncode(ml.string())\nOne-hot encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", min_frequency=20)\nOne-hot encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", max_categories=10)"
   },
   {
-    "objectID": "reference/steps-imputation.html#parameters-2",
-    "href": "reference/steps-imputation.html#parameters-2",
-    "title": "Imputation",
+    "objectID": "reference/steps-encoding.html#parameters-1",
+    "href": "reference/steps-encoding.html#parameters-1",
+    "title": "Encoding",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\n\nA selection of columns to impute. All columns must be numeric.\nrequired"
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to categorical encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone"
   },
   {
-    "objectID": "reference/steps-imputation.html#examples-2",
-    "href": "reference/steps-imputation.html#examples-2",
-    "title": "Imputation",
+    "objectID": "reference/steps-encoding.html#examples-1",
+    "href": "reference/steps-encoding.html#examples-1",
+    "title": "Encoding",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective medians, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMedian(ml.numeric())"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#parameters-3",
-    "href": "reference/steps-imputation.html#parameters-3",
-    "title": "Imputation",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to fillna.\nrequired\n\n\nfill_value\nAny\nThe fill value to use. Must be castable to the dtype of all columns in inputs.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#examples-3",
-    "href": "reference/steps-imputation.html#examples-3",
-    "title": "Imputation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nFill all NULL values in numeric columns with 0.\n&gt;&gt;&gt; step = ml.FillNA(ml.numeric(), 0)\nFill all NULL values in specific columns with 1.\n&gt;&gt;&gt; step = ml.FillNA([\"x\", \"y\"], 1)"
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)"
   },
   {
     "objectID": "reference/selectors.html",
@@ -189,81 +154,151 @@
     "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\nCallable[[ir.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired"
   },
   {
-    "objectID": "reference/core.html",
-    "href": "reference/core.html",
-    "title": "Common",
+    "objectID": "reference/steps-standardization.html",
+    "href": "reference/steps-standardization.html",
+    "title": "Standardization",
     "section": "",
-    "text": "Core APIs"
+    "text": "Standardization and normalization of numeric columns"
   },
   {
-    "objectID": "reference/core.html#parameters",
-    "href": "reference/core.html#parameters",
-    "title": "Common",
+    "objectID": "reference/steps-standardization.html#parameters",
+    "href": "reference/steps-standardization.html#parameters",
+    "title": "Standardization",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n*steps\nStep | Transform\nOne or more preprocessing steps.\n()"
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired"
   },
   {
-    "objectID": "reference/core.html#methods",
-    "href": "reference/core.html#methods",
-    "title": "Common",
-    "section": "Methods",
-    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\nfit\nFit the recipe.\n\n\n\n\nfit\nfit(self, table, outcomes=None)\nFit the recipe.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntable\nir.Table\nThe training data\nrequired\n\n\noutcomes\nstr | Sequence[str] | None\nThe column (or columns) to use as outcome variables.\nNone\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nRecipeTransform"
+    "objectID": "reference/steps-standardization.html#examples",
+    "href": "reference/steps-standardization.html#examples",
+    "title": "Standardization",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])"
   },
   {
-    "objectID": "reference/core.html#methods-1",
-    "href": "reference/core.html#methods-1",
-    "title": "Common",
-    "section": "Methods",
-    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\ntransform\nApply the transform to new data.\n\n\n\n\ntransform\ntransform(self, table)\nApply the transform to new data.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntable\nir.Table\nAn ibis table.\nrequired\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nTransformResult"
-  },
-  {
-    "objectID": "reference/core.html#attributes",
-    "href": "reference/core.html#attributes",
-    "title": "Common",
-    "section": "Attributes",
-    "text": "Attributes\n\n\n\nName\nDescription\n\n\n\n\nschema\nThe transformed table schema"
-  },
-  {
-    "objectID": "reference/core.html#methods-2",
-    "href": "reference/core.html#methods-2",
-    "title": "Common",
-    "section": "Methods",
-    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\nto_dask_dataframe\nConvert to a dask.dataframe.DataFrame.\n\n\nto_dask_dmatrix\nConvert to a xgboost.dask.DMatrix\n\n\nto_dmatrix\nConvert to a xgboost.DMatrix\n\n\nto_pandas\nConvert to a pandas.DataFrame.\n\n\nto_pyarrow\nConvert to a pyarrow.Table.\n\n\nto_pyarrow_batches\nConvert to a pyarrow.RecordBatchReader.\n\n\nto_table\nConvert to an ibis Table\n\n\n\n\nto_dask_dataframe\nto_dask_dataframe(self, categories=False)\nConvert to a dask.dataframe.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_dask_dmatrix\nto_dask_dmatrix(self)\nConvert to a xgboost.dask.DMatrix\n\n\nto_dmatrix\nto_dmatrix(self)\nConvert to a xgboost.DMatrix\n\n\nto_pandas\nto_pandas(self, categories=False)\nConvert to a pandas.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_pyarrow\nto_pyarrow(self, categories=False)\nConvert to a pyarrow.Table.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_pyarrow_batches\nto_pyarrow_batches(self, categories=False)\nConvert to a pyarrow.RecordBatchReader.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_table\nto_table(self)\nConvert to an ibis Table"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ibisml",
+    "objectID": "reference/steps-imputation.html",
+    "href": "reference/steps-imputation.html",
+    "title": "Imputation",
     "section": "",
-    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
+    "text": "Imputation and handling of missing values"
   },
   {
-    "objectID": "index.html#help-wanted",
-    "href": "index.html#help-wanted",
-    "title": "ibisml",
-    "section": "Help Wanted!",
-    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
+    "objectID": "reference/steps-imputation.html#parameters",
+    "href": "reference/steps-imputation.html#parameters",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\n\nA selection of columns to impute. All columns must be numeric.\nrequired"
   },
   {
-    "objectID": "reference/index.html",
-    "href": "reference/index.html",
-    "title": "Reference",
+    "objectID": "reference/steps-imputation.html#examples",
+    "href": "reference/steps-imputation.html#examples",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective means, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMean(ml.numeric())"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#parameters-1",
+    "href": "reference/steps-imputation.html#parameters-1",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\n\nA selection of columns to impute.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#examples-1",
+    "href": "reference/steps-imputation.html#examples-1",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective modes, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMode(ml.numeric())"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#parameters-2",
+    "href": "reference/steps-imputation.html#parameters-2",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\n\nA selection of columns to impute. All columns must be numeric.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#examples-2",
+    "href": "reference/steps-imputation.html#examples-2",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective medians, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMedian(ml.numeric())"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#parameters-3",
+    "href": "reference/steps-imputation.html#parameters-3",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to fillna.\nrequired\n\n\nfill_value\nAny\nThe fill value to use. Must be castable to the dtype of all columns in inputs.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#examples-3",
+    "href": "reference/steps-imputation.html#examples-3",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nFill all NULL values in numeric columns with 0.\n&gt;&gt;&gt; step = ml.FillNA(ml.numeric(), 0)\nFill all NULL values in specific columns with 1.\n&gt;&gt;&gt; step = ml.FillNA([\"x\", \"y\"], 1)"
+  },
+  {
+    "objectID": "reference/steps-other.html",
+    "href": "reference/steps-other.html",
+    "title": "Other",
     "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+    "text": "Other common tabular operations"
   },
   {
-    "objectID": "reference/index.html#core",
-    "href": "reference/index.html#core",
-    "title": "Reference",
-    "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties"
+    "objectID": "reference/steps-other.html#parameters",
+    "href": "reference/steps-other.html#parameters",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to cast.\nrequired\n\n\ndtype\ndt.DataType | type[dt.DataType] | str\nThe dtype to cast to. May be a dtype instance, class, or a string representation of one.\nrequired"
   },
   {
-    "objectID": "reference/index.html#steps",
-    "href": "reference/index.html#steps",
-    "title": "Reference",
-    "section": "",
-    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+    "objectID": "reference/steps-other.html#examples",
+    "href": "reference/steps-other.html#examples",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCast all numeric columns to float64\n&gt;&gt;&gt; step = ml.Cast(ml.numeric(), \"float64\")\nCast specific columns to int64 by name\n&gt;&gt;&gt; step = ml.Cast([\"x\", \"y\"], \"int64\")"
+  },
+  {
+    "objectID": "reference/steps-other.html#parameters-1",
+    "href": "reference/steps-other.html#parameters-1",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to drop.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-other.html#examples-1",
+    "href": "reference/steps-other.html#examples-1",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nDrop all non-numeric columns\n&gt;&gt;&gt; step = ml.Drop(~ml.numeric())\nDrop specific columns by name\n&gt;&gt;&gt; step = ml.Drop([\"x\", \"y\"])"
+  },
+  {
+    "objectID": "reference/steps-other.html#parameters-2",
+    "href": "reference/steps-other.html#parameters-2",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to use as inputs to expr/named_exprs.\nrequired\n\n\nexpr\nCallable[[ir.Column], ir.Column] | Deferred | None\nAn optional callable (Column -&gt; Column) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).\nNone\n\n\nnamed_exprs\nCallable[[ir.Column], ir.Column] | Deferred\nNamed callables (Column -&gt; Column) or deferred expressions to apply to all columns in inputs. Output columns will be named {column}_{name} where column is the input column name and name is the expression/callable name.\n{}"
+  },
+  {
+    "objectID": "reference/steps-other.html#examples-2",
+    "href": "reference/steps-other.html#examples-2",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\n&gt;&gt;&gt; from ibis import _\nReplace all numeric columns with their absolute values.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), _.abs())\nSame as the above, but instead create new columns with _abs suffixes.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), abs=_.abs())"
+  },
+  {
+    "objectID": "reference/steps-other.html#parameters-3",
+    "href": "reference/steps-other.html#parameters-3",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nexprs\nCallable[[ir.Table], ir.Column] | Deferred\nCallables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n()\n\n\nnamed_exprs\nCallable[[ir.Table], ir.Column] | Deferred\nNamed callables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n{}"
+  },
+  {
+    "objectID": "reference/steps-other.html#examples-3",
+    "href": "reference/steps-other.html#examples-3",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\n&gt;&gt;&gt; from ibis import _\nDefine a new column c as a**2 + b**2\n&gt;&gt;&gt; step = ml.Mutate(c=_.a**2 + _.b**2)"
   },
   {
     "objectID": "reference/steps-temporal.html",
@@ -301,59 +336,24 @@
     "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])"
   },
   {
-    "objectID": "reference/steps-encoding.html",
-    "href": "reference/steps-encoding.html",
-    "title": "Encoding",
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Reference",
     "section": "",
-    "text": "Encoding of categorical and string columns"
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
   },
   {
-    "objectID": "reference/steps-encoding.html#parameters",
-    "href": "reference/steps-encoding.html#parameters",
-    "title": "Encoding",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to one-hot encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone"
-  },
-  {
-    "objectID": "reference/steps-encoding.html#examples",
-    "href": "reference/steps-encoding.html#examples",
-    "title": "Encoding",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nOne-hot encode all string columns\n&gt;&gt;&gt; step = ml.OneHotEncode(ml.string())\nOne-hot encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", min_frequency=20)\nOne-hot encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", max_categories=10)"
-  },
-  {
-    "objectID": "reference/steps-encoding.html#parameters-1",
-    "href": "reference/steps-encoding.html#parameters-1",
-    "title": "Encoding",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to categorical encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone"
-  },
-  {
-    "objectID": "reference/steps-encoding.html#examples-1",
-    "href": "reference/steps-encoding.html#examples-1",
-    "title": "Encoding",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)"
-  },
-  {
-    "objectID": "reference/steps-standardization.html",
-    "href": "reference/steps-standardization.html",
-    "title": "Standardization",
+    "objectID": "reference/index.html#core",
+    "href": "reference/index.html#core",
+    "title": "Reference",
     "section": "",
-    "text": "Standardization and normalization of numeric columns"
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties"
   },
   {
-    "objectID": "reference/steps-standardization.html#parameters",
-    "href": "reference/steps-standardization.html#parameters",
-    "title": "Standardization",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-standardization.html#examples",
-    "href": "reference/steps-standardization.html#examples",
-    "title": "Standardization",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])"
+    "objectID": "reference/index.html#steps",
+    "href": "reference/index.html#steps",
+    "title": "Reference",
+    "section": "",
+    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
   }
 ]
