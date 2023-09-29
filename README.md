@@ -1,4 +1,4 @@
-# Ibis-ML
+# IbisML
 
 [![Build status](https://github.com/ibis-project/ibisml/actions/workflows/ci.yml/badge.svg)](https://github.com/ibis-project/ibisml/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ibis-project.github.io/ibisml/)
