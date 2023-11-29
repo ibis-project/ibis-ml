@@ -242,32 +242,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#ibisml.Recipe" id="toc-ibisml.Recipe" class="nav-link" data-scroll-target="#ibisml.Recipe">Recipe</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
-  <ul class="collapse">
-  <li><a href="#ibisml.Recipe.fit" id="toc-ibisml.Recipe.fit" class="nav-link" data-scroll-target="#ibisml.Recipe.fit">fit</a></li>
   </ul></li>
-  </ul></li>
-  <li><a href="#ibisml.RecipeTransform" id="toc-ibisml.RecipeTransform" class="nav-link" data-scroll-target="#ibisml.RecipeTransform">RecipeTransform</a>
-  <ul class="collapse">
-  <li><a href="#methods-1" id="toc-methods-1" class="nav-link" data-scroll-target="#methods-1">Methods</a>
-  <ul class="collapse">
-  <li><a href="#ibisml.RecipeTransform.transform" id="toc-ibisml.RecipeTransform.transform" class="nav-link" data-scroll-target="#ibisml.RecipeTransform.transform">transform</a></li>
-  </ul></li>
-  </ul></li>
-  <li><a href="#ibisml.TransformResult" id="toc-ibisml.TransformResult" class="nav-link" data-scroll-target="#ibisml.TransformResult">TransformResult</a>
-  <ul class="collapse">
-  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
-  <li><a href="#methods-2" id="toc-methods-2" class="nav-link" data-scroll-target="#methods-2">Methods</a>
-  <ul class="collapse">
-  <li><a href="#ibisml.TransformResult.to_dask_dataframe" id="toc-ibisml.TransformResult.to_dask_dataframe" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_dask_dataframe">to_dask_dataframe</a></li>
-  <li><a href="#ibisml.TransformResult.to_dask_dmatrix" id="toc-ibisml.TransformResult.to_dask_dmatrix" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_dask_dmatrix">to_dask_dmatrix</a></li>
-  <li><a href="#ibisml.TransformResult.to_dmatrix" id="toc-ibisml.TransformResult.to_dmatrix" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_dmatrix">to_dmatrix</a></li>
-  <li><a href="#ibisml.TransformResult.to_pandas" id="toc-ibisml.TransformResult.to_pandas" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_pandas">to_pandas</a></li>
-  <li><a href="#ibisml.TransformResult.to_pyarrow" id="toc-ibisml.TransformResult.to_pyarrow" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_pyarrow">to_pyarrow</a></li>
-  <li><a href="#ibisml.TransformResult.to_pyarrow_batches" id="toc-ibisml.TransformResult.to_pyarrow_batches" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_pyarrow_batches">to_pyarrow_batches</a></li>
-  <li><a href="#ibisml.TransformResult.to_table" id="toc-ibisml.TransformResult.to_table" class="nav-link" data-scroll-target="#ibisml.TransformResult.to_table">to_table</a></li>
-  </ul></li>
-  </ul></li>
+  <li><a href="#ibisml.RecipeTransform" id="toc-ibisml.RecipeTransform" class="nav-link" data-scroll-target="#ibisml.RecipeTransform">RecipeTransform</a></li>
+  <li><a href="#ibisml.TransformResult" id="toc-ibisml.TransformResult" class="nav-link" data-scroll-target="#ibisml.TransformResult">TransformResult</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/ibis-project/ibisml/edit/main/docs/reference/core.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/ibis-project/ibisml/issues" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -289,10 +266,10 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="table">
 <colgroup>
-<col style="width: 13%">
-<col style="width: 25%">
-<col style="width: 45%">
-<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 43%">
+<col style="width: 34%">
+<col style="width: 11%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -305,359 +282,26 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td><code>*steps</code></td>
-<td>Step | Transform</td>
+<td>ibisml.core.Step | ibisml.core.Transform</td>
 <td>One or more preprocessing steps.</td>
 <td><code>()</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="methods" class="level2">
-<h2 class="anchored" data-anchor-id="methods">Methods</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#ibisml.Recipe.fit">fit</a></td>
-<td>Fit the recipe.</td>
-</tr>
-</tbody>
-</table>
-<section id="ibisml.Recipe.fit" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.Recipe.fit">fit</h3>
-<p><code>fit(self, table, outcomes=None)</code></p>
-<p>Fit the recipe.</p>
-<section id="parameters-1" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-1">Parameters</h4>
-<table class="table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 29%">
-<col style="width: 49%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>table</code></td>
-<td>ir.Table</td>
-<td>The training data</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td><code>outcomes</code></td>
-<td>str | Sequence[str] | None</td>
-<td>The column (or columns) to use as outcome variables.</td>
-<td><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="returns" class="level4">
-<h4 class="anchored" data-anchor-id="returns">Returns</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>RecipeTransform</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-</section>
 </section>
 <section id="ibisml.RecipeTransform" class="level1">
 <h1>RecipeTransform</h1>
 <p><code>RecipeTransform(self, transforms, metadata, input_schema, output_schema)</code></p>
 <p>The result of fitting a Recipe.</p>
-<section id="methods-1" class="level2">
-<h2 class="anchored" data-anchor-id="methods-1">Methods</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#ibisml.RecipeTransform.transform">transform</a></td>
-<td>Apply the transform to new data.</td>
-</tr>
-</tbody>
-</table>
-<section id="ibisml.RecipeTransform.transform" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.RecipeTransform.transform">transform</h3>
-<p><code>transform(self, table)</code></p>
-<p>Apply the transform to new data.</p>
-<section id="parameters-2" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-2">Parameters</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>table</code></td>
-<td>ir.Table</td>
-<td>An ibis table.</td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="returns-1" class="level4">
-<h4 class="anchored" data-anchor-id="returns-1">Returns</h4>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>TransformResult</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-</section>
 </section>
 <section id="ibisml.TransformResult" class="level1">
 <h1>TransformResult</h1>
 <p><code>TransformResult(self, table, features=None, outcomes=None, other=None, categories=None)</code></p>
 <p>The result of applying a RecipeTransform.</p>
 <p>This is a wrapper around an ibis Table containing an expression describing the full preprocessing pipeline. Use one of the <code>to_*</code> methods to execute the expression and convert the result into an input type usable for fitting your model.</p>
-<section id="attributes" class="level2">
-<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#ibisml.TransformResult.schema">schema</a></td>
-<td>The transformed table schema</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="methods-2" class="level2">
-<h2 class="anchored" data-anchor-id="methods-2">Methods</h2>
-<table class="table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#ibisml.TransformResult.to_dask_dataframe">to_dask_dataframe</a></td>
-<td>Convert to a <code>dask.dataframe.DataFrame</code>.</td>
-</tr>
-<tr class="even">
-<td><a href="#ibisml.TransformResult.to_dask_dmatrix">to_dask_dmatrix</a></td>
-<td>Convert to a <code>xgboost.dask.DMatrix</code></td>
-</tr>
-<tr class="odd">
-<td><a href="#ibisml.TransformResult.to_dmatrix">to_dmatrix</a></td>
-<td>Convert to a <code>xgboost.DMatrix</code></td>
-</tr>
-<tr class="even">
-<td><a href="#ibisml.TransformResult.to_pandas">to_pandas</a></td>
-<td>Convert to a <code>pandas.DataFrame</code>.</td>
-</tr>
-<tr class="odd">
-<td><a href="#ibisml.TransformResult.to_pyarrow">to_pyarrow</a></td>
-<td>Convert to a <code>pyarrow.Table</code>.</td>
-</tr>
-<tr class="even">
-<td><a href="#ibisml.TransformResult.to_pyarrow_batches">to_pyarrow_batches</a></td>
-<td>Convert to a <code>pyarrow.RecordBatchReader</code>.</td>
-</tr>
-<tr class="odd">
-<td><a href="#ibisml.TransformResult.to_table">to_table</a></td>
-<td>Convert to an ibis Table</td>
-</tr>
-</tbody>
-</table>
-<section id="ibisml.TransformResult.to_dask_dataframe" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_dask_dataframe">to_dask_dataframe</h3>
-<p><code>to_dask_dataframe(self, categories=False)</code></p>
-<p>Convert to a <code>dask.dataframe.DataFrame</code>.</p>
-<section id="parameters-3" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-3">Parameters</h4>
-<table class="table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 3%">
-<col style="width: 85%">
-<col style="width: 4%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>categories</code></td>
-<td>bool</td>
-<td>Whether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="ibisml.TransformResult.to_dask_dmatrix" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_dask_dmatrix">to_dask_dmatrix</h3>
-<p><code>to_dask_dmatrix(self)</code></p>
-<p>Convert to a <code>xgboost.dask.DMatrix</code></p>
-</section>
-<section id="ibisml.TransformResult.to_dmatrix" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_dmatrix">to_dmatrix</h3>
-<p><code>to_dmatrix(self)</code></p>
-<p>Convert to a <code>xgboost.DMatrix</code></p>
-</section>
-<section id="ibisml.TransformResult.to_pandas" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_pandas">to_pandas</h3>
-<p><code>to_pandas(self, categories=False)</code></p>
-<p>Convert to a <code>pandas.DataFrame</code>.</p>
-<section id="parameters-4" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-4">Parameters</h4>
-<table class="table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 3%">
-<col style="width: 85%">
-<col style="width: 4%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>categories</code></td>
-<td>bool</td>
-<td>Whether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="ibisml.TransformResult.to_pyarrow" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_pyarrow">to_pyarrow</h3>
-<p><code>to_pyarrow(self, categories=False)</code></p>
-<p>Convert to a <code>pyarrow.Table</code>.</p>
-<section id="parameters-5" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-5">Parameters</h4>
-<table class="table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 3%">
-<col style="width: 85%">
-<col style="width: 4%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>categories</code></td>
-<td>bool</td>
-<td>Whether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="ibisml.TransformResult.to_pyarrow_batches" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_pyarrow_batches">to_pyarrow_batches</h3>
-<p><code>to_pyarrow_batches(self, categories=False)</code></p>
-<p>Convert to a <code>pyarrow.RecordBatchReader</code>.</p>
-<section id="parameters-6" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-6">Parameters</h4>
-<table class="table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 3%">
-<col style="width: 85%">
-<col style="width: 4%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>categories</code></td>
-<td>bool</td>
-<td>Whether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
-<td><code>False</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="ibisml.TransformResult.to_table" class="level3">
-<h3 class="anchored" data-anchor-id="ibisml.TransformResult.to_table">to_table</h3>
-<p><code>to_table(self)</code></p>
-<p>Convert to an ibis Table</p>
 
 
-</section>
-</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->

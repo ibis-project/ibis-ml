@@ -307,16 +307,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ibisml.ImputeMean" class="level1">
 <h1>ImputeMean</h1>
-<p><code>ImputeMean()</code></p>
+<p><code>ImputeMean(self, inputs)</code></p>
 <p>A step for replacing NULL values in select columns with their respective mean in the training set.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="table">
 <colgroup>
-<col style="width: 10%">
 <col style="width: 8%">
-<col style="width: 68%">
-<col style="width: 12%">
+<col style="width: 25%">
+<col style="width: 55%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -329,7 +329,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td></td>
+<td>ibisml.select.SelectionType</td>
 <td>A selection of columns to impute. All columns must be numeric.</td>
 <td><em>required</em></td>
 </tr>
@@ -345,11 +345,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ibisml.ImputeMode" class="level1">
 <h1>ImputeMode</h1>
-<p><code>ImputeMode()</code></p>
+<p><code>ImputeMode(self, inputs)</code></p>
 <p>A step for replacing NULL values in select columns with their respective modes in the training set.</p>
 <section id="parameters-1" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-1">Parameters</h2>
 <table class="table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 33%">
+<col style="width: 40%">
+<col style="width: 13%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -361,7 +367,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td></td>
+<td>ibisml.select.SelectionType</td>
 <td>A selection of columns to impute.</td>
 <td><em>required</em></td>
 </tr>
@@ -377,16 +383,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ibisml.ImputeMedian" class="level1">
 <h1>ImputeMedian</h1>
-<p><code>ImputeMedian()</code></p>
+<p><code>ImputeMedian(self, inputs)</code></p>
 <p>A step for replacing NULL values in select columns with their respective medians in the training set.</p>
 <section id="parameters-2" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-2">Parameters</h2>
 <table class="table">
 <colgroup>
-<col style="width: 10%">
 <col style="width: 8%">
-<col style="width: 68%">
-<col style="width: 12%">
+<col style="width: 25%">
+<col style="width: 55%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -399,7 +405,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td></td>
+<td>ibisml.select.SelectionType</td>
 <td>A selection of columns to impute. All columns must be numeric.</td>
 <td><em>required</em></td>
 </tr>
@@ -421,10 +427,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="parameters-3">Parameters</h2>
 <table class="table">
 <colgroup>
-<col style="width: 11%">
-<col style="width: 12%">
-<col style="width: 66%">
-<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 21%">
+<col style="width: 59%">
+<col style="width: 8%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -437,13 +443,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>SelectionType</td>
+<td>ibisml.select.SelectionType</td>
 <td>A selection of columns to fillna.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>fill_value</code></td>
-<td>Any</td>
+<td>typing.Any</td>
 <td>The fill value to use. Must be castable to the dtype of all columns in inputs.</td>
 <td><em>required</em></td>
 </tr>
