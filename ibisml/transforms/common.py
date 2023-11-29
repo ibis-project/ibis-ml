@@ -6,7 +6,7 @@ from ibisml.core import Transform
 
 import ibis.expr.types as ir
 import ibis.expr.datatypes as dt
-from ibis.expr.deferred import Deferred
+from ibis.common.deferred import Deferred
 
 
 class Drop(Transform):

@@ -4,7 +4,7 @@ from typing import Callable, Iterable, Any
 
 import ibis.expr.datatypes as dt
 import ibis.expr.types as ir
-from ibis.expr.deferred import Deferred
+from ibis.common.deferred import Deferred
 
 import ibisml as ml
 from ibisml.core import Metadata, Step, Transform
