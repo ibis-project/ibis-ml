@@ -13,6 +13,9 @@ dependencies = [
     "ibis-framework"
 ]
 
+[project.optional-dependencies]
+dask = ["dask[dataframe]"]
+
 [tool.setuptools]
 include-package-data = false
 
