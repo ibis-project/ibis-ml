@@ -11,6 +11,29 @@ from ibisml.core import Transform
 
 
 class OneHotEncode(Transform):
+    """
+    A transformation class that applies one-hot encoding to specified categorical columns.
+
+    Examples
+    ----------
+    >>> from ibis.interactive import *
+    >>> import ibisml as ml
+    >>> penguins = ex.penguins.fetch()
+    >>> recipe = ml.Recipe(ml.OneHotEncode("species"))
+    >>> recipe.fit(penguins).transform(penguins).table.select(s.startswith("species"))
+    ┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┓
+    ┃ species_Adelie ┃ species_Chinstrap ┃ species_Gentoo ┃
+    ┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━┩
+    │ int8           │ int8              │ int8           │
+    ├────────────────┼───────────────────┼────────────────┤
+    │              1 │                 0 │              0 │
+    │              1 │                 0 │              0 │
+    │              1 │                 0 │              0 │
+    │              1 │                 0 │              0 │
+    │              … │                 … │              … │
+    └────────────────┴───────────────────┴────────────────┘
+    """
+
     def __init__(self, categories: dict[str, list[Any]]):
         self.categories = categories
 
