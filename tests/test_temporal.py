@@ -66,3 +66,28 @@ def test_expand_time():
         x_millisecond=_.x.millisecond(),
     )
     assert res.equals(sol)
+
+
+def test_expand_datetime():
+    t = ibis.table({"y": "timestamp", "z": "int"})
+    step = ml.ExpandDateTime(
+        ml.timestamp(),
+        date_components=["dow", "doy", "day", "week", "month", "year"],
+        time_components=["hour", "minute", "second", "millisecond"],
+    )
+    transform = step.fit(t, ml.core.Metadata())
+
+    res = transform.transform(t)
+    sol = t.mutate(
+        y_dow=_.y.day_of_week.index(),
+        y_doy=_.y.day_of_year(),
+        y_day=_.y.day(),
+        y_week=_.y.week_of_year(),
+        y_month=_.y.month() - 1,
+        y_year=_.y.year(),
+        y_hour=_.y.hour(),
+        y_minute=_.y.minute(),
+        y_second=_.y.second(),
+        y_millisecond=_.y.millisecond(),
+    )
+    assert res.equals(sol)
