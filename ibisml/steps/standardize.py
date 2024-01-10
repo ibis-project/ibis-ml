@@ -9,6 +9,55 @@ from ibisml.select import SelectionType, selector
 import ibis.expr.types as ir
 
 
+class ScaleMinMax(Step):
+    """A step for normalizing selected numeric columns to have a maximum value of 1 and a minimum value of 0.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to normalize. All columns must be numeric.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Normalize all numeric columns.
+
+    >>> step = ml.ScaleMinMax(ml.numeric())
+
+    Normalize a specific set of columns.
+
+    >>> step = ml.ScaleMinMax(["x", "y"])
+    """
+
+    def __init__(self, inputs: SelectionType):
+        self.inputs = selector(inputs)
+
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+
+    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+        columns = self.inputs.select_columns(table, metadata)
+
+        stats = {}
+        if columns:
+            aggs = []
+            for name in columns:
+                c = table[name]
+                if not isinstance(c, ir.NumericColumn):
+                    raise ValueError(
+                        f"Cannot be normalized {name!r} - this column is not numeric"
+                    )
+
+                aggs.append(c.max().name(f"{name}_max"))
+                aggs.append(c.min().name(f"{name}_min"))
+
+            results = table.aggregate(aggs).execute().to_dict("records")[0]
+            for name in columns:
+                stats[name] = (results[f"{name}_max"], results[f"{name}_min"])
+        return ml.transforms.ScaleMinMax(stats)
+
+
 class ScaleStandard(Step):
     """A step for normalizing select numeric columns to have a standard
     deviation of one and a mean of zero.
