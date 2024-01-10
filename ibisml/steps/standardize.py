@@ -10,7 +10,8 @@ import ibis.expr.types as ir
 
 
 class ScaleMinMax(Step):
-    """A step for normalizing selected numeric columns to have a maximum value of 1 and a minimum value of 0.
+    """A step for normalizing selected numeric columns to have a maximum value of 1
+    and a minimum value of 0.
 
     Parameters
     ----------
