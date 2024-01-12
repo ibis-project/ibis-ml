@@ -1,73 +1,17 @@
 [
   {
-    "objectID": "reference/steps-temporal.html",
-    "href": "reference/steps-temporal.html",
-    "title": "Temporal",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ibisml",
     "section": "",
-    "text": "Feature extraction for temporal columns"
+    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
   },
   {
-    "objectID": "reference/steps-temporal.html#parameters",
-    "href": "reference/steps-temporal.html#parameters",
-    "title": "Temporal",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]\nA sequence of components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\n('dow', 'month', 'year')"
-  },
-  {
-    "objectID": "reference/steps-temporal.html#examples",
-    "href": "reference/steps-temporal.html#examples",
-    "title": "Temporal",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDate(ml.date())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandDate([\"x\", \"y\"], [\"day\", \"year\"])"
-  },
-  {
-    "objectID": "reference/steps-temporal.html#parameters-1",
-    "href": "reference/steps-temporal.html#parameters-1",
-    "title": "Temporal",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of time columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\n('hour', 'minute', 'second')"
-  },
-  {
-    "objectID": "reference/steps-temporal.html#examples-1",
-    "href": "reference/steps-temporal.html#examples-1",
-    "title": "Temporal",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])"
-  },
-  {
-    "objectID": "reference/core.html",
-    "href": "reference/core.html",
-    "title": "Common",
-    "section": "",
-    "text": "Core APIs"
-  },
-  {
-    "objectID": "reference/core.html#parameters",
-    "href": "reference/core.html#parameters",
-    "title": "Common",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n*steps\nibisml.core.Step | ibisml.core.Transform\nOne or more preprocessing steps.\n()"
-  },
-  {
-    "objectID": "reference/index.html",
-    "href": "reference/index.html",
-    "title": "Reference",
-    "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
-  },
-  {
-    "objectID": "reference/index.html#core",
-    "href": "reference/index.html#core",
-    "title": "Reference",
-    "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties"
-  },
-  {
-    "objectID": "reference/index.html#steps",
-    "href": "reference/index.html#steps",
-    "title": "Reference",
-    "section": "",
-    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+    "objectID": "index.html#help-wanted",
+    "href": "index.html#help-wanted",
+    "title": "ibisml",
+    "section": "Help Wanted!",
+    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
   },
   {
     "objectID": "reference/selectors.html",
@@ -133,39 +77,67 @@
     "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\ntyping.Callable[[ibis.ibis.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ibisml",
+    "objectID": "reference/steps-imputation.html",
+    "href": "reference/steps-imputation.html",
+    "title": "Imputation",
     "section": "",
-    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
+    "text": "Imputation and handling of missing values"
   },
   {
-    "objectID": "index.html#help-wanted",
-    "href": "index.html#help-wanted",
-    "title": "ibisml",
-    "section": "Help Wanted!",
-    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
-  },
-  {
-    "objectID": "reference/steps-standardization.html",
-    "href": "reference/steps-standardization.html",
-    "title": "Standardization",
-    "section": "",
-    "text": "Standardization and normalization of numeric columns"
-  },
-  {
-    "objectID": "reference/steps-standardization.html#parameters",
-    "href": "reference/steps-standardization.html#parameters",
-    "title": "Standardization",
+    "objectID": "reference/steps-imputation.html#parameters",
+    "href": "reference/steps-imputation.html#parameters",
+    "title": "Imputation",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired"
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to impute. All columns must be numeric.\nrequired"
   },
   {
-    "objectID": "reference/steps-standardization.html#examples",
-    "href": "reference/steps-standardization.html#examples",
-    "title": "Standardization",
+    "objectID": "reference/steps-imputation.html#examples",
+    "href": "reference/steps-imputation.html#examples",
+    "title": "Imputation",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])"
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective means, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMean(ml.numeric())"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#parameters-1",
+    "href": "reference/steps-imputation.html#parameters-1",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to impute.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#examples-1",
+    "href": "reference/steps-imputation.html#examples-1",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective modes, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMode(ml.numeric())"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#parameters-2",
+    "href": "reference/steps-imputation.html#parameters-2",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to impute. All columns must be numeric.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#examples-2",
+    "href": "reference/steps-imputation.html#examples-2",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective medians, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMedian(ml.numeric())"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#parameters-3",
+    "href": "reference/steps-imputation.html#parameters-3",
+    "title": "Imputation",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to fillna.\nrequired\n\n\nfill_value\ntyping.Any\nThe fill value to use. Must be castable to the dtype of all columns in inputs.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-imputation.html#examples-3",
+    "href": "reference/steps-imputation.html#examples-3",
+    "title": "Imputation",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nFill all NULL values in numeric columns with 0.\n&gt;&gt;&gt; step = ml.FillNA(ml.numeric(), 0)\nFill all NULL values in specific columns with 1.\n&gt;&gt;&gt; step = ml.FillNA([\"x\", \"y\"], 1)"
   },
   {
     "objectID": "reference/steps-other.html",
@@ -231,6 +203,97 @@
     "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\n&gt;&gt;&gt; from ibis import _\nDefine a new column c as a**2 + b**2\n&gt;&gt;&gt; step = ml.Mutate(c=_.a**2 + _.b**2)"
   },
   {
+    "objectID": "reference/steps-standardization.html",
+    "href": "reference/steps-standardization.html",
+    "title": "Standardization",
+    "section": "",
+    "text": "Standardization and normalization of numeric columns"
+  },
+  {
+    "objectID": "reference/steps-standardization.html#parameters",
+    "href": "reference/steps-standardization.html#parameters",
+    "title": "Standardization",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired"
+  },
+  {
+    "objectID": "reference/steps-standardization.html#examples",
+    "href": "reference/steps-standardization.html#examples",
+    "title": "Standardization",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])"
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Reference",
+    "section": "",
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+  },
+  {
+    "objectID": "reference/index.html#core",
+    "href": "reference/index.html#core",
+    "title": "Reference",
+    "section": "",
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties"
+  },
+  {
+    "objectID": "reference/index.html#steps",
+    "href": "reference/index.html#steps",
+    "title": "Reference",
+    "section": "",
+    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+  },
+  {
+    "objectID": "reference/steps-temporal.html",
+    "href": "reference/steps-temporal.html",
+    "title": "Temporal",
+    "section": "",
+    "text": "Feature extraction for temporal columns"
+  },
+  {
+    "objectID": "reference/steps-temporal.html#parameters",
+    "href": "reference/steps-temporal.html#parameters",
+    "title": "Temporal",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]\nA sequence of components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\n('dow', 'month', 'year')"
+  },
+  {
+    "objectID": "reference/steps-temporal.html#examples",
+    "href": "reference/steps-temporal.html#examples",
+    "title": "Temporal",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDate(ml.date())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandDate([\"x\", \"y\"], [\"day\", \"year\"])"
+  },
+  {
+    "objectID": "reference/steps-temporal.html#parameters-1",
+    "href": "reference/steps-temporal.html#parameters-1",
+    "title": "Temporal",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of time columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\n('hour', 'minute', 'second')"
+  },
+  {
+    "objectID": "reference/steps-temporal.html#examples-1",
+    "href": "reference/steps-temporal.html#examples-1",
+    "title": "Temporal",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])"
+  },
+  {
+    "objectID": "reference/core.html",
+    "href": "reference/core.html",
+    "title": "Common",
+    "section": "",
+    "text": "Core APIs"
+  },
+  {
+    "objectID": "reference/core.html#parameters",
+    "href": "reference/core.html#parameters",
+    "title": "Common",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n*steps\nibisml.core.Step | ibisml.core.Transform\nOne or more preprocessing steps.\n()"
+  },
+  {
     "objectID": "reference/steps-encoding.html",
     "href": "reference/steps-encoding.html",
     "title": "Encoding",
@@ -264,68 +327,5 @@
     "title": "Encoding",
     "section": "Examples",
     "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)"
-  },
-  {
-    "objectID": "reference/steps-imputation.html",
-    "href": "reference/steps-imputation.html",
-    "title": "Imputation",
-    "section": "",
-    "text": "Imputation and handling of missing values"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#parameters",
-    "href": "reference/steps-imputation.html#parameters",
-    "title": "Imputation",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to impute. All columns must be numeric.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#examples",
-    "href": "reference/steps-imputation.html#examples",
-    "title": "Imputation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective means, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMean(ml.numeric())"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#parameters-1",
-    "href": "reference/steps-imputation.html#parameters-1",
-    "title": "Imputation",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to impute.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#examples-1",
-    "href": "reference/steps-imputation.html#examples-1",
-    "title": "Imputation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective modes, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMode(ml.numeric())"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#parameters-2",
-    "href": "reference/steps-imputation.html#parameters-2",
-    "title": "Imputation",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to impute. All columns must be numeric.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#examples-2",
-    "href": "reference/steps-imputation.html#examples-2",
-    "title": "Imputation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nReplace NULL values in all numeric columns with their respective medians, computed from the training dataset.\n&gt;&gt;&gt; step = ml.ImputeMedian(ml.numeric())"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#parameters-3",
-    "href": "reference/steps-imputation.html#parameters-3",
-    "title": "Imputation",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to fillna.\nrequired\n\n\nfill_value\ntyping.Any\nThe fill value to use. Must be castable to the dtype of all columns in inputs.\nrequired"
-  },
-  {
-    "objectID": "reference/steps-imputation.html#examples-3",
-    "href": "reference/steps-imputation.html#examples-3",
-    "title": "Imputation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nFill all NULL values in numeric columns with 0.\n&gt;&gt;&gt; step = ml.FillNA(ml.numeric(), 0)\nFill all NULL values in specific columns with 1.\n&gt;&gt;&gt; step = ml.FillNA([\"x\", \"y\"], 1)"
   }
 ]
