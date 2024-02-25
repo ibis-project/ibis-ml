@@ -53,35 +53,42 @@ class ExpandDateTime(Step):
     def __init__(
         self,
         inputs: SelectionType,
-        date_components: Sequence[
-            Literal["day", "week", "month", "year", "dow", "doy"]
+        datetime_components: list[
+            Literal[
+                "day",
+                "week",
+                "month",
+                "year",
+                "dow",
+                "doy",
+                "hour",
+                "minute",
+                "second",
+                "millisecond",
+            ]
         ] = (
-            "dow",
+            "day",
+            "week",
             "month",
             "year",
-        ),
-        time_components: Sequence[
-            Literal["hour", "minute", "second", "millisecond"]
-        ] = (
+            "dow",
+            "doy",
             "hour",
             "minute",
-            "second",
         ),
     ):
         self.inputs = selector(inputs)
-        self.date_components = list(date_components)
-        self.time_components = list(time_components)
+        self.datetime_components = list(datetime_components)
 
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
-        yield ("date_components", self.date_components)
-        yield ("time_components", self.time_components)
+        yield ("datetime_components", self.datetime_components)
 
     def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        date_columns = self.inputs.select_columns(table, metadata)
+        columns = self.inputs.select_columns(table, metadata)
 
-        if "month" in self.date_components:
-            for col in date_columns:
+        if "month" in self.datetime_components:
+            for col in columns:
                 metadata.set_categories(
                     f"{col}_month",
                     [
@@ -99,8 +106,8 @@ class ExpandDateTime(Step):
                         "December",
                     ],
                 )
-        if "dow" in self.date_components:
-            for col in date_columns:
+        if "dow" in self.datetime_components:
+            for col in columns:
                 metadata.set_categories(
                     f"{col}_dow",
                     [
@@ -114,10 +121,7 @@ class ExpandDateTime(Step):
                     ],
                 )
 
-        time_columns = self.inputs.select_columns(table, metadata)
-        return ml.transforms.ExpandDateTime(
-            date_columns, self.date_components, time_columns, self.time_components
-        )
+        return ml.transforms.ExpandDateTime(columns, self.datetime_components)
 
 
 class ExpandDate(Step):

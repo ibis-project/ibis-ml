@@ -72,8 +72,18 @@ def test_expand_datetime():
     t = ibis.table({"y": "timestamp", "z": "int"})
     step = ml.ExpandDateTime(
         ml.timestamp(),
-        date_components=["dow", "doy", "day", "week", "month", "year"],
-        time_components=["hour", "minute", "second", "millisecond"],
+        datetime_components=[
+            "dow",
+            "doy",
+            "day",
+            "week",
+            "month",
+            "year",
+            "hour",
+            "minute",
+            "second",
+            "millisecond",
+        ],
     )
     transform = step.fit(t, ml.core.Metadata())
 
