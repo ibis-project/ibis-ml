@@ -94,90 +94,91 @@ quartodoc:
     - title: Core
       package: ibisml
       contents:
-      - kind: page
-        path: core
-        summary:
-          name: Common
-          desc: Core APIs
-        contents:
-          - Recipe
-          - RecipeTransform
-          - TransformResult
+        - kind: page
+          path: core
+          summary:
+            name: Common
+            desc: Core APIs
+          contents:
+            - Recipe
+            - RecipeTransform
+            - TransformResult
 
-      - kind: page
-        path: selectors
-        summary:
-          name: Selectors
-          desc: Select sets of columns by name, type, or other properties
-        contents:
-          - cols
-          - contains
-          - endswith
-          - startswith
-          - matches
-          - numeric
-          - nominal
-          - categorical
-          - string
-          - integer
-          - floating
-          - temporal
-          - date
-          - time
-          - timestamp
-          - has_type
-          - where
-          - everything
-          - selector
+        - kind: page
+          path: selectors
+          summary:
+            name: Selectors
+            desc: Select sets of columns by name, type, or other properties
+          contents:
+            - cols
+            - contains
+            - endswith
+            - startswith
+            - matches
+            - numeric
+            - nominal
+            - categorical
+            - string
+            - integer
+            - floating
+            - temporal
+            - date
+            - time
+            - timestamp
+            - has_type
+            - where
+            - everything
+            - selector
 
     - title: Steps
       desc: Define steps in a recipe
       package: ibisml
       contents:
-      - kind: page
-        path: steps-imputation
-        summary:
-          name: Imputation
-          desc: Imputation and handling of missing values
-        contents:
-          - ImputeMean
-          - ImputeMode
-          - ImputeMedian
-          - FillNA
+        - kind: page
+          path: steps-imputation
+          summary:
+            name: Imputation
+            desc: Imputation and handling of missing values
+          contents:
+            - ImputeMean
+            - ImputeMode
+            - ImputeMedian
+            - FillNA
 
-      - kind: page
-        path: steps-encoding
-        summary:
-          name: Encoding
-          desc: Encoding of categorical and string columns
-        contents:
-          - OneHotEncode
-          - CategoricalEncode
+        - kind: page
+          path: steps-encoding
+          summary:
+            name: Encoding
+            desc: Encoding of categorical and string columns
+          contents:
+            - OneHotEncode
+            - CategoricalEncode
 
-      - kind: page
-        path: steps-standardization
-        summary:
-          name: Standardization
-          desc: Standardization and normalization of numeric columns
-        contents:
-          - ScaleStandard
+        - kind: page
+          path: steps-standardization
+          summary:
+            name: Standardization
+            desc: Standardization and normalization of numeric columns
+          contents:
+            - ScaleStandard
 
-      - kind: page
-        path: steps-temporal
-        summary:
-          name: Temporal
-          desc: Feature extraction for temporal columns
-        contents:
-          - ExpandDate
-          - ExpandTime
+        - kind: page
+          path: steps-temporal
+          summary:
+            name: Temporal
+            desc: Feature extraction for temporal columns
+          contents:
+            - ExpandDateTime
+            - ExpandDate
+            - ExpandTime
 
-      - kind: page
-        path: steps-other
-        summary:
-          name: Other
-          desc: Other common tabular operations
-        contents:
-          - Cast
-          - Drop
-          - MutateAt
-          - Mutate
+        - kind: page
+          path: steps-other
+          summary:
+            name: Other
+            desc: Other common tabular operations
+          contents:
+            - Cast
+            - Drop
+            - MutateAt
+            - Mutate

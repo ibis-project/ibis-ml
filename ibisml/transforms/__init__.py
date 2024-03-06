@@ -2,7 +2,7 @@ from ibisml.transforms.common import Cast, Drop, MutateAt, Mutate
 from ibisml.transforms.impute import FillNA
 from ibisml.transforms.standardize import ScaleMinMax, ScaleStandard
 from ibisml.transforms.encode import OneHotEncode, CategoricalEncode
-from ibisml.transforms.temporal import ExpandDate, ExpandTime
+from ibisml.transforms.temporal import ExpandDateTime, ExpandDate, ExpandTime
 
 __all__ = (
     "Cast",
@@ -14,6 +14,7 @@ __all__ = (
     "ScaleStandard",
     "OneHotEncode",
     "CategoricalEncode",
+    "ExpandDateTime",
     "ExpandDate",
     "ExpandTime",
 )
