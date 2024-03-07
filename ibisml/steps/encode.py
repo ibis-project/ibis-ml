@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+import uuid
 from collections import defaultdict
 from typing import Any, Iterable
 
 import ibis
 import ibis.expr.types as ir
 
-import ibisml as ml
-from ibisml.core import Metadata, Step, Transform
+from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
 
 
@@ -36,7 +36,6 @@ def _compute_categories(
                 .group_by("value")
                 .count("count")
                 .mutate(column=ibis.literal(col))
-                .order_by("count")
             )
             return query if max_categories is None else query.limit(max_categories)
 
@@ -52,14 +51,10 @@ def _compute_categories(
     else:
 
         def collect(col: str) -> ir.Table:
-            return (
-                table.select(value=col, column=ibis.literal(col))
-                .distinct()
-                .order_by("value")
-            )
+            return table.select(value=col, column=ibis.literal(col)).distinct()
 
         def process(df: pd.DataFrame) -> list[Any]:
-            return df["value"].to_list()
+            return df["value"].sort_values().to_list()
 
     for group_type, group_cols in groups.items():
         query = ibis.union(*(collect(col) for col in group_cols))
@@ -129,7 +124,7 @@ class OneHotEncode(Step):
         if self.max_categories is not None:
             yield ("max_categories", self.max_categories)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
 
         categories = {}
@@ -142,12 +137,21 @@ class OneHotEncode(Step):
                 to_compute.append(column)
 
         categories.update(
-            _compute_categories(
-                table, to_compute, self.min_frequency, self.max_categories
-            )
+            _compute_categories(table, to_compute, self.min_frequency, self.max_categories)
         )
 
-        return ml.transforms.OneHotEncode(categories)
+        self.categories_ = categories
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        if not self.categories_:
+            return table
+        return table.mutate(
+            [
+                (table[col] == cat).cast("int8").name(f"{col}_{cat}")
+                for col, cats in self.categories_.items()
+                for cat in cats
+            ]
+        ).drop(*self.categories_)
 
 
 class CategoricalEncode(Step):
@@ -205,15 +209,38 @@ class CategoricalEncode(Step):
         if self.max_categories is not None:
             yield ("max_categories", self.max_categories)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        import pyarrow as pa  # type: ignore
+
         columns = self.inputs.select_columns(table, metadata)
         # Filter out already categorized columns
-        columns = [
-            column for column in columns if metadata.get_categories(column) is None
-        ]
+        columns = [column for column in columns if metadata.get_categories(column) is None]
         categories = _compute_categories(
             table, columns, self.min_frequency, self.max_categories
         )
         for col, cats in categories.items():
             metadata.set_categories(col, cats)
-        return ml.transforms.CategoricalEncode(categories)
+
+        tables = {}
+        suffix = uuid.uuid4().hex[:6]
+        for col, cats in categories.items():
+            table = pa.Table.from_pydict(
+                {f"key_{suffix}": cats, col: list(range(len(cats)))}
+            )
+            tables[col] = ibis.memtable(table, name=f"{col}_cats_{suffix}")
+
+        self.category_tables_ = tables
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        if not self.category_tables_:
+            return table
+
+        for col, lookup in self.category_tables_.items():
+            joined = table.left_join(
+                lookup,
+                table[col] == lookup[0],
+                lname="{name}_left",
+                rname="",
+            )
+            table = joined.drop(lookup.columns[0], f"{col}_left")
+        return table

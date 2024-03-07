@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
-import ibisml as ml
-from ibisml.core import Metadata, Step, Transform
+from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
 
 import ibis.expr.types as ir
@@ -37,7 +36,7 @@ class ScaleMinMax(Step):
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
 
         stats = {}
@@ -56,7 +55,16 @@ class ScaleMinMax(Step):
             results = table.aggregate(aggs).execute().to_dict("records")[0]
             for name in columns:
                 stats[name] = (results[f"{name}_max"], results[f"{name}_min"])
-        return ml.transforms.ScaleMinMax(stats)
+
+        self.stats_ = stats
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.mutate(
+            [
+                ((table[c] - min) / (max - min)).name(c)  # type: ignore
+                for c, (max, min) in self.stats_.items()
+            ]
+        )
 
 
 class ScaleStandard(Step):
@@ -87,7 +95,7 @@ class ScaleStandard(Step):
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
 
         stats = {}
@@ -106,4 +114,13 @@ class ScaleStandard(Step):
             results = table.aggregate(aggs).execute().to_dict("records")[0]
             for name in columns:
                 stats[name] = (results[f"{name}_mean"], results[f"{name}_std"])
-        return ml.transforms.ScaleStandard(stats)
+
+        self.stats_ = stats
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.mutate(
+            [
+                ((table[c] - center) / scale).name(c)  # type: ignore
+                for c, (center, scale) in self.stats_.items()
+            ]
+        )

@@ -22,12 +22,10 @@ include-package-data = false
 [tool.setuptools.packages.find]
 include = ["ibisml*"]
 
-[tool.setuptools_scm]
-
 [tool.ruff]
 line-length = 92
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 
 [tool.mypy]
