@@ -2,11 +2,17 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
-import ibisml as ml
-from ibisml.core import Metadata, Step, Transform
+from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
 
 import ibis.expr.types as ir
+
+
+def _fillna(col, val):
+    if col.type().is_floating():
+        return (col.isnull() | col.isnan()).ifelse(val, col)
+    else:
+        return col.coalesce(val)
 
 
 class FillNA(Step):
@@ -41,9 +47,13 @@ class FillNA(Step):
         yield ("", self.inputs)
         yield ("", self.fill_value)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        columns = self.inputs.select_columns(table, metadata)
-        return ml.transforms.FillNA({c: self.fill_value for c in columns})
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        self.columns_ = self.inputs.select_columns(table, metadata)
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.mutate(
+            [_fillna(table[c], self.fill_value).name(c) for c in self.columns_]
+        )
 
 
 class _BaseImpute(Step):
@@ -56,15 +66,18 @@ class _BaseImpute(Step):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         raise NotImplementedError
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
-
-        stats = (
+        self.fill_values_ = (
             table.aggregate([self._stat(table[c]).name(c) for c in columns])
             .execute()
             .to_dict("records")[0]
         )
-        return ml.transforms.FillNA(stats)
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.mutate(
+            [_fillna(table[c], v).name(c) for c, v in self.fill_values_.items()]
+        )
 
 
 class ImputeMean(_BaseImpute):
@@ -89,8 +102,7 @@ class ImputeMean(_BaseImpute):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
-                f"Cannot compute mean of {col.get_name()} - "
-                "this column is not numeric"
+                f"Cannot compute mean of {col.get_name()} - " "this column is not numeric"
             )
         return col.mean()
 
@@ -117,8 +129,7 @@ class ImputeMedian(_BaseImpute):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
-                f"Cannot compute median of {col.get_name()} - "
-                "this column is not numeric"
+                f"Cannot compute median of {col.get_name()} - " "this column is not numeric"
             )
         return col.median()
 

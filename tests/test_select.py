@@ -7,22 +7,20 @@ import ibisml as ml
 
 
 def eval_select(selector):
-    metadata = ml.core.Metadata(outcomes=["y_1", "y_2"])
-    metadata.set_categories("a_nominal", ["a", "b"])
-    metadata.set_categories("b_ordinal", ["c", "d"], True)
+    metadata = ml.core.Metadata()
+    metadata.set_categories("a_categorical", ["a", "b"])
+    metadata.set_categories("b_categorical", ["c", "d"])
 
     t = ibis.table(
         {
             "a_int": "int",
             "a_float": "float",
             "a_str": "str",
-            "a_nominal": "int",
-            "b_ordinal": "int",
+            "a_categorical": "int",
+            "b_categorical": "int",
             "b_time": "time",
             "b_date": "date",
             "b_timestamp": "timestamp",
-            "y_1": "int",
-            "y_2": "str",
         }
     )
 
@@ -54,8 +52,8 @@ def test_everything():
         "a_int",
         "a_float",
         "a_str",
-        "a_nominal",
-        "b_ordinal",
+        "a_categorical",
+        "b_categorical",
         "b_time",
         "b_date",
         "b_timestamp",
@@ -77,7 +75,7 @@ def test_contains():
 
 def test_endswith():
     assert ml.endswith("a") == ml.endswith("a")
-    assert eval_select(ml.endswith("inal")) == ["a_nominal", "b_ordinal"]
+    assert eval_select(ml.endswith("ical")) == ["a_categorical", "b_categorical"]
 
 
 def test_startswith():
@@ -86,14 +84,14 @@ def test_startswith():
         "a_int",
         "a_float",
         "a_str",
-        "a_nominal",
+        "a_categorical",
     ]
 
 
 def test_matches():
     assert ml.matches("a") == ml.matches("a")
-    assert eval_select(ml.matches("ina")) == ["a_nominal", "b_ordinal"]
-    assert eval_select(ml.matches("$ina^")) == []
+    assert eval_select(ml.matches("ica")) == ["a_categorical", "b_categorical"]
+    assert eval_select(ml.matches("$ica^")) == []
 
 
 @pytest.mark.parametrize(
@@ -107,7 +105,7 @@ def test_matches():
         (ml.date(), ["b_date"]),
         (ml.timestamp(), ["b_timestamp"]),
         (ml.temporal(), ["b_time", "b_date", "b_timestamp"]),
-        (ml.nominal(), ["a_str", "a_nominal", "b_ordinal"]),
+        (ml.nominal(), ["a_str", "a_categorical", "b_categorical"]),
     ],
 )
 def test_type_selector(selector, cols):
@@ -116,16 +114,8 @@ def test_type_selector(selector, cols):
 
 def test_categorical():
     assert ml.categorical() == ml.categorical()
-    assert ml.categorical(True) == ml.categorical(True)
-    assert ml.categorical() != ml.categorical(True)
-
     assert repr(ml.categorical()) == "categorical()"
-    assert repr(ml.categorical(True)) == "categorical(ordered=True)"
-    assert repr(ml.categorical(False)) == "categorical(ordered=False)"
-
-    assert eval_select(ml.categorical()) == ["a_nominal", "b_ordinal"]
-    assert eval_select(ml.categorical(True)) == ["b_ordinal"]
-    assert eval_select(ml.categorical(False)) == ["a_nominal"]
+    assert eval_select(ml.categorical()) == ["a_categorical", "b_categorical"]
 
 
 def test_where():
@@ -150,24 +140,30 @@ def test_and():
     s2 = s1 & ml.endswith("foo")
     assert repr(s2) == "(startswith('a_') & categorical() & endswith('foo'))"
 
-    assert eval_select(s1) == ["a_nominal"]
+    assert eval_select(s1) == ["a_categorical"]
     assert eval_select(s2) == []
 
 
 def test_or():
-    s1 = ml.startswith("a_") | ml.contains("ina")
-    assert repr(s1) == "(startswith('a_') | contains('ina'))"
+    s1 = ml.startswith("a_") | ml.contains("ica")
+    assert repr(s1) == "(startswith('a_') | contains('ica'))"
 
     s2 = s1 | ml.endswith("stamp")
-    assert repr(s2) == "(startswith('a_') | contains('ina') | endswith('stamp'))"
+    assert repr(s2) == "(startswith('a_') | contains('ica') | endswith('stamp'))"
 
-    assert eval_select(s1) == ["a_int", "a_float", "a_str", "a_nominal", "b_ordinal"]
+    assert eval_select(s1) == [
+        "a_int",
+        "a_float",
+        "a_str",
+        "a_categorical",
+        "b_categorical",
+    ]
     assert eval_select(s2) == [
         "a_int",
         "a_float",
         "a_str",
-        "a_nominal",
-        "b_ordinal",
+        "a_categorical",
+        "b_categorical",
         "b_timestamp",
     ]
 
@@ -175,7 +171,7 @@ def test_or():
 def test_and_or():
     s = (ml.integer() | ml.categorical()) & ml.startswith("a_")
     assert repr(s) == "((integer() | categorical()) & startswith('a_'))"
-    assert eval_select(s) == ["a_int", "a_nominal"]
+    assert eval_select(s) == ["a_int", "a_categorical"]
 
 
 def test_and_or_implicit_cols():
@@ -193,8 +189,8 @@ def test_not():
     assert repr(s2) == "~numeric()"
     assert eval_select(s2) == [
         "a_str",
-        "a_nominal",
-        "b_ordinal",
+        "a_categorical",
+        "b_categorical",
         "b_time",
         "b_date",
         "b_timestamp",

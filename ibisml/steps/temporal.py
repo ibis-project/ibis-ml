@@ -4,8 +4,7 @@ from typing import Any, Iterable, Sequence, Literal
 
 import ibis.expr.types as ir
 
-import ibisml as ml
-from ibisml.core import Metadata, Step, Transform
+from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
 
 
@@ -84,7 +83,7 @@ class ExpandDateTime(Step):
         yield ("", self.inputs)
         yield ("datetime_components", self.datetime_components)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
 
         if "month" in self.datetime_components:
@@ -121,7 +120,37 @@ class ExpandDateTime(Step):
                     ],
                 )
 
-        return ml.transforms.ExpandDateTime(columns, self.datetime_components)
+        self.columns_ = columns
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        new_cols = []
+
+        for name in self.columns_:
+            col = table[name]
+            for comp in self.datetime_components:
+                if comp == "day":
+                    feat = col.day()
+                elif comp == "week":
+                    feat = col.week_of_year()
+                elif comp == "month":
+                    feat = col.month() - 1
+                elif comp == "year":
+                    feat = col.year()
+                elif comp == "dow":
+                    feat = col.day_of_week.index()
+                elif comp == "doy":
+                    feat = col.day_of_year()
+                elif comp == "hour":
+                    feat = col.hour()
+                elif comp == "minute":
+                    feat = col.minute()
+                elif comp == "second":
+                    feat = col.second()
+                elif comp == "millisecond":
+                    feat = col.millisecond()
+                new_cols.append(feat.name(f"{name}_{comp}"))
+
+        return table.mutate(new_cols)
 
 
 class ExpandDate(Step):
@@ -176,7 +205,7 @@ class ExpandDate(Step):
         yield ("", self.inputs)
         yield ("components", self.components)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
         if "month" in self.components:
             for col in columns:
@@ -211,7 +240,27 @@ class ExpandDate(Step):
                         "Sunday",
                     ],
                 )
-        return ml.transforms.ExpandDate(columns, self.components)
+        self.columns_ = columns
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        new_cols = []
+        for name in self.columns_:
+            col = table[name]
+            for comp in self.components:
+                if comp == "day":
+                    feat = col.day()
+                elif comp == "week":
+                    feat = col.week_of_year()
+                elif comp == "month":
+                    feat = col.month() - 1
+                elif comp == "year":
+                    feat = col.year()
+                elif comp == "dow":
+                    feat = col.day_of_week.index()
+                elif comp == "doy":
+                    feat = col.day_of_year()
+                new_cols.append(feat.name(f"{name}_{comp}"))
+        return table.mutate(new_cols)
 
 
 class ExpandTime(Step):
@@ -260,6 +309,21 @@ class ExpandTime(Step):
         yield ("", self.inputs)
         yield ("components", self.components)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        columns = self.inputs.select_columns(table, metadata)
-        return ml.transforms.ExpandTime(columns, self.components)
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        self.columns_ = self.inputs.select_columns(table, metadata)
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        new_cols = []
+        for name in self.columns_:
+            col = table[name]
+            for comp in self.components:
+                if comp == "hour":
+                    feat = col.hour()
+                elif comp == "minute":
+                    feat = col.minute()
+                elif comp == "second":
+                    feat = col.second()
+                elif comp == "millisecond":
+                    feat = col.millisecond()
+                new_cols.append(feat.name(f"{name}_{comp}"))
+        return table.mutate(new_cols)

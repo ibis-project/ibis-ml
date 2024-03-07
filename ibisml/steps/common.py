@@ -6,8 +6,7 @@ import ibis.expr.datatypes as dt
 import ibis.expr.types as ir
 from ibis.common.deferred import Deferred
 
-import ibisml as ml
-from ibisml.core import Metadata, Step, Transform
+from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
 
 
@@ -38,9 +37,11 @@ class Drop(Step):
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        columns = self.inputs.select_columns(table, metadata)
-        return ml.transforms.Drop(columns)
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        self.columns_ = self.inputs.select_columns(table, metadata)
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.drop(*self.columns_)
 
 
 class Cast(Step):
@@ -79,9 +80,11 @@ class Cast(Step):
         yield ("", self.inputs)
         yield ("", str(self.dtype))
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        columns = self.inputs.select_columns(table, metadata)
-        return ml.transforms.Cast(columns, self.dtype)
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        self.columns_ = self.inputs.select_columns(table, metadata)
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.cast(dict.fromkeys(self.columns_, self.dtype))
 
 
 class MutateAt(Step):
@@ -134,11 +137,24 @@ class MutateAt(Step):
         for name, expr in self.named_exprs.items():
             yield name, expr
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        columns = self.inputs.select_columns(table, metadata)
-        return ml.transforms.MutateAt(
-            columns, expr=self.expr, named_exprs=self.named_exprs
-        )
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        self.columns_ = self.inputs.select_columns(table, metadata)
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        mutations: list[ir.Value] = []
+        if self.expr is not None:
+            func = self.expr.resolve if isinstance(self.expr, Deferred) else self.expr
+            mutations.extend(
+                func(table[c]).name(c)
+                for c in self.columns_  # type: ignore
+            )
+        for suffix, expr in self.named_exprs.items():
+            func = expr.resolve if isinstance(expr, Deferred) else expr
+            mutations.extend(
+                func(table[c]).name(f"{c}_{suffix}")
+                for c in self.columns_  # type: ignore
+            )
+        return table.mutate(mutations)
 
 
 class Mutate(Step):
@@ -177,5 +193,11 @@ class Mutate(Step):
         for name, expr in self.named_exprs.items():
             yield name, expr
 
-    def fit(self, table: ir.Table, metadata: Metadata) -> Transform:
-        return ml.transforms.Mutate(*self.exprs, **self.named_exprs)
+    def is_fitted(self):
+        return True
+
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        pass
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        return table.mutate(*self.exprs, **self.named_exprs)  # type: ignore

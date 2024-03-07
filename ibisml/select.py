@@ -68,8 +68,7 @@ class Selector:
         return [
             c
             for c in table.columns
-            if c not in metadata.outcomes
-            and self.matches(table[c], metadata)  # type: ignore
+            if self.matches(table[c], metadata)  # type: ignore
         ]
 
 
@@ -359,32 +358,11 @@ class nominal(Selector):
 
 
 class categorical(Selector):
-    """Select all categorical columns.
-
-    Parameters
-    ----------
-    ordered
-        Selects only ordered categoricals if True, and only unordered
-        categoricals if False. Defaults to None, to select all categoricals.
-    """
-
-    __slots__ = ("ordered",)
-
-    def __init__(self, ordered: bool | None = None):
-        self.ordered = ordered
-
-    def __repr__(self):
-        if self.ordered is None:
-            return "categorical()"
-        return f"categorical(ordered={self.ordered})"
+    """Select all categorical columns."""
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         categories = metadata.get_categories(col.get_name())
-        if categories is None:
-            return False
-        if self.ordered is not None:
-            return categories.ordered == self.ordered
-        return True
+        return categories is not None
 
 
 class where(Selector):
