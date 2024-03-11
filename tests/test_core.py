@@ -102,3 +102,22 @@ def test_to_numpy_errors_non_numeric(table):
     r.fit(table)
     with pytest.raises(ValueError, match="Not all output columns are numeric"):
         r.to_numpy(table)
+
+
+@pytest.mark.parametrize("format", ["numpy", "pandas", "pyarrow", "polars", "ibis-table"])
+def test_input_formats(format):
+    r = ml.Recipe(ml.Cast(ml.everything(), "float64"))
+    X = np.eye(3, dtype="i8")
+    if format == "polars":
+        pl = pytest.importorskip("polars")
+        X = pl.DataFrame(np.eye(3, dtype="i8"), schema=["x1", "x2", "x3"])
+    elif format != "numpy":
+        X = pd.DataFrame(np.eye(3, dtype="i8"), columns=["x1", "x2", "x3"])
+        if format == "ibis-table":
+            X = ibis.memtable(X, name="test")
+        elif format == "pyarrow":
+            X = pa.Table.from_pandas(X)
+    r.fit(X)
+    out = r.transform(X)
+    assert isinstance(out, np.ndarray)
+    assert out.dtype == "f8"
