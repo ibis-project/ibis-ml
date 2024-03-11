@@ -101,8 +101,6 @@ quartodoc:
             desc: Core APIs
           contents:
             - Recipe
-            - RecipeTransform
-            - TransformResult
 
         - kind: page
           path: selectors
