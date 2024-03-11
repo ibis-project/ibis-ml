@@ -15,6 +15,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dask = ["dask[dataframe]"]
+dev = ["ibis-framework[duckdb]", "pytest", "scikit-learn"]
 
 [tool.setuptools]
 include-package-data = false
