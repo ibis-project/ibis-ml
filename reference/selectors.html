@@ -270,10 +270,7 @@ ul.task-list li input[type="checkbox"] {
   </ul></li>
   <li><a href="#ibisml.numeric" id="toc-ibisml.numeric" class="nav-link" data-scroll-target="#ibisml.numeric">numeric</a></li>
   <li><a href="#ibisml.nominal" id="toc-ibisml.nominal" class="nav-link" data-scroll-target="#ibisml.nominal">nominal</a></li>
-  <li><a href="#ibisml.categorical" id="toc-ibisml.categorical" class="nav-link" data-scroll-target="#ibisml.categorical">categorical</a>
-  <ul class="collapse">
-  <li><a href="#parameters-5" id="toc-parameters-5" class="nav-link" data-scroll-target="#parameters-5">Parameters</a></li>
-  </ul></li>
+  <li><a href="#ibisml.categorical" id="toc-ibisml.categorical" class="nav-link" data-scroll-target="#ibisml.categorical">categorical</a></li>
   <li><a href="#ibisml.string" id="toc-ibisml.string" class="nav-link" data-scroll-target="#ibisml.string">string</a></li>
   <li><a href="#ibisml.integer" id="toc-ibisml.integer" class="nav-link" data-scroll-target="#ibisml.integer">integer</a></li>
   <li><a href="#ibisml.floating" id="toc-ibisml.floating" class="nav-link" data-scroll-target="#ibisml.floating">floating</a></li>
@@ -283,11 +280,11 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#ibisml.timestamp" id="toc-ibisml.timestamp" class="nav-link" data-scroll-target="#ibisml.timestamp">timestamp</a></li>
   <li><a href="#ibisml.has_type" id="toc-ibisml.has_type" class="nav-link" data-scroll-target="#ibisml.has_type">has_type</a>
   <ul class="collapse">
-  <li><a href="#parameters-6" id="toc-parameters-6" class="nav-link" data-scroll-target="#parameters-6">Parameters</a></li>
+  <li><a href="#parameters-5" id="toc-parameters-5" class="nav-link" data-scroll-target="#parameters-5">Parameters</a></li>
   </ul></li>
   <li><a href="#ibisml.where" id="toc-ibisml.where" class="nav-link" data-scroll-target="#ibisml.where">where</a>
   <ul class="collapse">
-  <li><a href="#parameters-7" id="toc-parameters-7" class="nav-link" data-scroll-target="#parameters-7">Parameters</a></li>
+  <li><a href="#parameters-6" id="toc-parameters-6" class="nav-link" data-scroll-target="#parameters-6">Parameters</a></li>
   </ul></li>
   <li><a href="#ibisml.everything" id="toc-ibisml.everything" class="nav-link" data-scroll-target="#ibisml.everything">everything</a></li>
   <li><a href="#ibisml.selector" id="toc-ibisml.selector" class="nav-link" data-scroll-target="#ibisml.selector">selector</a></li>
@@ -458,35 +455,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibisml.categorical" class="level1">
 <h1>categorical</h1>
-<p><code>categorical(self, ordered=None)</code></p>
+<p><code>categorical()</code></p>
 <p>Select all categorical columns.</p>
-<section id="parameters-5" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-5">Parameters</h2>
-<table class="table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 8%">
-<col style="width: 78%">
-<col style="width: 6%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>ordered</code></td>
-<td>bool | None</td>
-<td>Selects only ordered categoricals if True, and only unordered categoricals if False. Defaults to None, to select all categoricals.</td>
-<td><code>None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 <section id="ibisml.string" class="level1">
 <h1>string</h1>
@@ -527,8 +497,8 @@ ul.task-list li input[type="checkbox"] {
 <h1>has_type</h1>
 <p><code>has_type(self, dtype)</code></p>
 <p>Select all columns matching a specified dtype.</p>
-<section id="parameters-6" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-6">Parameters</h2>
+<section id="parameters-5" class="level2">
+<h2 class="anchored" data-anchor-id="parameters-5">Parameters</h2>
 <table class="table">
 <colgroup>
 <col style="width: 6%">
@@ -559,8 +529,8 @@ ul.task-list li input[type="checkbox"] {
 <h1>where</h1>
 <p><code>where(self, predicate)</code></p>
 <p>Select all columns matching a specific predicate function.</p>
-<section id="parameters-7" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-7">Parameters</h2>
+<section id="parameters-6" class="level2">
+<h2 class="anchored" data-anchor-id="parameters-6">Parameters</h2>
 <table class="table">
 <colgroup>
 <col style="width: 6%">

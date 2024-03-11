@@ -190,7 +190,7 @@
     "href": "reference/selectors.html#parameters-5",
     "title": "Selectors",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nordered\nbool | None\nSelects only ordered categoricals if True, and only unordered categoricals if False. Defaults to None, to select all categoricals.\nNone",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndtype\nibis.ibis.DataType | str | type[ibis.ibis.DataType]\nThe dtype to match. May be a dtype instance, string, or dtype class.\nrequired",
     "crumbs": [
       "Core API",
       "Selectors"
@@ -199,17 +199,6 @@
   {
     "objectID": "reference/selectors.html#parameters-6",
     "href": "reference/selectors.html#parameters-6",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndtype\nibis.ibis.DataType | str | type[ibis.ibis.DataType]\nThe dtype to match. May be a dtype instance, string, or dtype class.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-7",
-    "href": "reference/selectors.html#parameters-7",
     "title": "Selectors",
     "section": "Parameters",
     "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\ntyping.Callable[[ibis.ibis.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired",
@@ -292,18 +281,7 @@
     "href": "reference/core.html",
     "title": "Common",
     "section": "",
-    "text": "Core APIs",
-    "crumbs": [
-      "Core API",
-      "Common"
-    ]
-  },
-  {
-    "objectID": "reference/core.html#parameters",
-    "href": "reference/core.html#parameters",
-    "title": "Common",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n*steps\nibisml.core.Step | ibisml.core.Transform\nOne or more preprocessing steps.\n()",
+    "text": "Common\nCore APIs\n\n\nRecipe\nRecipe(self, *steps)\n\n\n\n\n Back to top",
     "crumbs": [
       "Core API",
       "Common"
@@ -457,7 +435,7 @@
     "href": "reference/steps-temporal.html#parameters",
     "title": "Temporal",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date and time columns to expand into new features.\nrequired\n\n\ndate_components\n\nA sequence of date components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\nrequired\n\n\ntime_components\n\nA sequence of time components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\nrequired",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date and time columns to expand into new features.\nrequired\n\n\ncomponents\nlist[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’, ‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of date or time components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value - hour: the hour as a numeric value - minute: the minute as a numeric value - second: the second as a numeric value - millisecond: the millisecond as a numeric value Defaults to [\"dow\", \"month\", \"year\", \"hour\", \"minute\", \"second\"].\n('dow', 'month', 'year', 'hour', 'minute', 'second')",
     "crumbs": [
       "Steps",
       "Temporal"
@@ -468,7 +446,7 @@
     "href": "reference/steps-temporal.html#examples",
     "title": "Temporal",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date and time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDateTime(ml.datetime())\nExpand specific columns using specific components for date and time\n&gt;&gt;&gt; step = ml.ExpandDateTime([\"x\", \"y\"], [\"day\", \"year\"], [\"hour\", \"minute\"])",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date and time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDateTime(ml.datetime())\nExpand specific columns using specific components for date and time\n&gt;&gt;&gt; step = ml.ExpandDateTime([\"x\", \"y\"], [\"day\", \"year\", \"hour\"])",
     "crumbs": [
       "Steps",
       "Temporal"

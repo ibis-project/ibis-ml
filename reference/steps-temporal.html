@@ -312,17 +312,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ibisml.ExpandDateTime" class="level1">
 <h1>ExpandDateTime</h1>
-<p><code>ExpandDateTime(self, inputs, datetime_components=('day', 'week', 'month', 'year', 'dow', 'doy', 'hour', 'minute'))</code></p>
+<p><code>ExpandDateTime(self, inputs, components=('dow', 'month', 'year', 'hour', 'minute', 'second'))</code></p>
 <p>A step for expanding date and time columns into one or more features.</p>
 <p>New features will be named <code>{input_column}_{component}</code>. For example, if expanding a <code>"year"</code> component from column <code>"x"</code>, the feature column would be named <code>"x_year"</code>.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="table">
 <colgroup>
-<col style="width: 4%">
+<col style="width: 1%">
+<col style="width: 14%">
+<col style="width: 77%">
 <col style="width: 6%">
-<col style="width: 87%">
-<col style="width: 2%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -340,16 +340,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>date_components</code></td>
-<td></td>
-<td>A sequence of date components to expand. Options include - <code>day</code>: the day of the month as a numeric value - <code>week</code>: the week of the year as a numeric value - <code>month</code>: the month of the year as a categorical value - <code>year</code>: the year as a numeric value - <code>dow</code>: the day of the week as a categorical value - <code>doy</code>: the day of the year as a numeric value Defaults to <code>["dow", "month", "year"]</code>.</td>
-<td><em>required</em></td>
-</tr>
-<tr class="odd">
-<td><code>time_components</code></td>
-<td></td>
-<td>A sequence of time components to expand. Options include <code>hour</code>, <code>minute</code>, <code>second</code>, and <code>millisecond</code>. Defaults to <code>["hour", "minute", "second"]</code>.</td>
-<td><em>required</em></td>
+<td><code>components</code></td>
+<td>list[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’, ‘hour’, ‘minute’, ‘second’, ‘millisecond’]]</td>
+<td>A sequence of date or time components to expand. Options include - <code>day</code>: the day of the month as a numeric value - <code>week</code>: the week of the year as a numeric value - <code>month</code>: the month of the year as a categorical value - <code>year</code>: the year as a numeric value - <code>dow</code>: the day of the week as a categorical value - <code>doy</code>: the day of the year as a numeric value - <code>hour</code>: the hour as a numeric value - <code>minute</code>: the minute as a numeric value - <code>second</code>: the second as a numeric value - <code>millisecond</code>: the millisecond as a numeric value Defaults to <code>["dow", "month", "year", "hour", "minute", "second"]</code>.</td>
+<td><code>('dow', 'month', 'year', 'hour', 'minute', 'second')</code></td>
 </tr>
 </tbody>
 </table>
@@ -360,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Expand date and time columns using the default components</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDateTime(ml.datetime())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand specific columns using specific components for date and time</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDateTime([<span class="st">"x"</span>, <span class="st">"y"</span>], [<span class="st">"day"</span>, <span class="st">"year"</span>], [<span class="st">"hour"</span>, <span class="st">"minute"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDateTime([<span class="st">"x"</span>, <span class="st">"y"</span>], [<span class="st">"day"</span>, <span class="st">"year"</span>, <span class="st">"hour"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="ibisml.ExpandDate" class="level1">
