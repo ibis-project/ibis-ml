@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Sequence, Iterable
-from typing import Any, Callable, cast, TYPE_CHECKING
+from typing import Any, Callable, Literal, cast, TYPE_CHECKING
 from functools import cache
 
 import numpy as np
@@ -12,6 +12,7 @@ import ibis
 import ibis.expr.types as ir
 
 if TYPE_CHECKING:
+    import polars as pl
     import dask.dataframe as dd
     import xgboost as xgb
 
@@ -19,12 +20,10 @@ if TYPE_CHECKING:
 def _as_table(X: Any):
     if isinstance(X, ir.Table):
         return X
-    elif isinstance(X, (pd.DataFrame, pa.Table)):
-        return ibis.memtable(X)
     elif isinstance(X, np.ndarray):
         return ibis.memtable(pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])]))
     else:
-        raise TypeError("X of type {type(X).__name__} is not supported")
+        return ibis.memtable(X)
 
 
 class Categories:
@@ -116,6 +115,12 @@ class Step:
 class Recipe:
     def __init__(self, *steps: Step):
         self.steps = steps
+        self._output_format = "default"
+
+    @property
+    def output_format(self) -> Literal["default", "pandas", "pyarrow", "polars"]:
+        """The output format to use for ``transform``"""
+        return self._output_format
 
     def get_params(self, deep=True):
         return {"steps": self.steps}
@@ -123,6 +128,35 @@ class Recipe:
     def set_params(self, **kwargs):
         if "steps" in kwargs:
             self.steps = kwargs.get("steps")
+
+    def set_output(
+        self, *, transform: Literal["default", "pandas", "pyarrow", "polars", None] = None
+    ) -> Recipe:
+        """Set output type returned by `transform`.
+
+        This is part of the standard Scikit-Learn API.
+
+        Parameters
+        ----------
+        transform : {"default", "pandas"}, default=None
+            Configure output of `transform` and `fit_transform`.
+
+            - `"default"`: Default output format of a transformer
+            - `"pandas"`: Pandas dataframe
+            - `"polars"`: Polars dataframe
+            - `"pyarrow"`: Pyarrow table
+            - `None`: Transform configuration is unchanged
+        """
+        if transform is None:
+            return self
+
+        formats = ("default", "pandas", "polars", "pyarrow")
+
+        if transform not in formats:
+            raise ValueError(f"`transform` must be one of {formats!r}, got {transform}")
+
+        self._output_format = transform
+        return self
 
     def __sklearn_clone__(self) -> Recipe:
         steps = [s.clone() for s in self.steps]
@@ -180,7 +214,7 @@ class Recipe:
         table = _as_table(X)
         return self._fit_transform(table).to_pandas()
 
-    def transform(self, X) -> pd.DataFrame:
+    def transform(self, X):
         """Transform the data.
 
         Parameters
@@ -193,7 +227,15 @@ class Recipe:
         Xt : pd.DataFrame
             Transformed data.
         """
-        return self.to_pandas(X)
+        if self._output_format == "pandas":
+            return self.to_pandas(X)
+        elif self._output_format == "polars":
+            return self.to_polars(X)
+        elif self._output_format == "pyarrow":
+            return self.to_pyarrow(X)
+        else:
+            assert self._output_format == "default"
+            return self.to_numpy(X)
 
     def _categorize_pandas(self, df: pd.DataFrame) -> pd.DataFrame:
         import pandas as pd
@@ -284,6 +326,31 @@ class Recipe:
         if categories:
             return self._categorize_pandas(df)
         return df
+
+    def to_numpy(self, X: Any) -> np.ndarray:
+        """Transform X and return a ``numpy.ndarray``.
+
+        Parameters
+        ----------
+        X : table-like
+            The input data to transform.
+        """
+        table = self.to_table(X)
+        if not all(t.is_numeric() for t in table.schema().types):
+            raise ValueError(
+                "Not all output columns are numeric, cannot convert to a numpy array"
+            )
+        return table.to_pandas().values
+
+    def to_polars(self, X: Any) -> pl.DataFrame:
+        """Transform X and return a ``polars.DataFrame``.
+
+        Parameters
+        ----------
+        X : table-like
+            The input data to transform.
+        """
+        return self.to_table(X).to_polars()
 
     def to_pyarrow(self, X: Any, categories: bool = False) -> pa.Table:
         """Transform X and return a ``pyarrow.Table``.

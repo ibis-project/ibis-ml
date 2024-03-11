@@ -1,6 +1,8 @@
 import ibisml as ml
 
+import numpy as np
 import pandas as pd
+import pyarrow as pa
 import ibis
 from ibis import _
 import pytest
@@ -56,6 +58,47 @@ def test_in_memory_workflow(df):
     assert r.is_fitted()
     res = r.transform(df)
 
-    assert isinstance(res, pd.DataFrame)
-    sol = df.assign(d=df.a + df.b).drop("c", axis=1)
-    assert res.equals(sol)
+    assert isinstance(res, np.ndarray)
+    sol = df.assign(d=df.a + df.b).drop("c", axis=1).values
+    np.testing.assert_array_equal(res, sol)
+
+
+def test_set_output():
+    recipe = ml.Recipe(ml.Drop(~ml.numeric()))
+    assert recipe.output_format == "default"
+
+    for format in ["default", "pandas", "pyarrow", "polars"]:
+        assert recipe.set_output(transform=format) is recipe
+        assert recipe.output_format == format
+
+    recipe.set_output(transform="polars")  # something non-standard
+    recipe.set_output(transform=None)  # None -> leave unchanged
+    assert recipe.output_format == "polars"
+
+    with pytest.raises(ValueError):
+        recipe.set_output(transform="unsupported")
+
+
+@pytest.mark.parametrize("format", ["pandas", "polars", "pyarrow", "default"])
+def test_output_formats(table, format):
+    if format == "pandas":
+        typ = pd.DataFrame
+    elif format == "pyarrow":
+        typ = pa.Table
+    elif format == "polars":
+        typ = pytest.importorskip("polars").DataFrame
+    else:
+        typ = np.ndarray
+
+    r = ml.Recipe(ml.Mutate(d=_.a + _.b), ml.Drop(~ml.numeric()))
+    r.set_output(transform=format)
+    r.fit(table)
+    out = r.transform(table)
+    assert isinstance(out, typ)
+
+
+def test_to_numpy_errors_non_numeric(table):
+    r = ml.Recipe(ml.Mutate(d=_.a + _.b))
+    r.fit(table)
+    with pytest.raises(ValueError, match="Not all output columns are numeric"):
+        r.to_numpy(table)
