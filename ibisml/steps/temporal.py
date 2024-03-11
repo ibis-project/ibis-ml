@@ -19,8 +19,8 @@ class ExpandDateTime(Step):
     ----------
     inputs
         A selection of date and time columns to expand into new features.
-    date_components
-        A sequence of date components to expand. Options include
+    components
+        A sequence of date or time components to expand. Options include
 
         - ``day``: the day of the month as a numeric value
         - ``week``: the week of the year as a numeric value
@@ -28,13 +28,12 @@ class ExpandDateTime(Step):
         - ``year``: the year as a numeric value
         - ``dow``: the day of the week as a categorical value
         - ``doy``: the day of the year as a numeric value
+        - ``hour``: the hour as a numeric value
+        - ``minute``: the minute as a numeric value
+        - ``second``: the second as a numeric value
+        - ``millisecond``: the millisecond as a numeric value
 
-        Defaults to ``["dow", "month", "year"]``.
-    time_components
-        A sequence of time components to expand. Options include ``hour``,
-        ``minute``, ``second``, and ``millisecond``.
-
-        Defaults to ``["hour", "minute", "second"]``.
+        Defaults to ``["dow", "month", "year", "hour", "minute", "second"]``.
 
     Examples
     --------
@@ -46,13 +45,13 @@ class ExpandDateTime(Step):
 
     Expand specific columns using specific components for date and time
 
-    >>> step = ml.ExpandDateTime(["x", "y"], ["day", "year"], ["hour", "minute"])
+    >>> step = ml.ExpandDateTime(["x", "y"], ["day", "year", "hour"])
     """
 
     def __init__(
         self,
         inputs: SelectionType,
-        datetime_components: list[
+        components: list[
             Literal[
                 "day",
                 "week",
@@ -66,27 +65,25 @@ class ExpandDateTime(Step):
                 "millisecond",
             ]
         ] = (
-            "day",
-            "week",
+            "dow",
             "month",
             "year",
-            "dow",
-            "doy",
             "hour",
             "minute",
+            "second",
         ),
     ):
         self.inputs = selector(inputs)
-        self.datetime_components = list(datetime_components)
+        self.components = list(components)
 
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
-        yield ("datetime_components", self.datetime_components)
+        yield ("components", self.components)
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
 
-        if "month" in self.datetime_components:
+        if "month" in self.components:
             for col in columns:
                 metadata.set_categories(
                     f"{col}_month",
@@ -105,7 +102,7 @@ class ExpandDateTime(Step):
                         "December",
                     ],
                 )
-        if "dow" in self.datetime_components:
+        if "dow" in self.components:
             for col in columns:
                 metadata.set_categories(
                     f"{col}_dow",
@@ -127,7 +124,7 @@ class ExpandDateTime(Step):
 
         for name in self.columns_:
             col = table[name]
-            for comp in self.datetime_components:
+            for comp in self.components:
                 if comp == "day":
                     feat = col.day()
                 elif comp == "week":
