@@ -15,10 +15,6 @@ libraries like [xgboost](https://xgboost.readthedocs.io) or
 import ibis
 import ibisml as ml
 
-# Load some training and testing data
-train = ibis.read_csv("training.csv")
-test = ibis.read_csv("testing.csv")
-
 # A recipe for a feature engineering pipeline that:
 # - imputes missing values in numeric columns with their mean
 # - applies standard scaling to all numeric columns
@@ -29,23 +25,25 @@ recipe = ml.Recipe(
     ml.OneHotEncode(ml.nominal()),
 )
 
-# Fit the recipe against the training data
-transform = recipe.fit(train, outcomes=["outcome_col"])
+# Use the recipe inside of a larger Scikit-Learn pipeline
+from sklearn.pipeline import Pipeline
+pipeline = Pipeline([("recipe", recipe), ("model", LinearSVC())])
 
-# Transform the training data and train a scikit-learn model
-from sklearn.svm import LinearSVC
-model = LinearSVC()
+# Fit the recipe against some local training data,
+# just as you would with any other scikit-learn model
+X, y = load_training_data()
+pipeline.fit(X, y)
 
-df_train = transform(train).to_pandas()
-X = df_train[transform.features]
-y = df_train[transform.outcomes]
-model.fit(X, y)
+# Evaluate the model against some local testing data.
+X_test, y_test = load_testing_data()
+pipeline.score(X_test, y_test)
 
-# Transform the testing data and use the model to predict results
-df_test = transform(test).to_pandas()
-X = df_test[transform.features]
-y = df_test[transform.outcomes]
-y_pred = model.predict(X)
+# Now apply the same preprocessing pipeline against any of ibis's
+# supported backends
+con = ibis.connect(...)
+X_remote = con.table["mytable"]
+for batch in recipe.to_pyarrow_batches(X_remote):
+    ...
 ```
 
 By using `ibis` for preprocessing and feature engineering, feature engineering
