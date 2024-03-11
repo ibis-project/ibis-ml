@@ -35,7 +35,7 @@ jobs:
 
       - name: Install ibisml
         run: |
-          pip install pytest "."
+          pip install ".[dev]"
 
       - name: Run tests
         run: |
