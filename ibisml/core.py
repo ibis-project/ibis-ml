@@ -169,14 +169,6 @@ class Recipe:
         """Check if this recipe has already been fit."""
         return all(s.is_fitted() for s in self.steps)
 
-    def _fit_transform(self, table: ir.Table) -> ir.Table:
-        metadata = Metadata()
-        for step in self.steps:
-            step.fit_table(table, metadata)
-            table = step.transform_table(table)
-        self.metadata_ = metadata
-        return table
-
     def fit(self, X, y=None) -> Recipe:
         """Fit a recipe.
 
@@ -193,8 +185,35 @@ class Recipe:
             Returns the same instance.
         """
         table = _as_table(X)
-        self._fit_transform(table)
+        metadata = Metadata()
+        for step in self.steps:
+            step.fit_table(table, metadata)
+            table = step.transform_table(table)
+        self.metadata_ = metadata
         return self
+
+    def transform(self, X):
+        """Transform the data.
+
+        Parameters
+        ----------
+        X : table-like
+            Data to transform.
+
+        Returns
+        -------
+        Xt
+            Transformed data.
+        """
+        if self._output_format == "pandas":
+            return self.to_pandas(X)
+        elif self._output_format == "polars":
+            return self.to_polars(X)
+        elif self._output_format == "pyarrow":
+            return self.to_pyarrow(X)
+        else:
+            assert self._output_format == "default"
+            return self.to_numpy(X)
 
     def fit_transform(self, X, y=None):
         """Fit and transform in one step.
@@ -208,34 +227,10 @@ class Recipe:
 
         Returns
         -------
-        Xt : pd.DataFrame
+        Xt
             Transformed training data.
         """
-        table = _as_table(X)
-        return self._fit_transform(table).to_pandas()
-
-    def transform(self, X):
-        """Transform the data.
-
-        Parameters
-        ----------
-        X : table-like
-            Data to transform.
-
-        Returns
-        -------
-        Xt : pd.DataFrame
-            Transformed data.
-        """
-        if self._output_format == "pandas":
-            return self.to_pandas(X)
-        elif self._output_format == "polars":
-            return self.to_polars(X)
-        elif self._output_format == "pyarrow":
-            return self.to_pyarrow(X)
-        else:
-            assert self._output_format == "default"
-            return self.to_numpy(X)
+        return self.fit(X, y).transform(X)
 
     def _categorize_pandas(self, df: pd.DataFrame) -> pd.DataFrame:
         import pandas as pd

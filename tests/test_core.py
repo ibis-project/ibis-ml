@@ -96,6 +96,9 @@ def test_output_formats(table, format):
     out = r.transform(table)
     assert isinstance(out, typ)
 
+    out2 = r.fit_transform(table)
+    assert isinstance(out2, typ)
+
 
 def test_to_numpy_errors_non_numeric(table):
     r = ml.Recipe(ml.Mutate(d=_.a + _.b))
@@ -121,3 +124,29 @@ def test_input_formats(format):
     out = r.transform(X)
     assert isinstance(out, np.ndarray)
     assert out.dtype == "f8"
+
+
+def test_can_use_in_sklearn_pipeline():
+    sklearn = pytest.importorskip("sklearn")
+    from sklearn.pipeline import Pipeline
+    from sklearn.linear_model import LinearRegression
+
+    X = np.array([[1, 3], [2, 4], [3, 5]])
+    y = np.array([10, 11, 12])
+
+    r = ml.Recipe(ml.Mutate(x2=_.x0 + _.x1), ml.ScaleStandard(ml.everything()))
+    p = Pipeline([("recipe", r), ("model", LinearRegression())])
+
+    # get/set params works
+    # params = p.get_params()
+    # p.set_params(**params)
+
+    # fit and predict work
+    p.fit(X, y)
+    assert isinstance(p.predict(X), np.ndarray)
+
+    # clone works
+    p2 = sklearn.clone(p)
+    r2 = p2.named_steps["recipe"]
+    assert r2 is not r
+    assert not r2.is_fitted()
