@@ -40,7 +40,7 @@ def test_expand_datetime():
     t = ibis.table({"y": "timestamp", "z": "int"})
     step = ml.ExpandDateTime(
         ml.timestamp(),
-        datetime_components=[
+        components=[
             "dow",
             "doy",
             "day",
