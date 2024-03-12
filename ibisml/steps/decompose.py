@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import warnings
+from typing import TYPE_CHECKING, Any, Iterable
 
-import ibis.expr.types as ir
 import numpy as np
 import sklearn.decomposition
 
 from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
+
+if TYPE_CHECKING:
+    import ibis.expr.types as ir
 
 
 class PCA(Step):
@@ -36,6 +39,7 @@ class PCA(Step):
         warnings.warn(
             f"{type(self)} cannot be fit natively; falling back to scikit-learn.",
             PerformanceWarning,
+            stacklevel=2,
         )
         columns = self.inputs.select_columns(table, metadata)
         X = table[columns].to_pandas()  # TODO(deepyaman): Handle empty selection given.
