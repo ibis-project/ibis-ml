@@ -258,7 +258,7 @@ class Recipe:
                     [
                         pa.DictionaryArray.from_arrays(chunk, cats.values)
                         for chunk in col.chunks
-                    ],
+                    ]
                 )
             out[name] = col
         return pa.Table.from_pydict(out)

@@ -286,8 +286,7 @@ class _TypeSelector(Selector):
 
     def matches(self, col: ir.Column, metadata: Metadata) -> bool:
         return metadata.get_categories(col.get_name()) is None and isinstance(
-            col.type(),
-            self._type,
+            col.type(), self._type
         )
 
 

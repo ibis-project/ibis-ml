@@ -11,11 +11,7 @@ import ibisml as ml
 @pytest.fixture()
 def df():
     return pd.DataFrame(
-        {
-            "a": [1, 2, 3, 4, 5],
-            "b": [1, 0, 1, 0, 1],
-            "c": ["x", "x", "y", "x", "y"],
-        },
+        {"a": [1, 2, 3, 4, 5], "b": [1, 0, 1, 0, 1], "c": ["x", "x", "y", "x", "y"]}
     )
 
 
@@ -49,10 +45,7 @@ def test_sklearn_clone(table):
 
 
 def test_in_memory_workflow(df):
-    r = ml.Recipe(
-        ml.Mutate(d=_.a + _.b),
-        ml.Drop(~ml.numeric()),
-    )
+    r = ml.Recipe(ml.Mutate(d=_.a + _.b), ml.Drop(~ml.numeric()))
 
     r.fit(df)
     assert r.is_fitted()
@@ -110,8 +103,7 @@ def test_to_numpy_errors_non_numeric(table):
 
 
 @pytest.mark.parametrize(
-    "format",
-    ["numpy", "pandas", "pyarrow", "polars", "ibis-table"],
+    "format", ["numpy", "pandas", "pyarrow", "polars", "ibis-table"]
 )
 def test_input_formats(format):
     r = ml.Recipe(ml.Cast(ml.everything(), "float64"))
