@@ -65,14 +65,7 @@ class ExpandDateTime(Step):
                 "second",
                 "millisecond",
             ]
-        ] = (
-            "dow",
-            "month",
-            "year",
-            "hour",
-            "minute",
-            "second",
-        ),
+        ] = ("dow", "month", "year", "hour", "minute", "second"),
     ):
         self.inputs = selector(inputs)
         self.components = list(components)

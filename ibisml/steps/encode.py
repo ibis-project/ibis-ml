@@ -139,11 +139,8 @@ class OneHotEncode(Step):
 
         categories.update(
             _compute_categories(
-                table,
-                to_compute,
-                self.min_frequency,
-                self.max_categories,
-            ),
+                table, to_compute, self.min_frequency, self.max_categories
+            )
         )
 
         self.categories_ = categories
@@ -156,7 +153,7 @@ class OneHotEncode(Step):
                 (table[col] == cat).cast("int8").name(f"{col}_{cat}")
                 for col, cats in self.categories_.items()
                 for cat in cats
-            ],
+            ]
         ).drop(*self.categories_)
 
 
@@ -224,10 +221,7 @@ class CategoricalEncode(Step):
             column for column in columns if metadata.get_categories(column) is None
         ]
         categories = _compute_categories(
-            table,
-            columns,
-            self.min_frequency,
-            self.max_categories,
+            table, columns, self.min_frequency, self.max_categories
         )
         for col, cats in categories.items():
             metadata.set_categories(col, cats)
@@ -236,7 +230,7 @@ class CategoricalEncode(Step):
         suffix = uuid.uuid4().hex[:6]
         for col, cats in categories.items():
             table = pa.Table.from_pydict(
-                {f"key_{suffix}": cats, col: list(range(len(cats)))},
+                {f"key_{suffix}": cats, col: list(range(len(cats)))}
             )
             tables[col] = ibis.memtable(table, name=f"{col}_cats_{suffix}")
 
@@ -248,10 +242,7 @@ class CategoricalEncode(Step):
 
         for col, lookup in self.category_tables_.items():
             joined = table.left_join(
-                lookup,
-                table[col] == lookup[0],
-                lname="{name}_left",
-                rname="",
+                lookup, table[col] == lookup[0], lname="{name}_left", rname=""
             )
             table = joined.drop(lookup.columns[0], f"{col}_left")
         return table

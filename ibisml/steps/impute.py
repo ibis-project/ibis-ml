@@ -52,7 +52,7 @@ class FillNA(Step):
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
-            [_fillna(table[c], self.fill_value).name(c) for c in self.columns_],
+            [_fillna(table[c], self.fill_value).name(c) for c in self.columns_]
         )
 
 
@@ -76,7 +76,7 @@ class _BaseImpute(Step):
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
-            [_fillna(table[c], v).name(c) for c, v in self.fill_values_.items()],
+            [_fillna(table[c], v).name(c) for c, v in self.fill_values_.items()]
         )
 
 
@@ -103,7 +103,7 @@ class ImputeMean(_BaseImpute):
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
                 f"Cannot compute mean of {col.get_name()} - "
-                "this column is not numeric",
+                "this column is not numeric"
             )
         return col.mean()
 
@@ -131,7 +131,7 @@ class ImputeMedian(_BaseImpute):
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
                 f"Cannot compute median of {col.get_name()} - "
-                "this column is not numeric",
+                "this column is not numeric"
             )
         return col.median()
 

@@ -69,9 +69,7 @@ class Cast(Step):
     """
 
     def __init__(
-        self,
-        inputs: SelectionType,
-        dtype: dt.DataType | type[dt.DataType] | str,
+        self, inputs: SelectionType, dtype: dt.DataType | type[dt.DataType] | str
     ):
         self.inputs = selector(inputs)
         self.dtype = dt.dtype(dtype)

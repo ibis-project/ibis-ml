@@ -20,7 +20,7 @@ def eval_select(selector):
             "b_time": "time",
             "b_date": "date",
             "b_timestamp": "timestamp",
-        },
+        }
     )
 
     return selector.select_columns(t, metadata)
