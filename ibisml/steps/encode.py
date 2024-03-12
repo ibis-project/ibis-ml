@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from collections import defaultdict
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
 
 import ibis
 import ibis.expr.types as ir
@@ -17,7 +17,8 @@ def _compute_categories(
     min_frequency: int | float | None = None,
     max_categories: int | None = None,
 ) -> dict[str, list[Any]]:
-    import pandas as pd
+    if TYPE_CHECKING:
+        import pandas as pd
 
     # We execute once for each type kind in the inputs. In the common case
     # (only string inputs) this means a single execution even for multiple
@@ -56,7 +57,7 @@ def _compute_categories(
         def process(df: pd.DataFrame) -> list[Any]:
             return df["value"].sort_values().to_list()
 
-    for group_type, group_cols in groups.items():
+    for group_cols in groups.values():
         query = ibis.union(*(collect(col) for col in group_cols))
         result_groups = query.execute().groupby("column")
 
@@ -137,7 +138,12 @@ class OneHotEncode(Step):
                 to_compute.append(column)
 
         categories.update(
-            _compute_categories(table, to_compute, self.min_frequency, self.max_categories)
+            _compute_categories(
+                table,
+                to_compute,
+                self.min_frequency,
+                self.max_categories,
+            ),
         )
 
         self.categories_ = categories
@@ -150,7 +156,7 @@ class OneHotEncode(Step):
                 (table[col] == cat).cast("int8").name(f"{col}_{cat}")
                 for col, cats in self.categories_.items()
                 for cat in cats
-            ]
+            ],
         ).drop(*self.categories_)
 
 
@@ -214,9 +220,14 @@ class CategoricalEncode(Step):
 
         columns = self.inputs.select_columns(table, metadata)
         # Filter out already categorized columns
-        columns = [column for column in columns if metadata.get_categories(column) is None]
+        columns = [
+            column for column in columns if metadata.get_categories(column) is None
+        ]
         categories = _compute_categories(
-            table, columns, self.min_frequency, self.max_categories
+            table,
+            columns,
+            self.min_frequency,
+            self.max_categories,
         )
         for col, cats in categories.items():
             metadata.set_categories(col, cats)
@@ -225,7 +236,7 @@ class CategoricalEncode(Step):
         suffix = uuid.uuid4().hex[:6]
         for col, cats in categories.items():
             table = pa.Table.from_pydict(
-                {f"key_{suffix}": cats, col: list(range(len(cats)))}
+                {f"key_{suffix}": cats, col: list(range(len(cats)))},
             )
             tables[col] = ibis.memtable(table, name=f"{col}_cats_{suffix}")
 

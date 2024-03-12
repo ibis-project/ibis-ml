@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
+import ibis.expr.types as ir
+
 from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
-
-import ibis.expr.types as ir
 
 
 class ScaleMinMax(Step):
@@ -46,7 +46,7 @@ class ScaleMinMax(Step):
                 c = table[name]
                 if not isinstance(c, ir.NumericColumn):
                     raise ValueError(
-                        f"Cannot be normalized {name!r} - this column is not numeric"
+                        f"Cannot be normalized {name!r} - this column is not numeric",
                     )
 
                 aggs.append(c.max().name(f"{name}_max"))
@@ -63,7 +63,7 @@ class ScaleMinMax(Step):
             [
                 ((table[c] - min) / (max - min)).name(c)  # type: ignore
                 for c, (max, min) in self.stats_.items()
-            ]
+            ],
         )
 
 
@@ -105,7 +105,7 @@ class ScaleStandard(Step):
                 c = table[name]
                 if not isinstance(c, ir.NumericColumn):
                     raise ValueError(
-                        f"Cannot standardize {name!r} - this column is not numeric"
+                        f"Cannot standardize {name!r} - this column is not numeric",
                     )
 
                 aggs.append(c.mean().name(f"{name}_mean"))
@@ -122,5 +122,5 @@ class ScaleStandard(Step):
             [
                 ((table[c] - center) / scale).name(c)  # type: ignore
                 for c, (center, scale) in self.stats_.items()
-            ]
+            ],
         )

@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import copy
-from collections.abc import Sequence, Iterable
-from typing import Any, Callable, Literal, cast, TYPE_CHECKING
+from collections.abc import Iterable, Sequence
 from functools import cache
+from typing import TYPE_CHECKING, Any, Callable, Literal, cast
 
-import numpy as np
-import pyarrow as pa
-import pandas as pd
 import ibis
 import ibis.expr.types as ir
+import numpy as np
+import pandas as pd
+import pyarrow as pa
 
 if TYPE_CHECKING:
-    import polars as pl
     import dask.dataframe as dd
+    import polars as pl
     import xgboost as xgb
 
 
@@ -21,7 +21,9 @@ def _as_table(X: Any):
     if isinstance(X, ir.Table):
         return X
     elif isinstance(X, np.ndarray):
-        return ibis.memtable(pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])]))
+        return ibis.memtable(
+            pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])])
+        )
     else:
         return ibis.memtable(X)
 
@@ -74,10 +76,7 @@ def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
     dask cluster.
     """
 
-    def categorize(
-        df: pd.DataFrame,
-        categories: dict[str, list[Any]],
-    ) -> pd.DataFrame:
+    def categorize(df: pd.DataFrame, categories: dict[str, list[Any]]) -> pd.DataFrame:
         import pandas as pd
 
         new = {}
@@ -130,7 +129,9 @@ class Recipe:
             self.steps = kwargs.get("steps")
 
     def set_output(
-        self, *, transform: Literal["default", "pandas", "pyarrow", "polars", None] = None
+        self,
+        *,
+        transform: Literal["default", "pandas", "pyarrow", "polars", None] = None,
     ) -> Recipe:
         """Set output type returned by `transform`.
 
@@ -146,6 +147,7 @@ class Recipe:
             - `"polars"`: Polars dataframe
             - `"pyarrow"`: Pyarrow table
             - `None`: Transform configuration is unchanged
+
         """
         if transform is None:
             return self
@@ -153,7 +155,9 @@ class Recipe:
         formats = ("default", "pandas", "polars", "pyarrow")
 
         if transform not in formats:
-            raise ValueError(f"`transform` must be one of {formats!r}, got {transform}")
+            raise ValueError(
+                f"`transform` must be one of {formats!r}, got {transform!r}"
+            )
 
         self._output_format = transform
         return self
@@ -265,7 +269,9 @@ class Recipe:
 
         categorize = _get_categorize_chunk()
 
-        categories = {col: cats.values for col, cats in self.metadata_.categories.items()}
+        categories = {
+            col: cats.values for col, cats in self.metadata_.categories.items()
+        }
         return ddf.map_partitions(categorize, categories)
 
     def _categorize_pyarrow_batches(
@@ -298,7 +304,6 @@ class Recipe:
         X : table-like
             The input data to transform.
         """
-
         table = _as_table(X)
         for step in self.steps:
             table = step.transform_table(table)
@@ -365,7 +370,9 @@ class Recipe:
             table = self._categorize_pyarrow(table)
         return table
 
-    def to_pyarrow_batches(self, X: Any, categories: bool = False) -> pa.RecordBatchReader:
+    def to_pyarrow_batches(
+        self, X: Any, categories: bool = False
+    ) -> pa.RecordBatchReader:
         """Transform X and return a ``pyarrow.RecordBatchReader``.
 
         Parameters
@@ -407,7 +414,7 @@ class Recipe:
                 return self._categorize_dask_dataframe(ddf)
             return ddf
         else:
-            # TODO: this is suboptimal, but may not matter. In practice I'd only
+            # TODO(jcrist): this is suboptimal, but may not matter. In practice I'd only
             # expect the dask conversion path to be used for backends where dask
             # integration makes sense.
             df = table.to_pandas()
@@ -427,7 +434,9 @@ class Recipe:
         import xgboost as xgb
 
         df = self.to_pandas(X, categories=True)
-        return xgb.DMatrix(df[self.features], df[self.outcomes], enable_categorical=True)
+        return xgb.DMatrix(
+            df[self.features], df[self.outcomes], enable_categorical=True
+        )
 
     def to_dask_dmatrix(self, X: Any) -> xgb.dask.DaskDMatrix:
         """Transform X and return a ``xgboost.dask.DMatrix``

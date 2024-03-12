@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
+import ibis.expr.types as ir
+
 from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
-
-import ibis.expr.types as ir
 
 
 def _fillna(col, val):
@@ -52,7 +52,7 @@ class FillNA(Step):
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
-            [_fillna(table[c], self.fill_value).name(c) for c in self.columns_]
+            [_fillna(table[c], self.fill_value).name(c) for c in self.columns_],
         )
 
 
@@ -76,7 +76,7 @@ class _BaseImpute(Step):
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
-            [_fillna(table[c], v).name(c) for c, v in self.fill_values_.items()]
+            [_fillna(table[c], v).name(c) for c, v in self.fill_values_.items()],
         )
 
 
@@ -102,7 +102,8 @@ class ImputeMean(_BaseImpute):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
-                f"Cannot compute mean of {col.get_name()} - " "this column is not numeric"
+                f"Cannot compute mean of {col.get_name()} - "
+                "this column is not numeric",
             )
         return col.mean()
 
@@ -129,7 +130,8 @@ class ImputeMedian(_BaseImpute):
     def _stat(self, col: ir.Column) -> ir.Scalar:
         if not isinstance(col, ir.NumericColumn):
             raise ValueError(
-                f"Cannot compute median of {col.get_name()} - " "this column is not numeric"
+                f"Cannot compute median of {col.get_name()} - "
+                "this column is not numeric",
             )
         return col.median()
 
