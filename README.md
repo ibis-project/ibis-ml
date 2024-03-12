@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/ibis-project/ibisml.svg)](https://github.com/ibis-project/ibisml/blob/main/LICENSE.txt)
 [![PyPI](https://img.shields.io/pypi/v/ibisml.svg)](https://pypi.org/project/ibisml/)
 
-`ibisml` is a *work-in-progress* library for developing Machine Learning
+`ibisml` is a _work-in-progress_ library for developing Machine Learning
 feature engineering pipelines using [ibis](https://ibis-project.org/). These
 pipelines can then be used to transform and feed data to other machine learning
 libraries like [xgboost](https://xgboost.readthedocs.io) or
