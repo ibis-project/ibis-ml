@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Iterable, Sequence, Literal
-
-import ibis.expr.types as ir
+from typing import TYPE_CHECKING, Any, Iterable, Literal, Sequence
 
 from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
+
+if TYPE_CHECKING:
+    import ibis.expr.types as ir
 
 
 class ExpandDateTime(Step):
@@ -64,14 +65,7 @@ class ExpandDateTime(Step):
                 "second",
                 "millisecond",
             ]
-        ] = (
-            "dow",
-            "month",
-            "year",
-            "hour",
-            "minute",
-            "second",
-        ),
+        ] = ("dow", "month", "year", "hour", "minute", "second"),
     ):
         self.inputs = selector(inputs)
         self.components = list(components)

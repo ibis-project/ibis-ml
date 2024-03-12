@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Iterable, Any
+from typing import Any, Callable, Iterable
 
 import ibis.expr.datatypes as dt
 import ibis.expr.types as ir
@@ -69,9 +69,7 @@ class Cast(Step):
     """
 
     def __init__(
-        self,
-        inputs: SelectionType,
-        dtype: dt.DataType | type[dt.DataType] | str,
+        self, inputs: SelectionType, dtype: dt.DataType | type[dt.DataType] | str
     ):
         self.inputs = selector(inputs)
         self.dtype = dt.dtype(dtype)
@@ -134,8 +132,7 @@ class MutateAt(Step):
         yield ("", self.inputs)
         if self.expr is not None:
             yield ("", self.expr)
-        for name, expr in self.named_exprs.items():
-            yield name, expr
+        yield from self.named_exprs.items()
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         self.columns_ = self.inputs.select_columns(table, metadata)

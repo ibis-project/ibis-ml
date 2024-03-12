@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable
 
+import ibis.expr.types as ir
+
 from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
-
-import ibis.expr.types as ir
 
 
 class ScaleMinMax(Step):

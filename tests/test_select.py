@@ -1,7 +1,6 @@
-import pytest
-
 import ibis
 import ibis.expr.datatypes as dt
+import pytest
 
 import ibisml as ml
 
@@ -95,7 +94,7 @@ def test_matches():
 
 
 @pytest.mark.parametrize(
-    "selector, cols",
+    ("selector", "cols"),
     [
         (ml.integer(), ["a_int"]),
         (ml.floating(), ["a_float"]),

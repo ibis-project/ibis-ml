@@ -1,24 +1,25 @@
-from ._version import __version__
 from ibisml.core import Recipe, Step
 from ibisml.select import (
-    selector,
-    everything,
+    categorical,
     cols,
     contains,
-    endswith,
-    startswith,
-    matches,
-    has_type,
-    numeric,
-    nominal,
-    categorical,
-    string,
-    integer,
-    floating,
-    temporal,
     date,
+    endswith,
+    everything,
+    floating,
+    has_type,
+    integer,
+    matches,
+    nominal,
+    numeric,
+    selector,
+    startswith,
+    string,
+    temporal,
     time,
     timestamp,
     where,
 )
-from ibisml.steps import *  # noqa: F403
+from ibisml.steps import *
+
+from ._version import __version__

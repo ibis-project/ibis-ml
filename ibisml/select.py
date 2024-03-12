@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import re
 from collections.abc import Collection
-from typing import Callable, Union, ClassVar
+from typing import TYPE_CHECKING, Callable, ClassVar, Union
 
-import ibis.expr.types as ir
 import ibis.expr.datatypes as dt
+import ibis.expr.types as ir
 
-from ibisml.core import Metadata
+if TYPE_CHECKING:
+    from ibisml.core import Metadata
 
 
 class Selector:

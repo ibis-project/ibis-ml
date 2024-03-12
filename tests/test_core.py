@@ -1,25 +1,21 @@
-import ibisml as ml
-
+import ibis
 import numpy as np
 import pandas as pd
 import pyarrow as pa
-import ibis
-from ibis import _
 import pytest
+from ibis import _
+
+import ibisml as ml
 
 
-@pytest.fixture
+@pytest.fixture()
 def df():
     return pd.DataFrame(
-        {
-            "a": [1, 2, 3, 4, 5],
-            "b": [1, 0, 1, 0, 1],
-            "c": ["x", "x", "y", "x", "y"],
-        }
+        {"a": [1, 2, 3, 4, 5], "b": [1, 0, 1, 0, 1], "c": ["x", "x", "y", "x", "y"]}
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def table(df):
     return ibis.memtable(df)
 
@@ -49,10 +45,7 @@ def test_sklearn_clone(table):
 
 
 def test_in_memory_workflow(df):
-    r = ml.Recipe(
-        ml.Mutate(d=_.a + _.b),
-        ml.Drop(~ml.numeric()),
-    )
+    r = ml.Recipe(ml.Mutate(d=_.a + _.b), ml.Drop(~ml.numeric()))
 
     r.fit(df)
     assert r.is_fitted()
@@ -75,7 +68,9 @@ def test_set_output():
     recipe.set_output(transform=None)  # None -> leave unchanged
     assert recipe.output_format == "polars"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match=r"`transform` must be one of \(.*\), got 'unsupported'"
+    ):
         recipe.set_output(transform="unsupported")
 
 
@@ -107,7 +102,9 @@ def test_to_numpy_errors_non_numeric(table):
         r.to_numpy(table)
 
 
-@pytest.mark.parametrize("format", ["numpy", "pandas", "pyarrow", "polars", "ibis-table"])
+@pytest.mark.parametrize(
+    "format", ["numpy", "pandas", "pyarrow", "polars", "ibis-table"]
+)
 def test_input_formats(format):
     r = ml.Recipe(ml.Cast(ml.everything(), "float64"))
     X = np.eye(3, dtype="i8")
@@ -128,8 +125,8 @@ def test_input_formats(format):
 
 def test_can_use_in_sklearn_pipeline():
     sklearn = pytest.importorskip("sklearn")
-    from sklearn.pipeline import Pipeline
     from sklearn.linear_model import LinearRegression
+    from sklearn.pipeline import Pipeline
 
     X = np.array([[1, 3], [2, 4], [3, 5]])
     y = np.array([10, 11, 12])
