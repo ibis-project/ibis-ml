@@ -8,6 +8,16 @@ from ibis import _
 import ibisml as ml
 
 
+class Shuffle(ml.Step):
+    """A Step to reorder the table, for use in testing that order is maintained"""
+
+    def is_fitted(self):
+        return True
+
+    def transform_table(self, table):
+        return table.order_by(ibis.random())
+
+
 @pytest.fixture()
 def df():
     return pd.DataFrame(
@@ -110,17 +120,46 @@ def test_input_formats(format):
     X = np.eye(3, dtype="i8")
     if format == "polars":
         pl = pytest.importorskip("polars")
-        X = pl.DataFrame(np.eye(3, dtype="i8"), schema=["x1", "x2", "x3"])
+        X = pl.DataFrame(X, schema=["x0", "x1", "x2"])
     elif format != "numpy":
-        X = pd.DataFrame(np.eye(3, dtype="i8"), columns=["x1", "x2", "x3"])
+        X = pd.DataFrame(X, columns=["x0", "x1", "x2"])
         if format == "ibis-table":
-            X = ibis.memtable(X, name="test")
+            X = ibis.memtable(X)
         elif format == "pyarrow":
             X = pa.Table.from_pandas(X)
     r.fit(X)
     out = r.transform(X)
     assert isinstance(out, np.ndarray)
     assert out.dtype == "f8"
+
+
+@pytest.mark.parametrize(
+    "format", ["numpy", "pandas", "pyarrow", "polars", "ibis-table"]
+)
+def test_transform_in_memory_data_maintains_order(format):
+    r = ml.Recipe(ml.Cast(ml.everything(), "float64"), Shuffle())
+
+    X = np.vstack([np.arange(100), np.arange(100, 200)]).T
+    if format == "polars":
+        pl = pytest.importorskip("polars")
+        X = pl.DataFrame(X, schema=["x0", "x1"])
+    elif format != "numpy":
+        X = pd.DataFrame(X, columns=["x0", "x1"])
+        if format == "ibis-table":
+            X = ibis.memtable(X)
+        elif format == "pyarrow":
+            X = pa.Table.from_pandas(X)
+    r.fit(X)
+    out = r.to_pandas(X)
+
+    # table inputs won't maintain order, in-memory inputs will
+    should_be_ordered = format != "ibis-table"
+
+    assert list(out.columns) == ["x0", "x1"]
+
+    for col in out.columns:
+        assert out[col].dtype == "f8"
+        assert out[col].is_monotonic_increasing == should_be_ordered
 
 
 def test_can_use_in_sklearn_pipeline():
@@ -135,8 +174,8 @@ def test_can_use_in_sklearn_pipeline():
     p = Pipeline([("recipe", r), ("model", LinearRegression())])
 
     # get/set params works
-    # params = p.get_params()
-    # p.set_params(**params)
+    params = p.get_params()
+    p.set_params(**params)
 
     # fit and predict work
     p.fit(X, y)
