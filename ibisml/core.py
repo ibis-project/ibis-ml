@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import os
 from collections.abc import Iterable, Sequence
 from functools import cache
 from typing import TYPE_CHECKING, Any, Callable, Literal, cast
@@ -10,6 +11,7 @@ import ibis.expr.types as ir
 import numpy as np
 import pandas as pd
 import pyarrow as pa
+from ibis.common.dispatch import lazy_singledispatch
 
 if TYPE_CHECKING:
     import dask.dataframe as dd
@@ -17,15 +19,83 @@ if TYPE_CHECKING:
     import xgboost as xgb
 
 
-def _as_table(X: Any):
-    if isinstance(X, ir.Table):
-        return X
-    elif isinstance(X, np.ndarray):
-        return ibis.memtable(
-            pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])])
-        )
+def gen_name(prefix: str = "") -> str:
+    """Create a unique identifier."""
+    parts = ["ibis"]
+    if prefix:
+        parts.append(prefix)
+    parts.append(os.urandom(8).hex())
+    return "_".join(parts)
+
+
+@lazy_singledispatch
+def as_table(X: Any, maintain_order: bool = False) -> tuple[ir.Table, str | None]:
+    """Coerce `X` to an ibis table.
+
+    Parameters
+    ----------
+    X : table-like
+        A supported input format.
+    maintain_order : bool, optional
+        If True and `X` is an in-memory table, an index column will be inserted
+        to use to maintain order of the output.
+
+    Returns
+    -------
+    table : ir.Table
+        The output table.
+    index : str | None
+        The index column name (if inserted), `None` otherwise.
+    """
+    raise TypeError(f"Cannot convert {type(X).__name__} to an ibis Table")
+
+
+@as_table.register(ir.Table)
+def _(X, maintain_order=False):
+    return X, None
+
+
+@as_table.register(pd.DataFrame)
+def _(X, maintain_order=False):
+    if maintain_order:
+        index = gen_name("index")
+        X = X.assign(**{index: np.arange(len(X))})
     else:
-        return ibis.memtable(X)
+        index = None
+    return ibis.memtable(X), index
+
+
+@as_table.register(np.ndarray)
+def _(X, maintain_order=False):
+    X = pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])])
+    if maintain_order:
+        index = gen_name("index")
+        X = X.assign(**{index: np.arange(len(X))})
+    else:
+        index = None
+    return ibis.memtable(X), index
+
+
+@as_table.register(pa.Table)
+def _(X, maintain_order=False):
+    if maintain_order:
+        index = gen_name("index")
+        X = X.add_column(0, index, pa.array(np.arange(len(X))))
+    else:
+        index = None
+    return ibis.memtable(X), index
+
+
+@as_table.register("polars.DataFrame")
+def _(X, maintain_order=False):
+    import polars as pl
+
+    if maintain_order:
+        index = gen_name("index")
+        X = X.with_columns(**{index: pl.arange(len(X))})
+    else:
+        index = None
+    return ibis.memtable(X), index
 
 
 class Categories:
@@ -188,7 +258,7 @@ class Recipe:
         self
             Returns the same instance.
         """
-        table = _as_table(X)
+        table, _ = as_table(X)
         metadata = Metadata()
         for step in self.steps:
             step.fit_table(table, metadata)
@@ -296,7 +366,7 @@ class Recipe:
             _categorize_wrap_reader(reader, self.metadata_.categories),
         )
 
-    def to_table(self, X: ir.Table) -> ir.Table:
+    def to_table(self, X) -> ir.Table:
         """Transform X and return an ibis table.
 
         Parameters
@@ -304,9 +374,11 @@ class Recipe:
         X : table-like
             The input data to transform.
         """
-        table = _as_table(X)
+        table, index = as_table(X, maintain_order=True)
         for step in self.steps:
             table = step.transform_table(table)
+        if index is not None:
+            table = table.order_by(index).drop(index)
         return table
 
     def to_pandas(self, X: Any, categories: bool = False) -> pd.DataFrame:
