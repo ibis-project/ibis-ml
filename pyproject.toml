@@ -52,7 +52,7 @@ select = [
   "TCH",  # flake8-type-checking
   "PTH",  # flake8-use-pathlib
   "TD",   # flake8-todos
-  # "ERA",# eradicate # TODO(deepyaman): Fix commented-out code.
+  "ERA",  # eradicate
   # "PD", # pandas-vet # TODO(deepyaman): Use `.to_numpy()` instead of `.values`.
   # "PGH",# pygrep-hooks # TODO(deepyaman): Use specific rule codes when ignoring type issues.
   "FLY",  # flynt
