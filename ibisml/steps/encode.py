@@ -9,6 +9,7 @@ import ibis.expr.types as ir
 
 from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
+from ibisml.steps.impute import FillNA
 
 
 def _compute_categories(
@@ -93,7 +94,7 @@ class OneHotEncode(Step):
     --------
     >>> import ibisml as ml
 
-    One-hot encode all string columns
+    One-hot encode all string columns.
 
     >>> step = ml.OneHotEncode(ml.string())
 
@@ -148,6 +149,7 @@ class OneHotEncode(Step):
     def transform_table(self, table: ir.Table) -> ir.Table:
         if not self.categories_:
             return table
+
         return table.mutate(
             [
                 (table[col] == cat).cast("int8").name(f"{col}_{cat}")
@@ -180,7 +182,7 @@ class CategoricalEncode(Step):
     --------
     >>> import ibisml as ml
 
-    Categorical encode all string columns
+    Categorical encode all string columns.
 
     >>> step = ml.CategoricalEncode(ml.string())
 
@@ -237,12 +239,53 @@ class CategoricalEncode(Step):
         self.category_tables_ = tables
 
     def transform_table(self, table: ir.Table) -> ir.Table:
-        if not self.category_tables_:
-            return table
-
         for col, lookup in self.category_tables_.items():
             joined = table.left_join(
                 lookup, table[col] == lookup[0], lname="{name}_left", rname=""
             )
             table = joined.drop(lookup.columns[0], f"{col}_left")
+
         return table
+
+
+class CountEncode(Step):
+    """A step for count encoding select columns.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to count encode.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Count encode all string columns.
+
+    >>> step = ml.CountEncode(ml.string())
+    """
+
+    def __init__(self, inputs: SelectionType) -> None:
+        self.inputs = selector(inputs)
+
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        columns = self.inputs.select_columns(table, metadata)
+        self.value_counts_ = {
+            c: ibis.memtable(table[c].value_counts().to_pyarrow()) for c in columns
+        }
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        for c, value_counts in self.value_counts_.items():
+            joined = table.left_join(
+                value_counts, table[c] == value_counts[0], lname="left_{name}", rname=""
+            )
+            table = joined.drop(value_counts.columns[0], f"left_{c}").rename(
+                {c: f"{c}_count"}
+            )
+
+        fillna = FillNA(list(self.value_counts_), 0)
+        fillna.fit_table(table, Metadata())
+        return fillna.transform_table(table)
