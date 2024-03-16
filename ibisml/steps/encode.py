@@ -286,6 +286,6 @@ class CountEncode(Step):
                 {c: f"{c}_count"}
             )
 
-        fillna = FillNA(list(self.value_counts_), 0)
+        fillna = FillNA(self.value_counts_, 0)
         fillna.fit_table(table, Metadata())
         return fillna.transform_table(table)

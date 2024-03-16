@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Collection
+from collections.abc import Iterable
 from typing import TYPE_CHECKING, Callable, ClassVar, Union
 
 import ibis.expr.datatypes as dt
@@ -73,7 +73,7 @@ class Selector:
         ]
 
 
-SelectionType = Union[str, Collection[str], Callable[[ir.Column], bool], Selector]
+SelectionType = Union[str, Iterable[str], Callable[[ir.Column], bool], Selector]
 
 
 def selector(obj: SelectionType) -> Selector:
@@ -82,7 +82,7 @@ def selector(obj: SelectionType) -> Selector:
         return obj
     elif isinstance(obj, str):
         return cols(obj)
-    elif isinstance(obj, Collection):
+    elif isinstance(obj, Iterable):
         return cols(*obj)
     elif callable(obj):
         return where(obj)
