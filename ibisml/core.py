@@ -366,7 +366,7 @@ class Recipe:
             _categorize_wrap_reader(reader, self.metadata_.categories),
         )
 
-    def to_table(self, X) -> ir.Table:
+    def to_ibis(self, X) -> ir.Table:
         """Transform X and return an ibis table.
 
         Parameters
@@ -394,7 +394,7 @@ class Recipe:
             as numeric columns containing only their integral categorical
             codes.
         """
-        df = self.to_table(X).to_pandas()
+        df = self.to_ibis(X).to_pandas()
         if categories:
             return self._categorize_pandas(df)
         return df
@@ -407,7 +407,7 @@ class Recipe:
         X : table-like
             The input data to transform.
         """
-        table = self.to_table(X)
+        table = self.to_ibis(X)
         if not all(t.is_numeric() for t in table.schema().types):
             raise ValueError(
                 "Not all output columns are numeric, cannot convert to a numpy array"
@@ -422,7 +422,7 @@ class Recipe:
         X : table-like
             The input data to transform.
         """
-        return self.to_table(X).to_polars()
+        return self.to_ibis(X).to_polars()
 
     def to_pyarrow(self, X: Any, categories: bool = False) -> pa.Table:
         """Transform X and return a ``pyarrow.Table``.
@@ -437,7 +437,7 @@ class Recipe:
             as numeric columns containing only their integral categorical
             codes.
         """
-        table = self.to_table(X).to_pyarrow()
+        table = self.to_ibis(X).to_pyarrow()
         if categories:
             table = self._categorize_pyarrow(table)
         return table
@@ -457,7 +457,7 @@ class Recipe:
             as numeric columns containing only their integral categorical
             codes.
         """
-        reader = self.to_table(X).to_pyarrow_batches()
+        reader = self.to_ibis(X).to_pyarrow_batches()
         if categories:
             return self._categorize_pyarrow_batches(reader)
         return reader
@@ -477,7 +477,7 @@ class Recipe:
         """
         import dask.dataframe as dd
 
-        table = self.to_table(X)
+        table = self.to_ibis(X)
 
         con = ibis.get_backend(table)
         if hasattr(con, "to_dask"):
