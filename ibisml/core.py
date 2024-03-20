@@ -7,6 +7,7 @@ from functools import cache
 from typing import TYPE_CHECKING, Any, Callable, Literal, cast
 
 import ibis
+import ibis.expr.operations as ops
 import ibis.expr.types as ir
 import numpy as np
 import pandas as pd
@@ -28,14 +29,38 @@ def gen_name(prefix: str = "") -> str:
     return "_".join(parts)
 
 
+def _ibis_table_to_numpy(table: ir.Table) -> np.ndarray:
+    if not all(t.is_numeric() for t in table.schema().types):
+        raise ValueError(
+            "Not all output columns are numeric, cannot convert to a numpy array"
+        )
+    return table.to_pandas().values
+
+
+def _y_as_dataframe(y: Any) -> pd.DataFrame:
+    """Coerce `y` to a pandas dataframe"""
+    if isinstance(y, pd.DataFrame):
+        return y
+    elif isinstance(y, pd.Series):
+        return y.to_frame()
+    y = np.asarray(y)
+    if y.ndim == 1:
+        return pd.DataFrame({"y": y})
+    return pd.DataFrame(y, name=[f"y{i}" for i in range(y.shape[-1])])
+
+
 @lazy_singledispatch
-def as_table(X: Any, maintain_order: bool = False) -> tuple[ir.Table, str | None]:
-    """Coerce `X` to an ibis table.
+def normalize_table(
+    X: Any, y: Any = None, maintain_order: bool = False
+) -> tuple[ir.Table, tuple[str, ...], str | None]:
+    """Coerce `X` and `y` to an ibis table.
 
     Parameters
     ----------
     X : table-like
-        A supported input format.
+        The predictor columns in a supported input format.
+    y : column-like or table-like, optional
+        Any target columns, in a supported input format.
     maintain_order : bool, optional
         If True and `X` is an in-memory table, an index column will be inserted
         to use to maintain order of the output.
@@ -44,58 +69,156 @@ def as_table(X: Any, maintain_order: bool = False) -> tuple[ir.Table, str | None
     -------
     table : ir.Table
         The output table.
+    targets : tuple[str, ...]
+        A tuple of target column names in the table.
     index : str | None
         The index column name (if inserted), `None` otherwise.
     """
     raise TypeError(f"Cannot convert {type(X).__name__} to an ibis Table")
 
 
-@as_table.register(ir.Table)
-def _(X, maintain_order=False):
-    return X, None
+@normalize_table.register(ir.Table)
+def _(X, y=None, maintain_order=False):
+    if y is None:
+        return X, (), None
+
+    if isinstance(y, ir.Column):
+        y = y.normalize_table()
+
+    if not isinstance(y, ir.Table):
+        raise TypeError(
+            "When passing in `X` as an ibis Table, `y` must also be an "
+            "ibis Table or Column"
+        )
+
+    if set(y.columns).insersection(X.columns):
+        raise ValueError("X and y must not share column names")
+
+    X_op = X.op()
+    y_op = y.op()
+
+    # For now we only handle reconstituting a table after a simple selection.
+    # >>> X = parent[cols]
+    # >>> y = parent[single_or_multiple_cols]
+    # >>> table = parent[cols + single_or_multiple_cols]
+    if (
+        hasattr(ops, "Project")
+        and isinstance(X_op, ops.Project)
+        and isinstance(y_op, ops.Project)
+        and X_op.parent is y_op.parent
+    ):
+        # ibis 9.0
+        values = dict(X_op.values)
+        values.update(y_op.values)
+        table = ops.Project(X_op.parent, values)
+    elif (
+        hasattr(ops, "Selection")
+        and isinstance(X_op, ops.Selection)
+        and isinstance(y_op, ops.Selection)
+        and X_op.table is y_op.table
+        and X_op.predicates == y_op.predicates
+        and X_op.sort_keys == y_op.sort_keys
+    ):
+        # ibis 8.0
+        table = ops.Selection(
+            X_op.table,
+            X_op.selections + y_op.selections,
+            X_op.predicates,
+            X_op.sort_keys,
+        )
+    else:
+        raise ValueError("`X` and `y` must directly share a common parent table")
+
+    return table, tuple(y.columns), None
 
 
-@as_table.register(pd.DataFrame)
-def _(X, maintain_order=False):
+@normalize_table.register(pd.DataFrame)
+def _(X, y=None, maintain_order=False):
+    if y is not None:
+        y = _y_as_dataframe(y)
+        table = pd.concat([X, y], axis=1)
+        targets = tuple(y.columns)
+    else:
+        table = X
+        targets = ()
+
     if maintain_order:
         index = gen_name("index")
-        X = X.assign(**{index: np.arange(len(X))})
+        table = table.assign(**{index: np.arange(len(table))})
     else:
         index = None
-    return ibis.memtable(X), index
+    return ibis.memtable(table), targets, index
 
 
-@as_table.register(np.ndarray)
-def _(X, maintain_order=False):
+@normalize_table.register(np.ndarray)
+def _(X, y=None, maintain_order=False):
     X = pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])])
+    if y is not None:
+        y = _y_as_dataframe(y)
+        table = pd.concat([X, y], axis=1)
+        targets = tuple(y.columns)
+    else:
+        table = X
+        targets = ()
+
     if maintain_order:
         index = gen_name("index")
-        X = X.assign(**{index: np.arange(len(X))})
+        table = table.assign(**{index: np.arange(len(table))})
     else:
         index = None
-    return ibis.memtable(X), index
+    return ibis.memtable(table), targets, index
 
 
-@as_table.register(pa.Table)
-def _(X, maintain_order=False):
+@normalize_table.register(pa.Table)
+def _(X, y=None, maintain_order=False):
+    if y is not None:
+        if isinstance(y, (pa.ChunkedArray, pa.Array)):
+            y = pa.Table.from_pydict({"y": y})
+        elif not isinstance(y, pa.Table):
+            raise TypeError(
+                "When passing in `X` as an pyarrow.Table, `y` must also be an "
+                "pyarrow.Table or Array"
+            )
+        targets = tuple(y.column_names)
+        table = X
+        for name in y.column_names:
+            table.append_column(name, y[name])
+    else:
+        table = X
+        targets = ()
+
     if maintain_order:
         index = gen_name("index")
-        X = X.add_column(0, index, pa.array(np.arange(len(X))))
+        table = table.append_column(index, pa.array(np.arange(len(table))))
     else:
         index = None
-    return ibis.memtable(X), index
+    return ibis.memtable(table), targets, index
 
 
-@as_table.register("polars.DataFrame")
-def _(X, maintain_order=False):
+@normalize_table.register("polars.DataFrame")
+def _(X, y=None, maintain_order=False):
     import polars as pl
 
+    if y is not None:
+        if isinstance(y, pl.Series):
+            y = y.to_frame()
+        elif not isinstance(y, (pl.DataFrame, pl.LazyFrame)):
+            raise TypeError(
+                "When passing in `X` as an polars.DataFrame, `y` must also be "
+                "polars.DataFrame or Series"
+            )
+        table = pl.concat([X, y], how="horizontal")
+        targets = tuple(y.columns)
+    else:
+        table = X
+        targets = ()
+
     if maintain_order:
         index = gen_name("index")
-        X = X.with_columns(**{index: pl.arange(len(X))})
+        table = table.with_columns(**{index: pl.arange(len(table))})
     else:
         index = None
-    return ibis.memtable(X), index
+    return ibis.memtable(table), targets, index
 
 
 class Categories:
@@ -111,8 +234,13 @@ class Categories:
 
 
 class Metadata:
-    def __init__(self, categories: dict[str, Categories] | None = None):
+    def __init__(
+        self,
+        categories: dict[str, Categories] | None = None,
+        targets: tuple[str, ...] = (),
+    ):
         self.categories = categories or {}
+        self.targets = targets
 
     def get_categories(self, column: str) -> Categories | None:
         return self.categories.get(column)
@@ -243,6 +371,45 @@ class Recipe:
         """Check if this recipe has already been fit."""
         return all(s.is_fitted() for s in self.steps)
 
+    def _fit_table(
+        self, table: ir.Table, targets: tuple[str, ...] = (), index: str | None = None
+    ) -> None:
+        metadata = Metadata(targets=targets)
+
+        if index is not None:
+            table = table.drop(index)
+
+        for step in self.steps:
+            step.fit_table(table, metadata)
+            table = step.transform_table(table)
+
+        self.metadata_ = metadata
+
+    def _transform_table(
+        self, table: ir.Table, targets: tuple[str, ...] = (), index: str | None = None
+    ) -> ir.Table:
+        if targets:
+            table = table.drop(*targets)
+
+        for step in self.steps:
+            table = step.transform_table(table)
+
+        if index is not None:
+            table = table.order_by(index).drop(index)
+
+        return table
+
+    def _to_output_format(self, table: ir.Table) -> Any:
+        if self._output_format == "pandas":
+            return table.to_pandas()
+        elif self._output_format == "polars":
+            return table.to_polars()
+        elif self._output_format == "pyarrow":
+            return table.to_pyarrow()
+        else:
+            assert self._output_format == "default"
+            return _ibis_table_to_numpy(table)
+
     def fit(self, X, y=None) -> Recipe:
         """Fit a recipe.
 
@@ -258,13 +425,20 @@ class Recipe:
         self
             Returns the same instance.
         """
-        table, _ = as_table(X)
-        metadata = Metadata()
-        for step in self.steps:
-            step.fit_table(table, metadata)
-            table = step.transform_table(table)
-        self.metadata_ = metadata
+        table, targets, index = normalize_table(X, y)
+        self._fit_table(table, targets, index)
         return self
+
+    def to_ibis(self, X) -> ir.Table:
+        """Transform X and return an ibis table.
+
+        Parameters
+        ----------
+        X : table-like
+            The input data to transform.
+        """
+        table, targets, index = normalize_table(X, maintain_order=True)
+        return self._transform_table(table, targets, index)
 
     def transform(self, X):
         """Transform the data.
@@ -279,15 +453,8 @@ class Recipe:
         Xt
             Transformed data.
         """
-        if self._output_format == "pandas":
-            return self.to_pandas(X)
-        elif self._output_format == "polars":
-            return self.to_polars(X)
-        elif self._output_format == "pyarrow":
-            return self.to_pyarrow(X)
-        else:
-            assert self._output_format == "default"
-            return self.to_numpy(X)
+        table = self.to_ibis(X)
+        return self._to_output_format(table)
 
     def fit_transform(self, X, y=None):
         """Fit and transform in one step.
@@ -304,7 +471,10 @@ class Recipe:
         Xt
             Transformed training data.
         """
-        return self.fit(X, y).transform(X)
+        table, targets, index = normalize_table(X, y, maintain_order=True)
+        self._fit_table(table, targets, index)
+        table = self._transform_table(table, targets, index)
+        return self._to_output_format(table)
 
     def _categorize_pandas(self, df: pd.DataFrame) -> pd.DataFrame:
         import pandas as pd
@@ -366,21 +536,6 @@ class Recipe:
             _categorize_wrap_reader(reader, self.metadata_.categories),
         )
 
-    def to_ibis(self, X) -> ir.Table:
-        """Transform X and return an ibis table.
-
-        Parameters
-        ----------
-        X : table-like
-            The input data to transform.
-        """
-        table, index = as_table(X, maintain_order=True)
-        for step in self.steps:
-            table = step.transform_table(table)
-        if index is not None:
-            table = table.order_by(index).drop(index)
-        return table
-
     def to_pandas(self, X: Any, categories: bool = False) -> pd.DataFrame:
         """Transform X and return a ``pandas.DataFrame``.
 
@@ -408,11 +563,7 @@ class Recipe:
             The input data to transform.
         """
         table = self.to_ibis(X)
-        if not all(t.is_numeric() for t in table.schema().types):
-            raise ValueError(
-                "Not all output columns are numeric, cannot convert to a numpy array"
-            )
-        return table.to_pandas().values
+        return _ibis_table_to_numpy(table)
 
     def to_polars(self, X: Any) -> pl.DataFrame:
         """Transform X and return a ``polars.DataFrame``.
