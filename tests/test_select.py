@@ -6,7 +6,7 @@ import ibisml as ml
 
 
 def eval_select(selector):
-    metadata = ml.core.Metadata()
+    metadata = ml.core.Metadata(targets=("y",))
     metadata.set_categories("a_categorical", ["a", "b"])
     metadata.set_categories("b_categorical", ["c", "d"])
 
@@ -20,6 +20,7 @@ def eval_select(selector):
             "b_time": "time",
             "b_date": "date",
             "b_timestamp": "timestamp",
+            "y": "int",
         }
     )
 

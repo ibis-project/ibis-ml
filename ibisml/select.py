@@ -69,7 +69,7 @@ class Selector:
         return [
             c
             for c in table.columns
-            if self.matches(table[c], metadata)  # type: ignore
+            if c not in metadata.targets and self.matches(table[c], metadata)  # type: ignore
         ]
 
 
