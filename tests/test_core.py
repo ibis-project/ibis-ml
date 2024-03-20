@@ -51,7 +51,7 @@ def test_sklearn_clone(table):
     assert not r2.is_fitted()
 
     r2.fit(table)
-    assert r1.to_table(table).equals(r2.to_table(table))
+    assert r1.to_ibis(table).equals(r2.to_ibis(table))
 
 
 def test_in_memory_workflow(df):
