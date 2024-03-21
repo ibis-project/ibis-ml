@@ -338,3 +338,10 @@ def test_normalize_table_polars_errors():
     X = pl.DataFrame({"x": [1, 2]})
     with pytest.raises(TypeError, match="must also be a polars"):
         normalize_table(X, object())
+
+
+@pytest.mark.parametrize("method", ["transform", "to_ibis", "to_pandas", "to_numpy"])
+def test_errors_nicely_if_not_fitted(table, method):
+    r = ml.Recipe(ml.Drop(~ml.numeric()), ml.ScaleStandard(ml.numeric()))
+    with pytest.raises(ValueError, match="not fitted"):
+        getattr(r, method)(table)
