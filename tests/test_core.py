@@ -1,4 +1,5 @@
 import ibis
+import ibis.expr.types as ir
 import numpy as np
 import pandas as pd
 import pyarrow as pa
@@ -6,6 +7,7 @@ import pytest
 from ibis import _
 
 import ibisml as ml
+from ibisml.core import normalize_table
 
 
 class Shuffle(ml.Step):
@@ -21,7 +23,12 @@ class Shuffle(ml.Step):
 @pytest.fixture()
 def df():
     return pd.DataFrame(
-        {"a": [1, 2, 3, 4, 5], "b": [1, 0, 1, 0, 1], "c": ["x", "x", "y", "x", "y"]}
+        {
+            "a": [1, 2, 3, 4, 5],
+            "b": [1, 0, 1, 0, 1],
+            "c": ["x", "x", "y", "x", "y"],
+            "y": [0, 1, 0, 1, 0],
+        }
     )
 
 
@@ -34,7 +41,7 @@ def test_is_fitted(table):
     r = ml.Recipe(ml.Drop(~ml.numeric()))
     assert not r.is_fitted()
 
-    r.fit(table)
+    r.fit(table, "y")
     assert r.is_fitted()
 
 
@@ -44,25 +51,31 @@ def test_sklearn_clone(table):
     r1 = ml.Recipe(ml.Drop(~ml.numeric()))
     assert not r1.is_fitted()
 
-    r1.fit(table)
+    r1.fit(table, "y")
     assert r1.is_fitted()
 
     r2 = sklearn.clone(r1)
     assert not r2.is_fitted()
 
-    r2.fit(table)
+    r2.fit(table, "y")
     assert r1.to_ibis(table).equals(r2.to_ibis(table))
 
 
-def test_in_memory_workflow(df):
+@pytest.mark.parametrize("include_y", [False, True])
+def test_in_memory_workflow(df, include_y):
+    X = df[["a", "b", "c"]]
+
     r = ml.Recipe(ml.Mutate(d=_.a + _.b), ml.Drop(~ml.numeric()))
 
-    r.fit(df)
+    if include_y:
+        r.fit(X, y=df.y)
+    else:
+        r.fit(X)
     assert r.is_fitted()
-    res = r.transform(df)
+    res = r.transform(X)
 
     assert isinstance(res, np.ndarray)
-    sol = df.assign(d=df.a + df.b).drop("c", axis=1).values
+    sol = X.assign(d=X.a + X.b).drop("c", axis=1).values
     np.testing.assert_array_equal(res, sol)
 
 
@@ -85,7 +98,12 @@ def test_set_output():
 
 
 @pytest.mark.parametrize("format", ["pandas", "polars", "pyarrow", "default"])
-def test_output_formats(table, format):
+@pytest.mark.parametrize("fit_transform", [False, True])
+@pytest.mark.parametrize("include_y", [False, True])
+def test_output_formats(table, format, fit_transform, include_y):
+    X = table[["a", "b", "c"]]
+    y = table["y"] if include_y else None
+
     if format == "pandas":
         typ = pd.DataFrame
     elif format == "pyarrow":
@@ -97,8 +115,7 @@ def test_output_formats(table, format):
 
     r = ml.Recipe(ml.Mutate(d=_.a + _.b), ml.Drop(~ml.numeric()))
     r.set_output(transform=format)
-    r.fit(table)
-    out = r.transform(table)
+    out = r.fit_transform(X, y=y) if fit_transform else r.fit(X, y=y).transform(X)
     assert isinstance(out, typ)
 
     out2 = r.fit_transform(table)
@@ -186,3 +203,138 @@ def test_can_use_in_sklearn_pipeline():
     r2 = p2.named_steps["recipe"]
     assert r2 is not r
     assert not r2.is_fitted()
+
+
+@pytest.mark.parametrize(
+    "get_Xy",
+    [
+        pytest.param(lambda t: (t[["a", "b", "c"]], None), id="None"),
+        pytest.param(lambda t: (t[["a", "b", "c"]], t["y"]), id="column"),
+        pytest.param(lambda t: (t[["a", "b", "c"]], t[["y"]]), id="table"),
+        pytest.param(lambda t: (t, "y"), id="col-name"),
+        pytest.param(lambda t: (t, ["y"]), id="col-names"),
+    ],
+)
+@pytest.mark.parametrize("maintain_order", [False, True])
+def test_normalize_table_ibis(table, get_Xy, maintain_order):
+    X, y = get_Xy(table)
+    t, targets, index = normalize_table(X, y, maintain_order=maintain_order)
+    sol_targets = ("y",) if y is not None else ()
+    sol_cols = ("a", "b", "c", *sol_targets)
+    assert isinstance(t, ir.Table)
+    assert tuple(t.columns) == sol_cols
+    assert targets == sol_targets
+    assert index is None
+
+
+def test_normalize_table_ibis_errors(table):
+    with pytest.raises(TypeError, match="must also be an ibis Table or Column"):
+        normalize_table(table, object())
+
+    with pytest.raises(ValueError, match="must not share column names"):
+        normalize_table(table, table[["y"]])
+
+    y = ibis.table({"target": "int"}, name="y")
+    with pytest.raises(ValueError, match="must directly share a common parent"):
+        normalize_table(table, y)
+
+
+@pytest.mark.parametrize(
+    "get_y",
+    [
+        pytest.param(lambda t: None, id="None"),
+        pytest.param(lambda t: t["y"], id="series"),
+        pytest.param(lambda t: t[["y"]], id="dataframe"),
+        pytest.param(lambda t: t["y"].values, id="numpy-1d"),
+        pytest.param(lambda t: t[["y"]].values, id="numpy-2d"),
+    ],
+)
+@pytest.mark.parametrize("x_is_numpy", [False, True])
+@pytest.mark.parametrize("maintain_order", [False, True])
+def test_normalize_table_pandas_numpy(df, get_y, x_is_numpy, maintain_order):
+    y = get_y(df)
+    X = df[["a", "b"]]
+    if x_is_numpy:
+        X = X.values
+
+    t, targets, index = normalize_table(X, y, maintain_order=maintain_order)
+    if y is None:
+        sol_targets = ()
+    elif isinstance(y, np.ndarray):
+        sol_targets = ("y",) if y.ndim == 1 else ("y0",)
+    else:
+        sol_targets = ("y",)
+
+    sol_cols = (("x0", "x1") if x_is_numpy else ("a", "b")) + sol_targets
+
+    if maintain_order:
+        sol_cols += (index,)
+    assert isinstance(t, ir.Table)
+    assert tuple(t.columns) == sol_cols
+    assert targets == sol_targets
+    assert bool(index is not None) == maintain_order
+
+
+@pytest.mark.parametrize("y_kind", ["none", "array", "chunked-array", "table"])
+@pytest.mark.parametrize("maintain_order", [False, True])
+def test_normalize_table_pyarrow(df, y_kind, maintain_order):
+    X = pa.Table.from_pydict({"a": [1, 2], "b": [3, 4]})
+    if y_kind == "array":
+        y = pa.array([5, 6])
+    elif y_kind == "chunked-array":
+        y = pa.chunked_array([[5, 6]])
+    elif y_kind == "table":
+        y = pa.Table.from_pydict({"y": [5, 6]})
+    else:
+        y = None
+
+    t, targets, index = normalize_table(X, y, maintain_order=maintain_order)
+
+    sol_targets = () if y is None else ("y",)
+    sol_cols = tuple(X.column_names) + sol_targets
+    if maintain_order:
+        sol_cols += (index,)
+
+    assert isinstance(t, ir.Table)
+    assert tuple(t.columns) == sol_cols
+    assert targets == sol_targets
+    assert bool(index is not None) == maintain_order
+
+
+def test_normalize_table_pyarrow_errors():
+    X = pa.Table.from_pydict({"x": [1, 2]})
+    with pytest.raises(TypeError, match="must also be a pyarrow"):
+        normalize_table(X, object())
+
+
+@pytest.mark.parametrize("y_kind", ["none", "series", "dataframe"])
+@pytest.mark.parametrize("maintain_order", [False, True])
+def test_normalize_table_polars(df, y_kind, maintain_order):
+    pl = pytest.importorskip("polars")
+    X = pl.DataFrame({"a": [1, 2], "b": [3, 4]})
+
+    if y_kind == "series":
+        y = pl.Series(name="y", values=[5, 6])
+    elif y_kind == "dataframe":
+        y = pl.DataFrame({"y": [5, 6]})
+    else:
+        y = None
+
+    t, targets, index = normalize_table(X, y, maintain_order=maintain_order)
+
+    sol_targets = () if y is None else ("y",)
+    sol_cols = tuple(X.columns) + sol_targets
+    if maintain_order:
+        sol_cols += (index,)
+
+    assert isinstance(t, ir.Table)
+    assert tuple(t.columns) == sol_cols
+    assert targets == sol_targets
+    assert bool(index is not None) == maintain_order
+
+
+def test_normalize_table_polars_errors():
+    pl = pytest.importorskip("polars")
+    X = pl.DataFrame({"x": [1, 2]})
+    with pytest.raises(TypeError, match="must also be a polars"):
+        normalize_table(X, object())

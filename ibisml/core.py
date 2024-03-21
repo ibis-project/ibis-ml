@@ -46,7 +46,7 @@ def _y_as_dataframe(y: Any) -> pd.DataFrame:
     y = np.asarray(y)
     if y.ndim == 1:
         return pd.DataFrame({"y": y})
-    return pd.DataFrame(y, name=[f"y{i}" for i in range(y.shape[-1])])
+    return pd.DataFrame(y, columns=[f"y{i}" for i in range(y.shape[-1])])
 
 
 @lazy_singledispatch
@@ -81,9 +81,12 @@ def normalize_table(
 def _(X, y=None, maintain_order=False):
     if y is None:
         return X, (), None
+    elif isinstance(y, (str, tuple, list)):
+        targets = tuple(X.select(y).columns)
+        return X, targets, None
 
     if isinstance(y, ir.Column):
-        y = y.normalize_table()
+        y = y.as_table()
 
     if not isinstance(y, ir.Table):
         raise TypeError(
@@ -91,7 +94,7 @@ def _(X, y=None, maintain_order=False):
             "ibis Table or Column"
         )
 
-    if set(y.columns).insersection(X.columns):
+    if set(y.columns).intersection(X.columns):
         raise ValueError("X and y must not share column names")
 
     X_op = X.op()
@@ -110,7 +113,7 @@ def _(X, y=None, maintain_order=False):
         # ibis 9.0
         values = dict(X_op.values)
         values.update(y_op.values)
-        table = ops.Project(X_op.parent, values)
+        table = ops.Project(X_op.parent, values).to_expr()
     elif (
         hasattr(ops, "Selection")
         and isinstance(X_op, ops.Selection)
@@ -125,7 +128,7 @@ def _(X, y=None, maintain_order=False):
             X_op.selections + y_op.selections,
             X_op.predicates,
             X_op.sort_keys,
-        )
+        ).to_expr()
     else:
         raise ValueError("`X` and `y` must directly share a common parent table")
 
@@ -176,13 +179,13 @@ def _(X, y=None, maintain_order=False):
             y = pa.Table.from_pydict({"y": y})
         elif not isinstance(y, pa.Table):
             raise TypeError(
-                "When passing in `X` as an pyarrow.Table, `y` must also be an "
+                "When passing in `X` as a pyarrow.Table, `y` must also be a "
                 "pyarrow.Table or Array"
             )
         targets = tuple(y.column_names)
         table = X
         for name in y.column_names:
-            table.append_column(name, y[name])
+            table = table.append_column(name, y[name])
     else:
         table = X
         targets = ()
@@ -202,10 +205,10 @@ def _(X, y=None, maintain_order=False):
     if y is not None:
         if isinstance(y, pl.Series):
             y = y.to_frame()
-        elif not isinstance(y, (pl.DataFrame, pl.LazyFrame)):
+        elif not isinstance(y, pl.DataFrame):
             raise TypeError(
-                "When passing in `X` as an polars.DataFrame, `y` must also be "
-                "polars.DataFrame or Series"
+                "When passing in `X` as a polars.DataFrame, `y` must also be "
+                "a polars.DataFrame or Series"
             )
         table = pl.concat([X, y], how="horizontal")
         targets = tuple(y.columns)
