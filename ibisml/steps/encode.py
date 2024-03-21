@@ -133,7 +133,7 @@ class OneHotEncode(Step):
         to_compute = []
         for column in columns:
             if cats := metadata.get_categories(column):
-                categories[column] = list(range(len(cats.values)))
+                categories[column] = list(range(len(cats)))
             else:
                 to_compute.append(column)
 
