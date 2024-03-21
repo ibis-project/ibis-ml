@@ -379,6 +379,11 @@ class Recipe:
     def _transform_table(
         self, table: ir.Table, targets: tuple[str, ...] = (), index: str | None = None
     ) -> ir.Table:
+        if not self.is_fitted():
+            raise ValueError(
+                "This Recipe instance is not fitted yet. Call `fit` with appropriate "
+                "arguments before using this recipe."
+            )
         if targets:
             table = table.drop(*targets)
 
