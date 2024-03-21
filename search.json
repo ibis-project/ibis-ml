@@ -292,7 +292,7 @@
     "href": "reference/steps-encoding.html#examples",
     "title": "Encoding",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nOne-hot encode all string columns\n&gt;&gt;&gt; step = ml.OneHotEncode(ml.string())\nOne-hot encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", min_frequency=20)\nOne-hot encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", max_categories=10)",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nOne-hot encode all string columns.\n&gt;&gt;&gt; step = ml.OneHotEncode(ml.string())\nOne-hot encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", min_frequency=20)\nOne-hot encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", max_categories=10)",
     "crumbs": [
       "Steps",
       "Encoding"
@@ -314,7 +314,7 @@
     "href": "reference/steps-encoding.html#examples-1",
     "title": "Encoding",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns.\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)",
     "crumbs": [
       "Steps",
       "Encoding"
