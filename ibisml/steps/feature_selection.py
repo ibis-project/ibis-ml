@@ -11,16 +11,13 @@ from ibisml.select import SelectionType, selector
 class ZeroVariance(Step):
     """A step for removing columns with zero variance.
 
-    This step identifies and removes columns from the input selection that have zero variance. 
-    Columns with zero variance have constant values across all rows, providing no information for modeling.
-
     Parameters
     ----------
     inputs : SelectionType
         A selection of columns to analyze for zero variance.
     tolerance : int | float, optional
-        Tolerance level for considering variance as zero. 
-        Columns with variance less than this tolerance will be removed. 
+        Tolerance level for considering variance as zero.
+        Columns with variance less than this tolerance will be removed.
         Default is 1e-4.
 
     Examples
@@ -37,12 +34,7 @@ class ZeroVariance(Step):
     >>> step = ml.ZeroVariance(ml.string())
     """
 
-    def __init__(
-        self,
-        inputs: SelectionType,
-        *,
-        tolerance: int | float = 1e-4,
-    ):
+    def __init__(self, inputs: SelectionType, *, tolerance: int | float = 1e-4,):
         self.inputs = selector(inputs)
         self.tolerance = tolerance
 
@@ -51,7 +43,6 @@ class ZeroVariance(Step):
         yield ("tolerance", self.tolerance)
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
-
         columns = self.inputs.select_columns(table, metadata)
         cols = []
         if columns:

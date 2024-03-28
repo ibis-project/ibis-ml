@@ -5,16 +5,16 @@ import ibisml as ml
 
 
 def test_zero_variance():
-
-    zv_numeric_col = [1.0]*10
+    zv_numeric_col = [1.0] * 10
     non_zv_numeric_col = list(range(10))
     zv_string_col = ["String"] * 10
     non_zv_string_col = [f"String_{i}" for i in range(10)]
     start_timestamp = pd.Timestamp("2000-01-01 00:00:00.000")
     zv_timestamp_col = [start_timestamp] * 10
-    non_zv_timestamp_col = [start_timestamp + pd.Timedelta(minutes=i) for i in range(10)]
+    non_zv_timestamp_col = [start_timestamp +
+                            pd.Timedelta(minutes=i) for i in range(10)]
 
-    zv_cols = {
+    non_zv_cols = {
         "non_zero_variance_numeric_col",
         "non_zero_variance_string_col",
         "non_zero_variance_timestamp_col",
@@ -38,11 +38,10 @@ def test_zero_variance():
             "non_zero_variance_string_col": [],
             "zero_variance_timestamp_col": [],
             "non_zero_variance_timestamp_col": [],
-
         }
     )
 
     step = ml.ZeroVariance(ml.everything())
     step.fit_table(t_train, ml.core.Metadata())
     res = step.transform_table(t_test)
-    assert set(res.columns) == zv_cols
+    assert set(res.columns) == non_zv_cols
