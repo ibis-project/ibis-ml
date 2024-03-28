@@ -34,7 +34,7 @@ class ZeroVariance(Step):
     >>> step = ml.ZeroVariance(ml.string())
     """
 
-    def __init__(self, inputs: SelectionType, *, tolerance: int | float = 1e-4,):
+    def __init__(self, inputs: SelectionType, *, tolerance: int | float = 1e-4):
         self.inputs = selector(inputs)
         self.tolerance = tolerance
 

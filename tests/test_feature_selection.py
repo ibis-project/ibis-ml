@@ -11,8 +11,9 @@ def test_zero_variance():
     non_zv_string_col = [f"String_{i}" for i in range(10)]
     start_timestamp = pd.Timestamp("2000-01-01 00:00:00.000")
     zv_timestamp_col = [start_timestamp] * 10
-    non_zv_timestamp_col = [start_timestamp +
-                            pd.Timedelta(minutes=i) for i in range(10)]
+    non_zv_timestamp_col = [
+        start_timestamp + pd.Timedelta(minutes=i) for i in range(10)
+    ]
 
     non_zv_cols = {
         "non_zero_variance_numeric_col",
