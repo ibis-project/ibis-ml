@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Iterable
 from itertools import combinations_with_replacement
+from typing import Any, Iterable
 
 import ibis.expr.types as ir
 
@@ -15,7 +15,7 @@ class PolynomialFeatures(Step):
     Parameters
     ----------
     inputs
-        A selection of columns to generate polynomial features. 
+        A selection of columns to generate polynomial features.
         All columns must be numeric.
     degree : int, default `2`
         The maximum degree of polynomial features to generate.
@@ -33,15 +33,10 @@ class PolynomialFeatures(Step):
     >>> step = ml.PolynomialFeatures(["x", "y"], 2)
     """
 
-    def __init__(
-        self,
-        inputs: SelectionType,
-        *,
-        degree: int = 2,
-    ):
+    def __init__(self, inputs: SelectionType, *, degree: int = 2):
         if degree < 2:
             raise ValueError("Degree must be greater than 1")
-        
+
         self.inputs = selector(inputs)
         self.degree = degree
 
@@ -66,16 +61,13 @@ class PolynomialFeatures(Step):
         self.combinations_ = combinations
 
     def transform_table(self, table: ir.Table) -> ir.Table:
-        
         expressions = []
         for combination in self.combinations_:
             expression = 1
             for column in combination:
                 expression *= table[column]
-            expressions.append(expression.name(f"poly_{'_'.join(column for column in combination)}"))
-        
+            expressions.append(
+                expression.name(f"poly_{'_'.join(column for column in combination)}")
+            )
+
         return table.mutate(**{exp.get_name(): exp for exp in expressions})
-
-        
-
-
