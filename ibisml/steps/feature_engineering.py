@@ -53,7 +53,7 @@ class PolynomialFeatures(Step):
         if non_numeric_cols:
             raise ValueError(
                 "Cannot fit polynomial features step: "
-                f"{[c for c in non_numeric_cols]} is not numeric"
+                f"{non_numeric_cols} is not numeric"
             )
         combinations = []
         for d in range(2, self.degree + 1):
