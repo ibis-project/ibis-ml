@@ -1,5 +1,126 @@
 [
   {
+    "objectID": "reference/steps-temporal.html",
+    "href": "reference/steps-temporal.html",
+    "title": "Temporal",
+    "section": "",
+    "text": "Feature extraction for temporal columns",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal.html#parameters",
+    "href": "reference/steps-temporal.html#parameters",
+    "title": "Temporal",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date and time columns to expand into new features.\nrequired\n\n\ncomponents\nlist[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’, ‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of date or time components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value - hour: the hour as a numeric value - minute: the minute as a numeric value - second: the second as a numeric value - millisecond: the millisecond as a numeric value Defaults to [\"dow\", \"month\", \"year\", \"hour\", \"minute\", \"second\"].\n('dow', 'month', 'year', 'hour', 'minute', 'second')",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal.html#examples",
+    "href": "reference/steps-temporal.html#examples",
+    "title": "Temporal",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date and time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDateTime(ml.datetime())\nExpand specific columns using specific components for date and time\n&gt;&gt;&gt; step = ml.ExpandDateTime([\"x\", \"y\"], [\"day\", \"year\", \"hour\"])",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal.html#parameters-1",
+    "href": "reference/steps-temporal.html#parameters-1",
+    "title": "Temporal",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]\nA sequence of components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\n('dow', 'month', 'year')",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal.html#examples-1",
+    "href": "reference/steps-temporal.html#examples-1",
+    "title": "Temporal",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDate(ml.date())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandDate([\"x\", \"y\"], [\"day\", \"year\"])",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal.html#parameters-2",
+    "href": "reference/steps-temporal.html#parameters-2",
+    "title": "Temporal",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of time columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\n('hour', 'minute', 'second')",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal.html#examples-2",
+    "href": "reference/steps-temporal.html#examples-2",
+    "title": "Temporal",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])",
+    "crumbs": [
+      "Steps",
+      "Temporal"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html",
+    "href": "reference/steps-standardization.html",
+    "title": "Standardization",
+    "section": "",
+    "text": "Standardization and normalization of numeric columns",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html#parameters",
+    "href": "reference/steps-standardization.html#parameters",
+    "title": "Standardization",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html#examples",
+    "href": "reference/steps-standardization.html#examples",
+    "title": "Standardization",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/core.html",
+    "href": "reference/core.html",
+    "title": "Common",
+    "section": "",
+    "text": "Common\nCore APIs\n\n\nRecipe\nRecipe(self, *steps)\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Core API",
+      "Common"
+    ]
+  },
+  {
     "objectID": "reference/index.html",
     "href": "reference/index.html",
     "title": "Reference",
@@ -19,6 +140,163 @@
     "title": "Reference",
     "section": "",
     "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ibisml",
+    "section": "",
+    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
+  },
+  {
+    "objectID": "index.html#help-wanted",
+    "href": "index.html#help-wanted",
+    "title": "ibisml",
+    "section": "Help Wanted!",
+    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
+  },
+  {
+    "objectID": "reference/steps-encoding.html",
+    "href": "reference/steps-encoding.html",
+    "title": "Encoding",
+    "section": "",
+    "text": "Encoding of categorical and string columns",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#parameters",
+    "href": "reference/steps-encoding.html#parameters",
+    "title": "Encoding",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to one-hot encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#examples",
+    "href": "reference/steps-encoding.html#examples",
+    "title": "Encoding",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nOne-hot encode all string columns.\n&gt;&gt;&gt; step = ml.OneHotEncode(ml.string())\nOne-hot encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", min_frequency=20)\nOne-hot encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", max_categories=10)",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#parameters-1",
+    "href": "reference/steps-encoding.html#parameters-1",
+    "title": "Encoding",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to categorical encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#examples-1",
+    "href": "reference/steps-encoding.html#examples-1",
+    "title": "Encoding",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns.\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html",
+    "href": "reference/selectors.html",
+    "title": "Selectors",
+    "section": "",
+    "text": "Select sets of columns by name, type, or other properties",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters",
+    "href": "reference/selectors.html#parameters",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncolumns\nstr\nNames of the columns to select.\n()",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters-1",
+    "href": "reference/selectors.html#parameters-1",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npattern\nstr\nThe string to search for in column names.\nrequired",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters-2",
+    "href": "reference/selectors.html#parameters-2",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nsuffix\nstr\nThe column name suffix to match.\nrequired",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters-3",
+    "href": "reference/selectors.html#parameters-3",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nprefix\nstr\nThe column name prefix to match.\nrequired",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters-4",
+    "href": "reference/selectors.html#parameters-4",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npattern\nstr\nThe pattern to search for in column names.\nrequired",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters-5",
+    "href": "reference/selectors.html#parameters-5",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndtype\nibis.ibis.DataType | str | type[ibis.ibis.DataType]\nThe dtype to match. May be a dtype instance, string, or dtype class.\nrequired",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
+  },
+  {
+    "objectID": "reference/selectors.html#parameters-6",
+    "href": "reference/selectors.html#parameters-6",
+    "title": "Selectors",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\ntyping.Callable[[ibis.ibis.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired",
+    "crumbs": [
+      "Core API",
+      "Selectors"
+    ]
   },
   {
     "objectID": "reference/steps-imputation.html",
@@ -117,284 +395,6 @@
     "crumbs": [
       "Steps",
       "Imputation"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html",
-    "href": "reference/steps-standardization.html",
-    "title": "Standardization",
-    "section": "",
-    "text": "Standardization and normalization of numeric columns",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html#parameters",
-    "href": "reference/steps-standardization.html#parameters",
-    "title": "Standardization",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html#examples",
-    "href": "reference/steps-standardization.html#examples",
-    "title": "Standardization",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "reference/core.html",
-    "href": "reference/core.html",
-    "title": "Common",
-    "section": "",
-    "text": "Common\nCore APIs\n\n\nRecipe\nRecipe(self, *steps)\n\n\n\n\n Back to top",
-    "crumbs": [
-      "Core API",
-      "Common"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ibisml",
-    "section": "",
-    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
-  },
-  {
-    "objectID": "index.html#help-wanted",
-    "href": "index.html#help-wanted",
-    "title": "ibisml",
-    "section": "Help Wanted!",
-    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
-  },
-  {
-    "objectID": "reference/selectors.html",
-    "href": "reference/selectors.html",
-    "title": "Selectors",
-    "section": "",
-    "text": "Select sets of columns by name, type, or other properties",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters",
-    "href": "reference/selectors.html#parameters",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ncolumns\nstr\nNames of the columns to select.\n()",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-1",
-    "href": "reference/selectors.html#parameters-1",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npattern\nstr\nThe string to search for in column names.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-2",
-    "href": "reference/selectors.html#parameters-2",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nsuffix\nstr\nThe column name suffix to match.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-3",
-    "href": "reference/selectors.html#parameters-3",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nprefix\nstr\nThe column name prefix to match.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-4",
-    "href": "reference/selectors.html#parameters-4",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npattern\nstr\nThe pattern to search for in column names.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-5",
-    "href": "reference/selectors.html#parameters-5",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndtype\nibis.ibis.DataType | str | type[ibis.ibis.DataType]\nThe dtype to match. May be a dtype instance, string, or dtype class.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/selectors.html#parameters-6",
-    "href": "reference/selectors.html#parameters-6",
-    "title": "Selectors",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\ntyping.Callable[[ibis.ibis.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired",
-    "crumbs": [
-      "Core API",
-      "Selectors"
-    ]
-  },
-  {
-    "objectID": "reference/steps-encoding.html",
-    "href": "reference/steps-encoding.html",
-    "title": "Encoding",
-    "section": "",
-    "text": "Encoding of categorical and string columns",
-    "crumbs": [
-      "Steps",
-      "Encoding"
-    ]
-  },
-  {
-    "objectID": "reference/steps-encoding.html#parameters",
-    "href": "reference/steps-encoding.html#parameters",
-    "title": "Encoding",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to one-hot encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone",
-    "crumbs": [
-      "Steps",
-      "Encoding"
-    ]
-  },
-  {
-    "objectID": "reference/steps-encoding.html#examples",
-    "href": "reference/steps-encoding.html#examples",
-    "title": "Encoding",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nOne-hot encode all string columns.\n&gt;&gt;&gt; step = ml.OneHotEncode(ml.string())\nOne-hot encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", min_frequency=20)\nOne-hot encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.OneHotEncode(\"x\", max_categories=10)",
-    "crumbs": [
-      "Steps",
-      "Encoding"
-    ]
-  },
-  {
-    "objectID": "reference/steps-encoding.html#parameters-1",
-    "href": "reference/steps-encoding.html#parameters-1",
-    "title": "Encoding",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to categorical encode.\nrequired\n\n\nmin_frequency\nint | float | None\nA minimum frequency of elements in the training set required to treat a column as a distinct category. May be either: - an integer, representing a minimum number of samples required. - a float in [0, 1], representing a minimum fraction of samples required. Defaults to None for no minimum frequency.\nNone\n\n\nmax_categories\nint | None\nA maximum number of categories to include. If set, only the most frequent max_categories categories are kept.\nNone",
-    "crumbs": [
-      "Steps",
-      "Encoding"
-    ]
-  },
-  {
-    "objectID": "reference/steps-encoding.html#examples-1",
-    "href": "reference/steps-encoding.html#examples-1",
-    "title": "Encoding",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns.\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)",
-    "crumbs": [
-      "Steps",
-      "Encoding"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html",
-    "href": "reference/steps-temporal.html",
-    "title": "Temporal",
-    "section": "",
-    "text": "Feature extraction for temporal columns",
-    "crumbs": [
-      "Steps",
-      "Temporal"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html#parameters",
-    "href": "reference/steps-temporal.html#parameters",
-    "title": "Temporal",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date and time columns to expand into new features.\nrequired\n\n\ncomponents\nlist[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’, ‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of date or time components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value - hour: the hour as a numeric value - minute: the minute as a numeric value - second: the second as a numeric value - millisecond: the millisecond as a numeric value Defaults to [\"dow\", \"month\", \"year\", \"hour\", \"minute\", \"second\"].\n('dow', 'month', 'year', 'hour', 'minute', 'second')",
-    "crumbs": [
-      "Steps",
-      "Temporal"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html#examples",
-    "href": "reference/steps-temporal.html#examples",
-    "title": "Temporal",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date and time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDateTime(ml.datetime())\nExpand specific columns using specific components for date and time\n&gt;&gt;&gt; step = ml.ExpandDateTime([\"x\", \"y\"], [\"day\", \"year\", \"hour\"])",
-    "crumbs": [
-      "Steps",
-      "Temporal"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html#parameters-1",
-    "href": "reference/steps-temporal.html#parameters-1",
-    "title": "Temporal",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of date columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]\nA sequence of components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\n('dow', 'month', 'year')",
-    "crumbs": [
-      "Steps",
-      "Temporal"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html#examples-1",
-    "href": "reference/steps-temporal.html#examples-1",
-    "title": "Temporal",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand date columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDate(ml.date())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandDate([\"x\", \"y\"], [\"day\", \"year\"])",
-    "crumbs": [
-      "Steps",
-      "Temporal"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html#parameters-2",
-    "href": "reference/steps-temporal.html#parameters-2",
-    "title": "Temporal",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of time columns to expand into new features.\nrequired\n\n\ncomponents\ntyping.Sequence[typing.Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\n('hour', 'minute', 'second')",
-    "crumbs": [
-      "Steps",
-      "Temporal"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal.html#examples-2",
-    "href": "reference/steps-temporal.html#examples-2",
-    "title": "Temporal",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])",
-    "crumbs": [
-      "Steps",
-      "Temporal"
     ]
   },
   {
