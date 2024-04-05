@@ -15,10 +15,10 @@ def test_zero_variance():
         start_timestamp + pd.Timedelta(minutes=i) for i in range(10)
     ]
 
-    non_zv_cols = {
-        "non_zero_variance_numeric_col",
-        "non_zero_variance_string_col",
-        "non_zero_variance_timestamp_col",
+    zv_cols = {
+        "zero_variance_numeric_col",
+        "zero_variance_string_col",
+        "zero_variance_timestamp_col",
     }
 
     t_train = ibis.memtable(
@@ -45,4 +45,5 @@ def test_zero_variance():
     step = ml.ZeroVariance(ml.everything())
     step.fit_table(t_train, ml.core.Metadata())
     res = step.transform_table(t_test)
-    assert set(res.columns) == non_zv_cols
+    sol = t_test.drop(zv_cols)
+    assert sol.equals(res)

@@ -30,8 +30,8 @@ class ZeroVariance(Step):
     To remove all numeric columns with zero variance:
     >>> step = ml.ZeroVariance(ml.numeric())
 
-    To remove all non-numeric columns with only one unique value:
-    >>> step = ml.ZeroVariance(ml.string())
+    To remove all string or categorical columns with only one unique value:
+    >>> step = ml.ZeroVariance(ml.norminal())
     """
 
     def __init__(self, inputs: SelectionType, *, tolerance: int | float = 1e-4):
@@ -64,14 +64,11 @@ class ZeroVariance(Step):
                     # Check variance for numeric columns
                     if results[f"{name}_var"] < self.tolerance:
                         cols.append(name)
-                elif not isinstance(c, ir.NumericColumn) and results[f"{name}_var"] < 2:
+                elif results[f"{name}_var"] < 2:
                     # Check unique count for non-numeric columns
                     cols.append(name)
 
         self.cols_ = cols
 
     def transform_table(self, table: ir.Table) -> ir.Table:
-        if len(self.cols_) > 0:
-            return table.drop(self.cols_)
-        else:
-            return table
+        return table.drop(self.cols_)
