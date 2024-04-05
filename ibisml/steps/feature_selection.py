@@ -31,7 +31,7 @@ class ZeroVariance(Step):
     >>> step = ml.ZeroVariance(ml.numeric())
 
     To remove all string or categorical columns with only one unique value:
-    >>> step = ml.ZeroVariance(ml.norminal())
+    >>> step = ml.ZeroVariance(ml.nominal())
     """
 
     def __init__(self, inputs: SelectionType, *, tolerance: int | float = 1e-4):
