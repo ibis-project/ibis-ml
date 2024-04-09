@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Any, Iterable
 
 import ibis
@@ -66,14 +67,14 @@ class KBinsDiscretizer(Step):
         *,
         n_bins: int = 5,
         strategy: str = "uniform",
-        overwrite: bool = False,
+        overwrite: bool = True,
     ):
         if n_bins <= 1:
             raise ValueError("Number of n_bins must be greater than 1.")
 
         if strategy not in ["uniform", "quantile"]:
             raise ValueError(
-                f"Unsupported strategy '{self.strategy}' encountered."
+                f"Unsupported strategy {strategy!r} encountered."
                 "Supported strategies are 'uniform' and 'quantile'."
             )
 
@@ -89,58 +90,61 @@ class KBinsDiscretizer(Step):
         yield ("overwrite", self.overwrite)
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
-        """
-        Bin continuous data into intervals.
-        """
         columns = self.inputs.select_columns(table, metadata)
+        bins_edge = {}
         if columns:
             if self.strategy == "uniform":
-                self._fit_uniform_strategy(table, columns)
+                bins_edge = self._fit_uniform_strategy(table, columns)
             elif self.strategy == "quantile":
-                self._fit_quantile_strategy(table, columns)
+                bins_edge = self._fit_quantile_strategy(table, columns)
         else:
-            raise ValueError(f"No columns are selected: {self.inputs}")
-
-    def _fit_uniform_strategy(self, table: ir.Table, columns: list[str]) -> None:
-        aggs = []
-        for col_name in columns:
-            c = table[col_name]
-            if not isinstance(c, ir.NumericColumn):
-                raise ValueError(f"Cannot discretize non-numeric column: '{col_name}'.")
-            aggs.append(c.max().name(f"{col_name}_max"))
-            aggs.append(c.min().name(f"{col_name}_min"))
-
-        bins_edge = {}
-        results = table.aggregate(aggs).execute().to_dict("records")[0]
-        for col_name in columns:
-            edges = np.linspace(
-                results[f"{col_name}_min"], results[f"{col_name}_max"], self.n_bins + 1
+            warnings.warn(
+                f"No column selected for discretization - {self.inputs!r}.",
+                stacklevel=2,
             )
-            bins_edge[col_name] = edges
-
         self.bins_edge_ = bins_edge
 
-    def _fit_quantile_strategy(self, table: ir.Table, columns: list[str]) -> None:
+    def _fit_uniform_strategy(
+        self, table: ir.Table, columns: list[str]
+    ) -> dict[str, list[float]]:
         aggs = []
-        percentiles = np.linspace(0, 1, self.n_bins + 1)
         for col_name in columns:
-            if not isinstance(table[col_name], ir.NumericColumn):
-                raise ValueError(f"Cannot discretize non-numeric column: '{col_name}'.")
-
-            aggs.extend(
-                [
-                    table[col_name].quantile(q).name(f"{col_name}_{q}")
-                    for q in percentiles
-                ]
-            )
+            col = table[col_name]
+            if not isinstance(col, ir.NumericColumn):
+                raise ValueError(
+                    f"Cannot discretize {col_name!r} - this column is not numeric"
+                )
+            aggs.append(col.max().name(f"{col_name}_max"))
+            aggs.append(col.min().name(f"{col_name}_min"))
 
         results = table.aggregate(aggs).execute().to_dict("records")[0]
-        bins_edge = {
-            col_name: [results[f"{col_name}_{q}"] for q in percentiles]
+
+        return {
+            col_name: np.linspace(
+                results[f"{col_name}_min"], results[f"{col_name}_max"], self.n_bins + 1
+            )
             for col_name in columns
         }
 
-        self.bins_edge_ = bins_edge
+    def _fit_quantile_strategy(
+        self, table: ir.Table, columns: list[str]
+    ) -> dict[str, list[float]]:
+        aggs = []
+        percentiles = np.linspace(0, 1, self.n_bins + 1)
+        for col_name in columns:
+            col = table[col_name]
+            if not isinstance(col, ir.NumericColumn):
+                raise ValueError(
+                    f"Cannot discretize {col_name!r} - this column is not numeric"
+                )
+            aggs.extend([col.quantile(q).name(f"{col_name}_{q}") for q in percentiles])
+
+        results = table.aggregate(aggs).execute().to_dict("records")[0]
+
+        return {
+            col_name: [results[f"{col_name}_{q}"] for q in percentiles]
+            for col_name in columns
+        }
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         aggs = []
