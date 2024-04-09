@@ -24,7 +24,7 @@ class KBinsDiscretizer(Step):
         Strategy used to define the bin edges.
         - 'uniform': Evenly spaced bins between the minimum and maximum values.
         - 'quantile': Bins are created based on data quantiles.
-    overwrite : bool, default=False
+    overwrite : bool, default=True
         Whether to overwrite existing columns or create new ones.
 
     Raises
@@ -46,17 +46,13 @@ class KBinsDiscretizer(Step):
 
     Bin all numeric columns.
 
-    >>> step = ml.KBinsDiscretizer(ml.numeric(), n_bins=10, overwrite=True)
+    >>> step = ml.KBinsDiscretizer(ml.numeric(), n_bins=10)
     >>> step.fit_table(p, Metadata())
     >>> step.transform_table(p)
 
     Bin specific numeric columns.
 
-    >>> step = ml.KBinsDiscretizer(
-        ["bill_length_mm"],
-        strategy="quantile",
-        overwrite="True",
-    )
+    >>> step = ml.KBinsDiscretizer(["bill_length_mm"], strategy="quantile")
     >>> step.fit_table(p, Metadata())
     >>> step.transform_table(p)
     """
