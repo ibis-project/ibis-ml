@@ -1,17 +1,29 @@
+import operator
+
 import ibis
+import pytest
 from ibis import _
 
 import ibisml as ml
 
 
-def test_polynomial_features():
-    t = ibis.table({"x": "int", "y": "float", "z": "string"})
+@pytest.fixture()
+def train_table():
+    N = 100
+    return ibis.memtable({"x": list(range(N)), "y": [10] * N, "z": ["s"] * N})
+
+
+def test_PolynomialFeatures(train_table):
     step = ml.PolynomialFeatures(ml.numeric(), degree=2)
-    step.fit_table(t, ml.core.Metadata())
-    res = step.transform_table(t)
-    sol = t.mutate(
-        poly_x_x=_.x * 1 * _.x, poly_x_y=_.x * 1 * _.y, poly_y_y=_.y * 1 * _.y
+    step.fit_table(train_table, ml.core.Metadata())
+    result_table = step.transform_table(train_table)
+    sol = train_table.mutate(
+        operator.pow(_.x, 2), operator.mul(_.x, _.y), operator.pow(_.y, 2)
     )
-    assert step.is_fitted()
-    assert set(res.columns) == set(sol.columns)
-    assert res.equals(sol)
+    assert sol.equals(result_table)
+    # Check if the transformed table has the expected data
+    for col_name in sol.columns:
+        assert (
+            sol[col_name].execute().tolist()
+            == result_table[col_name].execute().tolist()
+        )

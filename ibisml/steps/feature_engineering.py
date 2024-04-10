@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import functools
+import operator
+from collections import Counter
 from itertools import combinations_with_replacement
 from typing import Any, Iterable
 
@@ -47,27 +50,31 @@ class PolynomialFeatures(Step):
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
 
-        non_numeric_cols = [
-            col for col in columns if not isinstance(table[col], ir.NumericColumn)
-        ]
-        if non_numeric_cols:
-            raise ValueError(
-                "Cannot fit polynomial features step: "
-                f"{non_numeric_cols} is not numeric"
-            )
+        for col_name in columns:
+            if not isinstance(table[col_name], ir.NumericColumn):
+                raise ValueError(
+                    f"Cannot calculate polynomial features of {col_name!r} - "
+                    "this column is not numeric"
+                )
         combinations = []
         for d in range(2, self.degree + 1):
-            combinations.extend(combinations_with_replacement(columns, d))
+            combinations.extend(
+                [
+                    dict(Counter(comb))
+                    for comb in combinations_with_replacement(columns, d)
+                ]
+            )
         self.combinations_ = combinations
 
     def transform_table(self, table: ir.Table) -> ir.Table:
-        expressions = []
-        for combination in self.combinations_:
-            expression = 1
-            for column in combination:
-                expression *= table[column]
-            expressions.append(
-                expression.name(f"poly_{'_'.join(column for column in combination)}")
+        expressions = [
+            functools.reduce(
+                operator.mul,
+                [
+                    operator.pow(table[col], p) if p > 1 else table[col]
+                    for col, p in combination.items()
+                ],
             )
-
-        return table.mutate(**{exp.get_name(): exp for exp in expressions})
+            for combination in self.combinations_
+        ]
+        return table.mutate(*expressions)
