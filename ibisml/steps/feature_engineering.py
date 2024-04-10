@@ -66,15 +66,19 @@ class PolynomialFeatures(Step):
             )
         self.combinations_ = combinations
 
-    def transform_table(self, table: ir.Table) -> ir.Table:
-        expressions = [
-            functools.reduce(
+    def transform_table(self, table):
+        expressions = {}
+        for combination in self.combinations_:
+            exp = functools.reduce(
                 operator.mul,
                 [
                     operator.pow(table[col], p) if p > 1 else table[col]
                     for col, p in combination.items()
                 ],
             )
-            for combination in self.combinations_
-        ]
-        return table.mutate(*expressions)
+            name = "poly_" + "_".join(
+                f"{col}^{p}" if p > 1 else f"{col}" for col, p in combination.items()
+            )
+            expressions[name] = exp
+
+        return table.mutate(**expressions)

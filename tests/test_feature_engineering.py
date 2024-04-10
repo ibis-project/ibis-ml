@@ -2,7 +2,6 @@ import operator
 
 import ibis
 import pytest
-from ibis import _
 
 import ibisml as ml
 
@@ -18,7 +17,11 @@ def test_PolynomialFeatures(train_table):
     step.fit_table(train_table, ml.core.Metadata())
     result_table = step.transform_table(train_table)
     sol = train_table.mutate(
-        operator.pow(_.x, 2), operator.mul(_.x, _.y), operator.pow(_.y, 2)
+        **{
+            "poly_x^2": operator.pow(train_table.x, 2),
+            "poly_x_y": operator.mul(train_table.x, train_table.y),
+            "poly_y^2": operator.pow(train_table.y, 2),
+        }
     )
     assert sol.equals(result_table)
     # Check if the transformed table has the expected data
