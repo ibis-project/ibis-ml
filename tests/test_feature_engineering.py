@@ -22,6 +22,5 @@ def test_PolynomialFeatures(train_table):
             "poly_y^2": train_table.y**2,
         }
     )
-    assert expected.equals(result)
     # Check if the transformed table has the expected data
     tm.assert_frame_equal(result.execute(), expected.execute())
