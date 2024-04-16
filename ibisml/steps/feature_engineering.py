@@ -59,10 +59,7 @@ class PolynomialFeatures(Step):
         combinations = []
         for d in range(2, self.degree + 1):
             combinations.extend(
-                [
-                    dict(Counter(comb))
-                    for comb in combinations_with_replacement(columns, d)
-                ]
+                [Counter(comb) for comb in combinations_with_replacement(columns, d)]
             )
         self.combinations_ = combinations
 
@@ -72,12 +69,12 @@ class PolynomialFeatures(Step):
             exp = functools.reduce(
                 operator.mul,
                 [
-                    operator.pow(table[col], p) if p > 1 else table[col]
+                    table[col] ** p if p > 1 else table[col]
                     for col, p in combination.items()
                 ],
             )
             name = "poly_" + "_".join(
-                f"{col}^{p}" if p > 1 else f"{col}" for col, p in combination.items()
+                f"{col}^{p}" if p > 1 else col for col, p in combination.items()
             )
             expressions[name] = exp
 

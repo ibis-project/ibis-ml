@@ -1,6 +1,5 @@
-import operator
-
 import ibis
+import pandas.testing as tm
 import pytest
 
 import ibisml as ml
@@ -15,18 +14,14 @@ def train_table():
 def test_PolynomialFeatures(train_table):
     step = ml.PolynomialFeatures(ml.numeric(), degree=2)
     step.fit_table(train_table, ml.core.Metadata())
-    result_table = step.transform_table(train_table)
-    sol = train_table.mutate(
+    result = step.transform_table(train_table)
+    expected = train_table.mutate(
         **{
-            "poly_x^2": operator.pow(train_table.x, 2),
-            "poly_x_y": operator.mul(train_table.x, train_table.y),
-            "poly_y^2": operator.pow(train_table.y, 2),
+            "poly_x^2": train_table.x**2,
+            "poly_x_y": train_table.x * train_table.y,
+            "poly_y^2": train_table.y**2,
         }
     )
-    assert sol.equals(result_table)
+    assert expected.equals(result)
     # Check if the transformed table has the expected data
-    for col_name in sol.columns:
-        assert (
-            sol[col_name].execute().tolist()
-            == result_table[col_name].execute().tolist()
-        )
+    tm.assert_frame_equal(result.execute(), expected.execute())
