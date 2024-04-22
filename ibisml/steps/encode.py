@@ -73,8 +73,8 @@ class OneHotEncode(Step):
 
     The original input column is dropped, and N-category new columns are
     created with names like ``{input_column}_{category}``. Unknown categories
-    will be ignored during transformation, the resulting one-hot encoded
-    columns for this row will be all zeros.
+    will be ignored during transformation; the resulting one-hot encoded
+    columns for this feature will be all zeros.
 
     Parameters
     ----------
@@ -154,7 +154,7 @@ class OneHotEncode(Step):
 
         return table.mutate(
             [
-                ibis.ifelse((table[col] == cat), 1, 0).cast("int8").name(f"{col}_{cat}")
+                ibis.ifelse((table[col] == cat), 1, 0).name(f"{col}_{cat}")
                 for col, cats in self.categories_.items()
                 for cat in cats
             ]
