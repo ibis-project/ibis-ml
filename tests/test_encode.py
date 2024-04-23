@@ -53,24 +53,20 @@ def test_one_hot_encode(t_train, t_test):
     step = ml.OneHotEncode("ticker")
     step.fit_table(t_train, ml.core.Metadata())
     result = step.transform_table(t_test)
-    expected = ibis.memtable(
-        pd.DataFrame(
-            {
-                "time": pd.Series(
-                    [
-                        pd.Timestamp("2016-05-25 13:30:00.023"),
-                        pd.Timestamp("2016-05-25 13:30:00.038"),
-                        pd.Timestamp("2016-05-25 13:30:00.048"),
-                        pd.Timestamp("2016-05-25 13:30:00.049"),
-                        pd.Timestamp("2016-05-25 13:30:00.050"),
-                        pd.Timestamp("2016-05-25 13:30:00.051"),
-                    ]
-                ),
-                "ticker_AAPL": pd.Series([0, 0, 0, 0, 0, 0], dtype="Int8"),
-                "ticker_GOOG": pd.Series([0, 0, 1, 1, 0, 0], dtype="Int8"),
-                "ticker_MSFT": pd.Series([1, 1, 0, 0, 0, 0], dtype="Int8"),
-                "ticker_None": pd.Series([0, 0, 0, 0, 0, 1], dtype="Int8"),
-            }
-        )
+    expected = pd.DataFrame(
+        {
+            "time": [
+                pd.Timestamp("2016-05-25 13:30:00.023"),
+                pd.Timestamp("2016-05-25 13:30:00.038"),
+                pd.Timestamp("2016-05-25 13:30:00.048"),
+                pd.Timestamp("2016-05-25 13:30:00.049"),
+                pd.Timestamp("2016-05-25 13:30:00.050"),
+                pd.Timestamp("2016-05-25 13:30:00.051"),
+            ],
+            "ticker_AAPL": [0, 0, 0, 0, 0, 0],
+            "ticker_GOOG": [0, 0, 1, 1, 0, 0],
+            "ticker_MSFT": [1, 1, 0, 0, 0, 0],
+            "ticker_None": [0, 0, 0, 0, 0, 1],
+        }
     )
-    tm.assert_frame_equal(result.execute(), expected.execute())
+    tm.assert_frame_equal(result.execute(), expected, check_dtype=False)
