@@ -323,7 +323,7 @@ class TargetEncode(Step):
         yield ("smooth", self.smooth)
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
-        target_means = (
+        self.target_means_ = (
             table.aggregate([table[c].mean().name(c) for c in metadata.targets])
             .execute()
             .to_dict("records")[0]
@@ -344,7 +344,7 @@ class TargetEncode(Step):
             for target in metadata.targets:
                 target_encodings[f"{target}_{suffix}"] = (
                     agged[f"{target}_mean"] * agged[f"{target}_count"]
-                    + target_means[target] * self.smooth
+                    + self.target_means_[target] * self.smooth
                 ) / (agged[f"{target}_count"] + self.smooth)
 
             self.encodings_[column] = ibis.memtable(
@@ -361,5 +361,16 @@ class TargetEncode(Step):
                 if len(encodings.columns) < 3
                 else {f"{c}{k + 1}": t for k, t in enumerate(encodings.columns[1:])}
             )
+
+        for k, mean in enumerate(self.target_means_.values()):
+            fillna = FillNA(
+                (
+                    c if len(self.target_means_) < 2 else f"{c}{k + 1}"
+                    for c in self.encodings_
+                ),
+                mean,
+            )
+            fillna.fit_table(table, Metadata())
+            table = fillna.transform_table(table)
 
         return table
