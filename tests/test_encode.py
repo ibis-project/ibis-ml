@@ -92,7 +92,12 @@ def test_target_encode(smooth):
     t_train = ibis.memtable(data)
 
     enc = TargetEncoder(smooth=smooth).fit(X, y)
-    expected = pd.DataFrame({"X": enc.categories_[0], "expected": enc.encodings_[0]})
+    expected = pd.DataFrame(
+        {
+            "X": np.append(enc.categories_[0], "ibis"),
+            "expected": np.append(enc.encodings_[0], y.mean()),
+        }
+    )
     t_test = ibis.memtable(expected)
 
     step = ml.TargetEncode("X", smooth)
