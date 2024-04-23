@@ -71,4 +71,4 @@ class ZeroVariance(Step):
         self.cols_ = cols
 
     def transform_table(self, table: ir.Table) -> ir.Table:
-        return table.drop(self.cols_)
+        return table.drop(*self.cols_)
