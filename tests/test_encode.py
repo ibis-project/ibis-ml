@@ -104,3 +104,58 @@ def test_target_encode(smooth):
     step.fit_table(t_train, ml.core.Metadata(targets=("y",)))
     res = step.transform_table(t_test).to_pandas()
     assert np.allclose(res.X, res.expected)
+
+
+def test_target_encode_multioutput():
+    # https://towardsdatascience.com/target-encoding-for-multi-class-classification-c9a7bcb1a53
+    t = ibis.memtable(
+        {
+            "Color": ["Red"] * 5 + ["Green"] * 3,
+            "Target_1": [1, 1, 0, 0, 0, 1, 0, 0],
+            "Target_2": [0, 0, 1, 0, 0, 0, 1, 0],
+            "Target_3": [0, 0, 0, 1, 1, 0, 0, 1],
+        }
+    )
+    expected = pd.DataFrame(
+        {
+            "Color1": [2 / 5] * 5 + [1 / 3] * 3,
+            "Color2": [1 / 5] * 5 + [1 / 3] * 3,
+            "Color3": [2 / 5] * 5 + [1 / 3] * 3,
+        }
+    )
+
+    step = ml.TargetEncode("Color")
+    step.fit_table(t, ml.core.Metadata(targets=("Target_1", "Target_2", "Target_3")))
+    res = step.transform_table(t)
+    tm.assert_frame_equal(res.to_pandas()[expected.columns], expected)
+
+
+def test_target_encode_multiinput_multioutput():
+    t_train = ibis.memtable(
+        {
+            "Color": ["Red"] * 5 + ["Green"] * 3,
+            "Animal": ["Dog"] * 2 + ["Cat"] * 5 + ["Snake"] * 1,
+            "Target_1": [1, 1, 0, 0, 0, 1, 0, 0],
+            "Target_2": [0, 0, 1, 0, 0, 0, 1, 0],
+        }
+    )
+    t_test = ibis.memtable(
+        {
+            "Animal": ["Dog"] * 3 + ["Cat"] * 3 + ["Snake"] * 3 + ["Ibis"] * 1,
+            "Color": ["Red"] * 5 + ["Green"] * 5,
+        }
+    )
+    expected = pd.DataFrame(
+        {
+            # Columns are ordered based on the order in step definition.
+            "Color1": [2 / 5] * 5 + [1 / 3] * 5,
+            "Color2": [1 / 5] * 5 + [1 / 3] * 5,
+            "Animal1": [2 / 2] * 3 + [1 / 5] * 3 + [0 / 1] * 3 + [3 / 8] * 1,
+            "Animal2": [0 / 2] * 3 + [2 / 5] * 3 + [0 / 1] * 3 + [2 / 8] * 1,
+        }
+    )
+
+    step = ml.TargetEncode(ml.nominal())
+    step.fit_table(t_train, ml.core.Metadata(targets=("Target_1", "Target_2")))
+    res = step.transform_table(t_test)
+    tm.assert_frame_equal(res.to_pandas(), expected)
