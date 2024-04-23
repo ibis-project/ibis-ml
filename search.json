@@ -15,7 +15,7 @@
     "href": "reference/steps-other.html#parameters",
     "title": "Other",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to cast.\nrequired\n\n\ndtype\nibis.ibis.DataType | type[ibis.ibis.DataType] | str\nThe dtype to cast to. May be a dtype instance, class, or a string representation of one.\nrequired",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to cast.\nrequired\n\n\ndtype\nibis.expr.datatypes.ibis.expr.datatypes.DataType | type[ibis.expr.datatypes.ibis.expr.datatypes.DataType] | str\nThe dtype to cast to. May be a dtype instance, class, or a string representation of one.\nrequired",
     "crumbs": [
       "Steps",
       "Other"
@@ -59,7 +59,7 @@
     "href": "reference/steps-other.html#parameters-2",
     "title": "Other",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to use as inputs to expr/named_exprs.\nrequired\n\n\nexpr\ntyping.Callable[[ibis.ibis.Column], ibis.ibis.Column] | ibis.common.deferred.Deferred | None\nAn optional callable (Column -&gt; Column) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).\nNone\n\n\nnamed_exprs\ntyping.Callable[[ibis.ibis.Column], ibis.ibis.Column] | ibis.common.deferred.Deferred\nNamed callables (Column -&gt; Column) or deferred expressions to apply to all columns in inputs. Output columns will be named {column}_{name} where column is the input column name and name is the expression/callable name.\n{}",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to use as inputs to expr/named_exprs.\nrequired\n\n\nexpr\ntyping.Callable[[ibis.expr.types.ibis.expr.types.Column], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred | None\nAn optional callable (Column -&gt; Column) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).\nNone\n\n\nnamed_exprs\ntyping.Callable[[ibis.expr.types.ibis.expr.types.Column], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred\nNamed callables (Column -&gt; Column) or deferred expressions to apply to all columns in inputs. Output columns will be named {column}_{name} where column is the input column name and name is the expression/callable name.\n{}",
     "crumbs": [
       "Steps",
       "Other"
@@ -81,7 +81,7 @@
     "href": "reference/steps-other.html#parameters-3",
     "title": "Other",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nexprs\ntyping.Callable[[ibis.ibis.Table], ibis.ibis.Column] | ibis.common.deferred.Deferred\nCallables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n()\n\n\nnamed_exprs\ntyping.Callable[[ibis.ibis.Table], ibis.ibis.Column] | ibis.common.deferred.Deferred\nNamed callables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n{}",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nexprs\ntyping.Callable[[ibis.expr.types.ibis.expr.types.Table], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred\nCallables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n()\n\n\nnamed_exprs\ntyping.Callable[[ibis.expr.types.ibis.expr.types.Table], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred\nNamed callables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n{}",
     "crumbs": [
       "Steps",
       "Other"
@@ -224,7 +224,7 @@
     "href": "reference/selectors.html#parameters-5",
     "title": "Selectors",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndtype\nibis.ibis.DataType | str | type[ibis.ibis.DataType]\nThe dtype to match. May be a dtype instance, string, or dtype class.\nrequired",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndtype\nibis.expr.datatypes.ibis.expr.datatypes.DataType | str | type[ibis.expr.datatypes.ibis.expr.datatypes.DataType]\nThe dtype to match. May be a dtype instance, string, or dtype class.\nrequired",
     "crumbs": [
       "Core API",
       "Selectors"
@@ -235,7 +235,7 @@
     "href": "reference/selectors.html#parameters-6",
     "title": "Selectors",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\ntyping.Callable[[ibis.ibis.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\npredicate\ntyping.Callable[[ibis.expr.types.ibis.expr.types.Column], bool]\nA predicate function from Column to bool. Only columns where predicate returns True will be selected.\nrequired",
     "crumbs": [
       "Core API",
       "Selectors"

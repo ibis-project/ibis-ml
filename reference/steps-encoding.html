@@ -309,7 +309,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>OneHotEncode</h1>
 <p><code>OneHotEncode(self, inputs, *, min_frequency=None, max_categories=None)</code></p>
 <p>A step for one-hot encoding select columns.</p>
-<p>The original input column is dropped, and N-category new columns are created with names like <code>{input_column}_{category}</code>.</p>
+<p>The original input column is dropped, and N-category new columns are created with names like <code>{input_column}_{category}</code>. Unknown categories will be ignored during transformation; the resulting one-hot encoded columns for this feature will be all zeros.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="table">
