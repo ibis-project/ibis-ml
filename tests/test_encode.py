@@ -1,11 +1,14 @@
 import ibis
 import pandas as pd
+import pandas.testing as tm
+import pytest
 
 import ibisml as ml
 
 
-def test_count_encode():
-    t_train = ibis.memtable(
+@pytest.fixture()
+def t_train():
+    return ibis.memtable(
         {
             "time": [
                 pd.Timestamp("2016-05-25 13:30:00.023"),
@@ -20,7 +23,11 @@ def test_count_encode():
             "ticker": ["GOOG", "MSFT", "MSFT", "MSFT", None, "AAPL", "GOOG", "MSFT"],
         }
     )
-    t_test = ibis.memtable(
+
+
+@pytest.fixture()
+def t_test():
+    return ibis.memtable(
         {
             "time": [
                 pd.Timestamp("2016-05-25 13:30:00.023"),
@@ -34,7 +41,32 @@ def test_count_encode():
         }
     )
 
+
+def test_count_encode(t_train, t_test):
     step = ml.CountEncode("ticker")
     step.fit_table(t_train, ml.core.Metadata())
     res = step.transform_table(t_test)
     assert res.to_pandas().sort_values(by="time").ticker.to_list() == [4, 4, 2, 2, 0, 0]
+
+
+def test_one_hot_encode(t_train, t_test):
+    step = ml.OneHotEncode("ticker")
+    step.fit_table(t_train, ml.core.Metadata())
+    result = step.transform_table(t_test)
+    expected = pd.DataFrame(
+        {
+            "time": [
+                pd.Timestamp("2016-05-25 13:30:00.023"),
+                pd.Timestamp("2016-05-25 13:30:00.038"),
+                pd.Timestamp("2016-05-25 13:30:00.048"),
+                pd.Timestamp("2016-05-25 13:30:00.049"),
+                pd.Timestamp("2016-05-25 13:30:00.050"),
+                pd.Timestamp("2016-05-25 13:30:00.051"),
+            ],
+            "ticker_AAPL": [0, 0, 0, 0, 0, 0],
+            "ticker_GOOG": [0, 0, 1, 1, 0, 0],
+            "ticker_MSFT": [1, 1, 0, 0, 0, 0],
+            "ticker_None": [0, 0, 0, 0, 0, 1],
+        }
+    )
+    tm.assert_frame_equal(result.execute(), expected, check_dtype=False)
