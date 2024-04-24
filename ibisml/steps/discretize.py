@@ -11,7 +11,7 @@ from ibisml.core import Metadata, Step
 from ibisml.select import SelectionType, selector
 
 
-class KBinsDiscretizer(Step):
+class DiscretizeKBins(Step):
     """A step for binning numeric data into intervals.
 
     Parameters
@@ -24,8 +24,7 @@ class KBinsDiscretizer(Step):
         Strategy used to define the bin edges.
         - 'uniform': Evenly spaced bins between the minimum and maximum values.
         - 'quantile': Bins are created based on data quantiles.
-    overwrite : bool, default=True
-        Whether to overwrite existing columns or create new ones.
+
 
     Raises
     ----------
@@ -63,10 +62,9 @@ class KBinsDiscretizer(Step):
         *,
         n_bins: int = 5,
         strategy: str = "uniform",
-        overwrite: bool = True,
     ):
         if n_bins <= 1:
-            raise ValueError("Number of n_bins must be greater than 1.")
+            raise ValueError("Number of bins must be greater than 1.")
 
         if strategy not in ["uniform", "quantile"]:
             raise ValueError(
@@ -77,13 +75,11 @@ class KBinsDiscretizer(Step):
         self.inputs = selector(inputs)
         self.n_bins = n_bins
         self.strategy = strategy
-        self.overwrite = overwrite
 
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
         yield ("n_bins", self.n_bins)
         yield ("strategy", self.strategy)
-        yield ("overwrite", self.overwrite)
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
@@ -93,11 +89,6 @@ class KBinsDiscretizer(Step):
                 bins_edge = self._fit_uniform_strategy(table, columns)
             elif self.strategy == "quantile":
                 bins_edge = self._fit_quantile_strategy(table, columns)
-        else:
-            warnings.warn(
-                f"No column selected for discretization - {self.inputs!r}.",
-                stacklevel=2,
-            )
         self.bins_edge_ = bins_edge
 
     def _fit_uniform_strategy(
@@ -159,8 +150,7 @@ class KBinsDiscretizer(Step):
                     (col > prev_cutoff) & (col <= cutoff), i
                 )
             case_builder = case_builder.end()
-            if not self.overwrite:
-                col_name = f"{col_name}_{self.n_bins}_bin_{self.strategy}"
+            col_name = f"{col_name}_{self.n_bins}_bin_{self.strategy}"
             aggs.append({col_name: case_builder})
 
         return table.mutate(
