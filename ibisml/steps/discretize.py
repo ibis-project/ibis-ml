@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from typing import Any, Iterable
 
 import ibis
@@ -57,11 +56,7 @@ class DiscretizeKBins(Step):
     """
 
     def __init__(
-        self,
-        inputs: SelectionType,
-        *,
-        n_bins: int = 5,
-        strategy: str = "uniform",
+        self, inputs: SelectionType, *, n_bins: int = 5, strategy: str = "uniform"
     ):
         if n_bins <= 1:
             raise ValueError("Number of bins must be greater than 1.")
