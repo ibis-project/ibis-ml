@@ -291,3 +291,75 @@ class CountEncode(Step):
         fillna = FillNA(self.value_counts_, 0)
         fillna.fit_table(table, Metadata())
         return fillna.transform_table(table)
+
+
+class TargetEncode(Step):
+    """A step for target encoding select columns.
+
+    Parameters
+    ----------
+    inputs
+        A selection of columns to target encode.
+    smooth
+        The amount of mixing of the target mean conditioned on the value of the
+        category with the global target mean. A larger `smooth` value will put
+        more weight on the global target mean.
+
+    Examples
+    --------
+    >>> import ibisml as ml
+
+    Target encode all string columns.
+
+    >>> step = ml.TargetEncode(ml.string())
+    """
+
+    def __init__(self, inputs: SelectionType, smooth: float = 0.0) -> None:
+        self.inputs = selector(inputs)
+        self.smooth = smooth
+
+    def _repr(self) -> Iterable[tuple[str, Any]]:
+        yield ("", self.inputs)
+        yield ("smooth", self.smooth)
+
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        target_means = (
+            table.aggregate([table[c].mean().name(c) for c in metadata.targets])
+            .execute()
+            .to_dict("records")[0]
+        )
+
+        target_aggs = {}
+        for target in metadata.targets:
+            target_aggs[f"{target}_mean"] = table[target].mean()
+            target_aggs[f"{target}_count"] = table[target].count()
+
+        columns = self.inputs.select_columns(table, metadata)
+        self.encodings_ = {}
+        suffix = uuid.uuid4().hex[:6]
+        for column in columns:
+            agged = table.group_by(column).aggregate(**target_aggs)
+
+            target_encodings = {}
+            for target in metadata.targets:
+                target_encodings[f"{target}_{suffix}"] = (
+                    agged[f"{target}_mean"] * agged[f"{target}_count"]
+                    + target_means[target] * self.smooth
+                ) / (agged[f"{target}_count"] + self.smooth)
+
+            self.encodings_[column] = ibis.memtable(
+                agged.mutate(**target_encodings).drop(target_aggs).to_pyarrow()
+            )
+
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        for c, encodings in self.encodings_.items():
+            joined = table.left_join(
+                encodings, table[c] == encodings[0], lname="left_{name}", rname=""
+            )
+            table = joined.drop(encodings.columns[0], f"left_{c}").rename(
+                {c: encodings.columns[1]}
+                if len(encodings.columns) < 3
+                else {f"{c}{k + 1}": t for k, t in enumerate(encodings.columns[1:])}
+            )
+
+        return table

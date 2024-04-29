@@ -1,7 +1,9 @@
 import ibis
+import numpy as np
 import pandas as pd
 import pandas.testing as tm
 import pytest
+from sklearn.preprocessing import TargetEncoder
 
 import ibisml as ml
 
@@ -70,3 +72,30 @@ def test_one_hot_encode(t_train, t_test):
         }
     )
     tm.assert_frame_equal(result.execute(), expected, check_dtype=False)
+
+
+@pytest.mark.parametrize("smooth", [5000.0, 1.0, 0.0])
+def test_target_encode(smooth):
+    data = pd.DataFrame(
+        {
+            "X": ["dog"] * 20 + ["cat"] * 30 + ["snake"] * 38,
+            "y": [90.3] * 5
+            + [80.1] * 15
+            + [20.4] * 5
+            + [20.1] * 25
+            + [21.2] * 8
+            + [49] * 30,
+        }
+    )
+    X = data[["X"]]
+    y = data.y
+    t_train = ibis.memtable(data)
+
+    enc = TargetEncoder(smooth=smooth).fit(X, y)
+    expected = pd.DataFrame({"X": enc.categories_[0], "expected": enc.encodings_[0]})
+    t_test = ibis.memtable(expected)
+
+    step = ml.TargetEncode("X", smooth)
+    step.fit_table(t_train, ml.core.Metadata(targets=("y",)))
+    res = step.transform_table(t_test).to_pandas()
+    assert np.allclose(res.X, res.expected)
