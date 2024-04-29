@@ -1,6 +1,11 @@
 from ibisml.steps.common import Cast, Drop, Mutate, MutateAt
 from ibisml.steps.discretize import DiscretizeKBins
-from ibisml.steps.encode import CategoricalEncode, CountEncode, OneHotEncode
+from ibisml.steps.encode import (
+    CategoricalEncode,
+    CountEncode,
+    OneHotEncode,
+    TargetEncode,
+)
 from ibisml.steps.feature_engineering import PolynomialFeatures
 from ibisml.steps.feature_selection import ZeroVariance
 from ibisml.steps.impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
@@ -26,5 +31,6 @@ __all__ = (
     "PolynomialFeatures",
     "ScaleMinMax",
     "ScaleStandard",
+    "TargetEncode",
     "ZeroVariance",
 )
