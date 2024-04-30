@@ -137,6 +137,7 @@ class OneHotEncode(Step):
         for column in columns:
             if cats := metadata.get_categories(column):
                 categories[column] = list(range(len(cats)))
+                metadata.drop_categories(column)
             else:
                 to_compute.append(column)
 
@@ -275,9 +276,10 @@ class CountEncode(Step):
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
-        self.value_counts_ = {
-            c: ibis.memtable(table[c].value_counts().to_pyarrow()) for c in columns
-        }
+        self.value_counts_ = {}
+        for c in columns:
+            self.value_counts_[c] = ibis.memtable(table[c].value_counts().to_pyarrow())
+            metadata.drop_categories(c)
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         for c, value_counts in self.value_counts_.items():
@@ -350,6 +352,7 @@ class TargetEncode(Step):
             self.encodings_[column] = ibis.memtable(
                 agged.mutate(**target_encodings).drop(target_aggs).to_pyarrow()
             )
+            metadata.drop_categories(column)
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         for c, encodings in self.encodings_.items():

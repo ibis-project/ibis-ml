@@ -67,6 +67,7 @@ class ZeroVariance(Step):
                 elif results[f"{name}_var"] < 2:
                     # Check unique count for non-numeric columns
                     cols.append(name)
+                    metadata.drop_categories(name)
 
         self.cols_ = cols
 

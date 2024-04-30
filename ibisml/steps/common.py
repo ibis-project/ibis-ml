@@ -39,6 +39,8 @@ class Drop(Step):
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         self.columns_ = self.inputs.select_columns(table, metadata)
+        for column in self.columns_:
+            metadata.drop_categories(column)
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.drop(*self.columns_)
