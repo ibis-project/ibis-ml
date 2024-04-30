@@ -29,11 +29,11 @@ class PolynomialFeatures(Step):
 
     Generate polynomial features for all numeric columns with a degree is 2.
 
-    >>> step = ml.PolynomialFeatures(ml.numeric(), 2)
+    >>> step = ml.PolynomialFeatures(ml.numeric(), degree=2)
 
     Generate polynomial features a specific set of columns.
 
-    >>> step = ml.PolynomialFeatures(["x", "y"], 2)
+    >>> step = ml.PolynomialFeatures(["x", "y"], degree=2)
     """
 
     def __init__(self, inputs: SelectionType, *, degree: int = 2):

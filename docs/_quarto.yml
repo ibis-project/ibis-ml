@@ -70,6 +70,9 @@ website:
             - reference/steps-imputation.qmd
             - reference/steps-encoding.qmd
             - reference/steps-standardization.qmd
+            - reference/steps-discretization.qmd
+            - reference/steps-feature-selection.qmd
+            - reference/steps-feature-engineering.qmd
             - reference/steps-temporal.qmd
             - reference/steps-other.qmd
 
@@ -151,6 +154,8 @@ quartodoc:
           contents:
             - OneHotEncode
             - CategoricalEncode
+            - CountEncode
+            - TargetEncode
 
         - kind: page
           path: steps-standardization
@@ -159,6 +164,30 @@ quartodoc:
             desc: Standardization and normalization of numeric columns
           contents:
             - ScaleStandard
+
+        - kind: page
+          path: steps-discretization
+          summary:
+            name: Discretization
+            desc: Discretization of numeric columns
+          contents:
+            - DiscretizeKBins
+
+        - kind: page
+          path: steps-feature-selection
+          summary:
+            name: Feature Selection
+            desc: Selecting useful features for modeling
+          contents:
+            - ZeroVariance
+
+        - kind: page
+          path: steps-feature-engineering
+          summary:
+            name: Feature Engineering
+            desc: Generating new features
+          contents:
+            - PolynomialFeatures
 
         - kind: page
           path: steps-temporal

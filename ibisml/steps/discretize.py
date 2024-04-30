@@ -44,13 +44,13 @@ class DiscretizeKBins(Step):
 
     Bin all numeric columns.
 
-    >>> step = ml.KBinsDiscretizer(ml.numeric(), n_bins=10)
+    >>> step = ml.DiscretizeKBins(ml.numeric(), n_bins=10)
     >>> step.fit_table(p, Metadata())
     >>> step.transform_table(p)
 
     Bin specific numeric columns.
 
-    >>> step = ml.KBinsDiscretizer(["bill_length_mm"], strategy="quantile")
+    >>> step = ml.DiscretizeKBins(["bill_length_mm"], strategy="quantile")
     >>> step.fit_table(p, Metadata())
     >>> step.transform_table(p)
     """
