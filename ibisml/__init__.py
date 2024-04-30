@@ -26,9 +26,13 @@ from ._version import __version__
 
 
 def _auto_patch_skorch() -> None:
+    try:
+        import skorch.net
+    except ImportError:
+        return
+
     import ibis.expr.types as ir
     import numpy as np
-    import skorch.net
 
     old_fit = skorch.net.NeuralNet.fit
 
