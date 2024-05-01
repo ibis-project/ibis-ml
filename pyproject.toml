@@ -53,7 +53,7 @@ select = [
   "PTH",  # flake8-use-pathlib
   "TD",   # flake8-todos
   "ERA",  # eradicate
-  # "PD", # pandas-vet # TODO(deepyaman): Use `.to_numpy()` instead of `.values`.
+  "PD",   # pandas-vet
   # "PGH",# pygrep-hooks # TODO(deepyaman): Use specific rule codes when ignoring type issues.
   "FLY",  # flynt
   "NPY",  # NumPy-specific rules

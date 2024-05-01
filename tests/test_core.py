@@ -75,7 +75,7 @@ def test_in_memory_workflow(df, include_y):
     res = r.transform(X)
 
     assert isinstance(res, np.ndarray)
-    sol = X.assign(d=X.a + X.b).drop("c", axis=1).values
+    sol = X.assign(d=X.a + X.b).drop("c", axis=1).to_numpy()
     np.testing.assert_array_equal(res, sol)
 
 
@@ -245,8 +245,8 @@ def test_normalize_table_ibis_errors(table):
         pytest.param(lambda t: None, id="None"),
         pytest.param(lambda t: t["y"], id="series"),
         pytest.param(lambda t: t[["y"]], id="dataframe"),
-        pytest.param(lambda t: t["y"].values, id="numpy-1d"),
-        pytest.param(lambda t: t[["y"]].values, id="numpy-2d"),
+        pytest.param(lambda t: t["y"].to_numpy(), id="numpy-1d"),
+        pytest.param(lambda t: t[["y"]].to_numpy(), id="numpy-2d"),
     ],
 )
 @pytest.mark.parametrize("x_is_numpy", [False, True])
@@ -255,7 +255,7 @@ def test_normalize_table_pandas_numpy(df, get_y, x_is_numpy, maintain_order):
     y = get_y(df)
     X = df[["a", "b"]]
     if x_is_numpy:
-        X = X.values
+        X = X.to_numpy()
 
     t, targets, index = normalize_table(X, y, maintain_order=maintain_order)
     if y is None:
