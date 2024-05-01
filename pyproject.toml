@@ -66,6 +66,7 @@ ignore = [
   "ISC001", # single-line-implicit-string-concatenation
   "RET505", # superfluous-else-return, stylistic choice
   "TD003",  # missing-todo-link
+  "PD901",  # pandas-df-variable-name, stylistic choice
 ]
 
 [tool.ruff.lint.per-file-ignores]
