@@ -10,7 +10,7 @@ from ibisml.select import SelectionType, selector
 
 def _fillna(col, val):
     if col.type().is_floating():
-        return (col.isnull() | col.isnan()).ifelse(val, col)
+        return (col.isnull() | col.isnan()).ifelse(val, col)  # noqa: PD003
     else:
         return col.coalesce(val)
 
