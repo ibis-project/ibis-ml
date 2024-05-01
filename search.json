@@ -99,6 +99,39 @@
     ]
   },
   {
+    "objectID": "reference/steps-feature-engineering.html",
+    "href": "reference/steps-feature-engineering.html",
+    "title": "Feature engineering",
+    "section": "",
+    "text": "Generating new features",
+    "crumbs": [
+      "Steps",
+      "Feature engineering"
+    ]
+  },
+  {
+    "objectID": "reference/steps-feature-engineering.html#parameters",
+    "href": "reference/steps-feature-engineering.html#parameters",
+    "title": "Feature engineering",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to generate polynomial features. All columns must be numeric.\nrequired\n\n\ndegree\nint\nThe maximum degree of polynomial features to generate.\n2",
+    "crumbs": [
+      "Steps",
+      "Feature engineering"
+    ]
+  },
+  {
+    "objectID": "reference/steps-feature-engineering.html#examples",
+    "href": "reference/steps-feature-engineering.html#examples",
+    "title": "Feature engineering",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nGenerate polynomial features for all numeric columns with a degree is 2.\n&gt;&gt;&gt; step = ml.PolynomialFeatures(ml.numeric(), degree=2)\nGenerate polynomial features a specific set of columns.\n&gt;&gt;&gt; step = ml.PolynomialFeatures([\"x\", \"y\"], degree=2)",
+    "crumbs": [
+      "Steps",
+      "Feature engineering"
+    ]
+  },
+  {
     "objectID": "reference/steps-encoding.html",
     "href": "reference/steps-encoding.html",
     "title": "Encoding",
@@ -148,6 +181,50 @@
     "title": "Encoding",
     "section": "Examples",
     "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCategorical encode all string columns.\n&gt;&gt;&gt; step = ml.CategoricalEncode(ml.string())\nCategorical encode a specific column, only including categories with at least 20 samples.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", min_frequency=20)\nCategorical encode a specific column, including at most 10 categories.\n&gt;&gt;&gt; step = ml.CategoricalEncode(\"x\", max_categories=10)",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#parameters-2",
+    "href": "reference/steps-encoding.html#parameters-2",
+    "title": "Encoding",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to count encode.\nrequired",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#examples-2",
+    "href": "reference/steps-encoding.html#examples-2",
+    "title": "Encoding",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nCount encode all string columns.\n&gt;&gt;&gt; step = ml.CountEncode(ml.string())",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#parameters-3",
+    "href": "reference/steps-encoding.html#parameters-3",
+    "title": "Encoding",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to target encode.\nrequired\n\n\nsmooth\nfloat\nThe amount of mixing of the target mean conditioned on the value of the category with the global target mean. A larger smooth value will put more weight on the global target mean.\n0.0",
+    "crumbs": [
+      "Steps",
+      "Encoding"
+    ]
+  },
+  {
+    "objectID": "reference/steps-encoding.html#examples-3",
+    "href": "reference/steps-encoding.html#examples-3",
+    "title": "Encoding",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nTarget encode all string columns.\n&gt;&gt;&gt; step = ml.TargetEncode(ml.string())",
     "crumbs": [
       "Steps",
       "Encoding"
@@ -242,51 +319,15 @@
     ]
   },
   {
-    "objectID": "reference/steps-standardization.html",
-    "href": "reference/steps-standardization.html",
-    "title": "Standardization",
+    "objectID": "reference/core.html",
+    "href": "reference/core.html",
+    "title": "Common",
     "section": "",
-    "text": "Standardization and normalization of numeric columns",
+    "text": "Common\nCore APIs\n\n\nRecipe\nRecipe(self, *steps)\n\n\n\n\n Back to top",
     "crumbs": [
-      "Steps",
-      "Standardization"
+      "Core API",
+      "Common"
     ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html#parameters",
-    "href": "reference/steps-standardization.html#parameters",
-    "title": "Standardization",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html#examples",
-    "href": "reference/steps-standardization.html#examples",
-    "title": "Standardization",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "ibisml",
-    "section": "",
-    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
-  },
-  {
-    "objectID": "index.html#help-wanted",
-    "href": "index.html#help-wanted",
-    "title": "ibisml",
-    "section": "Help Wanted!",
-    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
   },
   {
     "objectID": "reference/steps-temporal.html",
@@ -366,14 +407,83 @@
     ]
   },
   {
-    "objectID": "reference/core.html",
-    "href": "reference/core.html",
-    "title": "Common",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ibisml",
     "section": "",
-    "text": "Common\nCore APIs\n\n\nRecipe\nRecipe(self, *steps)\n\n\n\n\n Back to top",
+    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
+  },
+  {
+    "objectID": "index.html#help-wanted",
+    "href": "index.html#help-wanted",
+    "title": "ibisml",
+    "section": "Help Wanted!",
+    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
+  },
+  {
+    "objectID": "reference/steps-standardization.html",
+    "href": "reference/steps-standardization.html",
+    "title": "Standardization",
+    "section": "",
+    "text": "Standardization and normalization of numeric columns",
     "crumbs": [
-      "Core API",
-      "Common"
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html#parameters",
+    "href": "reference/steps-standardization.html#parameters",
+    "title": "Standardization",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html#examples",
+    "href": "reference/steps-standardization.html#examples",
+    "title": "Standardization",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-feature-selection.html",
+    "href": "reference/steps-feature-selection.html",
+    "title": "Feature selection",
+    "section": "",
+    "text": "Selecting useful features for modeling",
+    "crumbs": [
+      "Steps",
+      "Feature selection"
+    ]
+  },
+  {
+    "objectID": "reference/steps-feature-selection.html#parameters",
+    "href": "reference/steps-feature-selection.html#parameters",
+    "title": "Feature selection",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to analyze for zero variance.\nrequired\n\n\ntolerance\nint | float\nTolerance level for considering variance as zero. Columns with variance less than this tolerance will be removed. Default is 1e-4.\n0.0001",
+    "crumbs": [
+      "Steps",
+      "Feature selection"
+    ]
+  },
+  {
+    "objectID": "reference/steps-feature-selection.html#examples",
+    "href": "reference/steps-feature-selection.html#examples",
+    "title": "Feature selection",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibisml as ml\nTo remove columns with zero variance:\n&gt;&gt;&gt; step = ml.ZeroVariance(ml.everything())\nTo remove all numeric columns with zero variance:\n&gt;&gt;&gt; step = ml.ZeroVariance(ml.numeric())\nTo remove all string or categorical columns with only one unique value:\n&gt;&gt;&gt; step = ml.ZeroVariance(ml.nominal())",
+    "crumbs": [
+      "Steps",
+      "Feature selection"
     ]
   },
   {
@@ -480,7 +590,7 @@
     "href": "reference/index.html",
     "title": "Reference",
     "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nDiscretization\nDiscretization of numeric columns\n\n\nFeature selection\nSelecting useful features for modeling\n\n\nFeature engineering\nGenerating new features\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
   },
   {
     "objectID": "reference/index.html#core",
@@ -494,6 +604,50 @@
     "href": "reference/index.html#steps",
     "title": "Reference",
     "section": "",
-    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nDiscretization\nDiscretization of numeric columns\n\n\nFeature selection\nSelecting useful features for modeling\n\n\nFeature engineering\nGenerating new features\n\n\nTemporal\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+  },
+  {
+    "objectID": "reference/steps-discretization.html",
+    "href": "reference/steps-discretization.html",
+    "title": "Discretization",
+    "section": "",
+    "text": "Discretization of numeric columns",
+    "crumbs": [
+      "Steps",
+      "Discretization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-discretization.html#parameters",
+    "href": "reference/steps-discretization.html#parameters",
+    "title": "Discretization",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nibisml.select.SelectionType\nA selection of columns to bin.\nrequired\n\n\nn_bins\nint\nNumber of bins to create.\n5\n\n\nstrategy\n(str, {‘uniform’, ‘quantile’})\nStrategy used to define the bin edges. - ‘uniform’: Evenly spaced bins between the minimum and maximum values. - ‘quantile’: Bins are created based on data quantiles.\n'uniform'",
+    "crumbs": [
+      "Steps",
+      "Discretization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-discretization.html#raises",
+    "href": "reference/steps-discretization.html#raises",
+    "title": "Discretization",
+    "section": "Raises",
+    "text": "Raises\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf n_bins is less than or equal to 1 or if an unsupported strategy is provided.",
+    "crumbs": [
+      "Steps",
+      "Discretization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-discretization.html#examples",
+    "href": "reference/steps-discretization.html#examples",
+    "title": "Discretization",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis\n&gt;&gt;&gt; import ibisml as ml\n&gt;&gt;&gt; from ibisml.core import Metadata\n&gt;&gt;&gt; ibis.options.interactive = True\nLoad penguins dataset\n&gt;&gt;&gt; p = ibis.examples.penguins.fetch()\nBin all numeric columns.\n&gt;&gt;&gt; step = ml.DiscretizeKBins(ml.numeric(), n_bins=10)\n&gt;&gt;&gt; step.fit_table(p, Metadata())\n&gt;&gt;&gt; step.transform_table(p)\nBin specific numeric columns.\n&gt;&gt;&gt; step = ml.DiscretizeKBins([\"bill_length_mm\"], strategy=\"quantile\")\n&gt;&gt;&gt; step.fit_table(p, Metadata())\n&gt;&gt;&gt; step.transform_table(p)",
+    "crumbs": [
+      "Steps",
+      "Discretization"
+    ]
   }
 ]

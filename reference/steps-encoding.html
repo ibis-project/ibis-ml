@@ -159,6 +159,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Standardization</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../reference/steps-discretization.html">
+ <span class="dropdown-text">Discretization</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-feature-selection.html">
+ <span class="dropdown-text">Feature selection</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-feature-engineering.html">
+ <span class="dropdown-text">Feature engineering</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../reference/steps-temporal.html">
  <span class="dropdown-text">Temporal</span></a>
   </li>  
@@ -259,6 +271,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../reference/steps-discretization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discretization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-feature-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Feature selection</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-feature-engineering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Feature engineering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../reference/steps-temporal.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Temporal</span></a>
   </div>
@@ -291,6 +321,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#parameters-1" id="toc-parameters-1" class="nav-link" data-scroll-target="#parameters-1">Parameters</a></li>
   <li><a href="#examples-1" id="toc-examples-1" class="nav-link" data-scroll-target="#examples-1">Examples</a></li>
+  </ul></li>
+  <li><a href="#ibisml.CountEncode" id="toc-ibisml.CountEncode" class="nav-link" data-scroll-target="#ibisml.CountEncode">CountEncode</a>
+  <ul class="collapse">
+  <li><a href="#parameters-2" id="toc-parameters-2" class="nav-link" data-scroll-target="#parameters-2">Parameters</a></li>
+  <li><a href="#examples-2" id="toc-examples-2" class="nav-link" data-scroll-target="#examples-2">Examples</a></li>
+  </ul></li>
+  <li><a href="#ibisml.TargetEncode" id="toc-ibisml.TargetEncode" class="nav-link" data-scroll-target="#ibisml.TargetEncode">TargetEncode</a>
+  <ul class="collapse">
+  <li><a href="#parameters-3" id="toc-parameters-3" class="nav-link" data-scroll-target="#parameters-3">Parameters</a></li>
+  <li><a href="#examples-3" id="toc-examples-3" class="nav-link" data-scroll-target="#examples-3">Examples</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibisml/edit/main/docs/reference/steps-encoding.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibisml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -412,6 +452,88 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CategoricalEncode(<span class="st">"x"</span>, min_frequency<span class="op">=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Categorical encode a specific column, including at most 10 categories.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CategoricalEncode(<span class="st">"x"</span>, max_categories<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="ibisml.CountEncode" class="level1">
+<h1>CountEncode</h1>
+<p><code>CountEncode(self, inputs)</code></p>
+<p>A step for count encoding select columns.</p>
+<section id="parameters-2" class="level2">
+<h2 class="anchored" data-anchor-id="parameters-2">Parameters</h2>
+<table class="table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 31%">
+<col style="width: 44%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>inputs</code></td>
+<td>ibisml.select.SelectionType</td>
+<td>A selection of columns to count encode.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples-2" class="level2">
+<h2 class="anchored" data-anchor-id="examples-2">Examples</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Count encode all string columns.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CountEncode(ml.string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="ibisml.TargetEncode" class="level1">
+<h1>TargetEncode</h1>
+<p><code>TargetEncode(self, inputs, smooth=0.0)</code></p>
+<p>A step for target encoding select columns.</p>
+<section id="parameters-3" class="level2">
+<h2 class="anchored" data-anchor-id="parameters-3">Parameters</h2>
+<table class="table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 12%">
+<col style="width: 78%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>inputs</code></td>
+<td>ibisml.select.SelectionType</td>
+<td>A selection of columns to target encode.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>smooth</code></td>
+<td>float</td>
+<td>The amount of mixing of the target mean conditioned on the value of the category with the global target mean. A larger <code>smooth</code> value will put more weight on the global target mean.</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples-3" class="level2">
+<h2 class="anchored" data-anchor-id="examples-3">Examples</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Target encode all string columns.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.TargetEncode(ml.string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
