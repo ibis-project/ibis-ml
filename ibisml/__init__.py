@@ -1,3 +1,5 @@
+"""IbisML is a library for building scalable ML pipelines using Ibis."""
+
 from ibisml.core import Recipe, Step
 from ibisml.select import (
     categorical,

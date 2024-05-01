@@ -10,8 +10,8 @@ metadata-files:
   - _sidebar.yml
 
 website:
-  title: "ibisml"
-  description: "portable feature engineering pipelines"
+  title: "IbisML"
+  description: "IbisML is a library for building scalable ML pipelines using Ibis."
   favicon: logo.svg
 
   # search
