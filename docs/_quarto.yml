@@ -176,7 +176,7 @@ quartodoc:
         - kind: page
           path: steps-feature-selection
           summary:
-            name: Feature Selection
+            name: Feature selection
             desc: Selecting useful features for modeling
           contents:
             - ZeroVariance
@@ -184,7 +184,7 @@ quartodoc:
         - kind: page
           path: steps-feature-engineering
           summary:
-            name: Feature Engineering
+            name: Feature engineering
             desc: Generating new features
           contents:
             - PolynomialFeatures
