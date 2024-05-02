@@ -42,6 +42,12 @@ website:
   # nav
   navbar:
     logo: logo.svg
+    left:
+      - text: "Overview"
+        href: index.qmd
+      - text: "Tutorial"
+        href: https://github.com/ibis-project/ibis-ml/blob/main/examples/Preprocess%20your%20data%20with%20recipes.ipynb
+      - sidebar:reference
     tools:
       - icon: github
         menu:
@@ -50,9 +56,6 @@ website:
           - text: Open an issue
             url: https://github.com/ibis-project/ibis-ml/issues
 
-    left:
-      - sidebar:reference
-
   sidebar:
     - id: ""
     - id: reference
@@ -60,7 +63,7 @@ website:
       style: "docked"
       collapse-level: 2
       contents:
-        - section: Core API
+        - section: Core
           contents:
             - reference/core.qmd
             - reference/selectors.qmd
