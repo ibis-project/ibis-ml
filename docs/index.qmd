@@ -18,37 +18,48 @@ hide-description: true
   [XGBoost](https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html), and
   [PyTorch](https://skorch.readthedocs.io/en/stable/) models.
 
-```python
-import ibis
+# Get started
+
+### Install IbisML
+
+```bash
+pip install ibisml
+```
+
+### Create your first recipe
+
+With recipes, you can define sequences of feature engineering steps to get your data
+ready for modeling. For example, create a recipe to replace missing values using the
+mean of each numeric column and then normalize numeric data to have a standard deviation
+of one and a mean of zero.
+
+```{python}
 import ibisml as ml
 
-# A recipe for a feature engineering pipeline that:
-# - imputes missing values in numeric columns with their mean
-# - applies standard scaling to all numeric columns
-# - one-hot-encodes all nominal columns
-recipe = ml.Recipe(
-    ml.ImputeMean(ml.numeric()),
-    ml.ScaleStandard(ml.numeric()),
-    ml.OneHotEncode(ml.nominal()),
-)
+imputer = ml.ImputeMean(ml.numeric())
+scaler = ml.ScaleStandard(ml.numeric())
+rec = ml.Recipe(imputer, scaler)
+```
 
-# Use the recipe inside of a larger Scikit-Learn pipeline
+A recipe can be chained in a [`Pipeline`](https://scikit-learn.org/stable/modules/
+generated/sklearn.pipeline.Pipeline.html) like any other
+[transformer](https://scikit-learn.org/stable/glossary.html#term-transformer).
+
+```{python}
 from sklearn.pipeline import Pipeline
-pipeline = Pipeline([("recipe", recipe), ("model", LinearSVC())])
+from sklearn.svm import SVC
 
-# Fit the recipe against some local training data,
-# just as you would with any other scikit-learn model
-X, y = load_training_data()
-pipeline.fit(X, y)
+pipe = Pipeline([("rec", rec), ("svc", SVC())])
+```
 
-# Evaluate the model against some local testing data.
-X_test, y_test = load_testing_data()
-pipeline.score(X_test, y_test)
+The pipeline can be used as any other estimator and avoids leaking the test set into the
+train set.
 
-# Now apply the same preprocessing pipeline against any of ibis's
-# supported backends
-con = ibis.connect(...)
-X_remote = con.table["mytable"]
-for batch in recipe.to_pyarrow_batches(X_remote):
-    ...
+```{python}
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+
+X, y = make_classification(random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+pipe.fit(X_train, y_train).score(X_test, y_test)
 ```
