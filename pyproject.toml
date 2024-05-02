@@ -13,8 +13,8 @@ dependencies = ["ibis-framework"]
 
 [project.optional-dependencies]
 dask = ["dask[dataframe]"]
-doc = ["ibis-framework[duckdb]", "jupyter", "quartodoc", "scikit-learn", "skorch"]
-dev = ["ibis-framework[duckdb]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
+doc = ["ibis-framework[duckdb,examples]", "jupyter", "quartodoc", "scikit-learn", "skorch", "torch"]
+dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
 
 [tool.setuptools]
 include-package-data = false
