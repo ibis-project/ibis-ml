@@ -12,8 +12,8 @@ IbisML is a library for building scalable ML pipelines using Ibis:
 - Preprocess your data at scale on any [Ibis](https://ibis-project.org/)-supported
   backend.
 - Compose [`Recipe`](/reference/core.html#ibisml.Recipe)s with other scikit-learn
-  estimators using [`Pipeline`](https://scikit-learn.org/stable/modules/compose.html
-  #pipeline-chaining-estimators)s.
+  estimators using
+  [`Pipeline`](https://scikit-learn.org/stable/modules/compose.html#pipeline-chaining-estimators)s.
 - Seamlessly integrate with [scikit-learn](https://scikit-learn.org/stable/),
   [XGBoost](https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html), and
   [PyTorch](https://skorch.readthedocs.io/en/stable/) models.
