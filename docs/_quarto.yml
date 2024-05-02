@@ -46,7 +46,7 @@ website:
       - text: "Overview"
         href: index.qmd
       - text: "Tutorial"
-        href: https://github.com/ibis-project/ibis-ml/blob/main/examples/Preprocess%20your%20data%20with%20recipes.ipynb
+        href: tutorial/Preprocess your data with recipes.ipynb
       - sidebar:reference
     tools:
       - icon: github
