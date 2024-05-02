@@ -5,11 +5,18 @@
 [![License](https://img.shields.io/github/license/ibis-project/ibis-ml.svg)](https://github.com/ibis-project/ibis-ml/blob/main/LICENSE.txt)
 [![PyPI](https://img.shields.io/pypi/v/ibisml.svg)](https://pypi.org/project/ibisml/)
 
-`ibisml` is a _work-in-progress_ library for developing Machine Learning
-feature engineering pipelines using [ibis](https://ibis-project.org/). These
-pipelines can then be used to transform and feed data to other machine learning
-libraries like [xgboost](https://xgboost.readthedocs.io) or
-[scikit-learn](https://scikit-learn.org).
+## What is IbisML?
+
+IbisML is a library for building scalable ML pipelines using Ibis:
+
+- Preprocess your data at scale on any [Ibis](https://ibis-project.org/)-supported
+  backend.
+- Compose [`Recipe`](/reference/core.html#ibisml.Recipe)s with other scikit-learn
+  estimators using [`Pipeline`](https://scikit-learn.org/stable/modules/compose.html
+  #pipeline-chaining-estimators)s.
+- Seamlessly integrate with [scikit-learn](https://scikit-learn.org/stable/),
+  [XGBoost](https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html), and
+  [PyTorch](https://skorch.readthedocs.io/en/stable/) models.
 
 ```python
 import ibis
@@ -45,16 +52,3 @@ X_remote = con.table["mytable"]
 for batch in recipe.to_pyarrow_batches(X_remote):
     ...
 ```
-
-By using `ibis` for preprocessing and feature engineering, feature engineering
-pipelines may be compiled to SQL and executed on a wide range of [performant
-and scalable backends](https://ibis-project.org/support_matrix). No more need
-to rewrite code for production deployments, pipelines may be developed locally
-(against e.g. `duckdb`) and deployed to production (against e.g. `spark`) with
-only a single line of code change.
-
-## Help Wanted!
-
-`ibisml` is a work-in-progress. If you're interested in getting involved
-(whether through feature requests, PRs, or just sharing opinions), we'd love to
-hear from you.
