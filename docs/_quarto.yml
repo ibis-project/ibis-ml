@@ -23,11 +23,11 @@ website:
   reader-mode: false
   twitter-card: true
   back-to-top-navigation: true
-  repo-url: https://github.com/ibis-project/ibisml
+  repo-url: https://github.com/ibis-project/ibis-ml
   repo-actions: [edit, issue]
   repo-branch: main
   repo-subdir: docs
-  issue-url: https://github.com/ibis-project/ibisml/issues
+  issue-url: https://github.com/ibis-project/ibis-ml/issues
 
   # footer
   page-footer:
@@ -35,7 +35,7 @@ website:
     left: ""
     right:
       - icon: github
-        href: https://github.com/ibis-project
+        href: https://github.com/ibis-project/ibis-ml
       - icon: zulip
         href: https://ibis-project.zulipchat.com/#narrow/stream/426262-ibis-ml
 
@@ -46,9 +46,9 @@ website:
       - icon: github
         menu:
           - text: Source code
-            url: https://github.com/ibis-project/ibisml
+            url: https://github.com/ibis-project/ibis-ml
           - text: Open an issue
-            url: https://github.com/ibis-project/ibisml/issues
+            url: https://github.com/ibis-project/ibis-ml/issues
 
     left:
       - sidebar:reference
