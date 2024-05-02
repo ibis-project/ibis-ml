@@ -46,7 +46,7 @@ website:
       - text: "Overview"
         href: index.qmd
       - text: "Tutorial"
-        href: tutorial/Preprocess your data with recipes.ipynb
+        href: tutorial/index.ipynb
       - sidebar:reference
     tools:
       - icon: github
