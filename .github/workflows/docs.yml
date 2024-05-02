@@ -23,10 +23,9 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Install IbisML and dependencies
+      - name: Install IbisML and docs dependencies
         run: |
-          pip install -e "."
-          pip install quartodoc
+          pip install '.[doc]'
 
       - name: Build Docs
         run: |
