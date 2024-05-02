@@ -1,4 +1,7 @@
-section#connection-parameters {
-  /* scroll when child contents overflow the width */
-  overflow-x: auto;
+.bi-zulip::before {
+  content: url(./zulip.svg);
+  display: inline-block;
+  filter: grayscale(1);
+  vertical-align: -0.125em;
+  width: 1em;
 }

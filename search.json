@@ -409,16 +409,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "ibisml",
+    "title": "Welcome to IbisML",
     "section": "",
-    "text": "ibisml is a work-in-progress library for developing Machine Learning feature engineering pipelines using ibis. These pipelines can then be used to transform and feed data to other machine learning libraries like xgboost or scikit-learn.\nBy using ibis for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of performant and scalable backends. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g. duckdb) and deployed to production (against e.g. spark) with only a single line of code change."
-  },
-  {
-    "objectID": "index.html#help-wanted",
-    "href": "index.html#help-wanted",
-    "title": "ibisml",
-    "section": "Help Wanted!",
-    "text": "Help Wanted!\nibisml is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you."
+    "text": "A library for building scalable ML pipelines\n\nPreprocess your data at scale on any Ibis-supported backend.\nCompose Recipes with other scikit-learn estimators using Pipelines.\nSeamlessly integrate with scikit-learn, XGBoost, and PyTorch models.\n\n\n\nGet started\n\nInstall IbisML\npip install ibisml\n\n\nCreate your first recipe\nWith recipes, you can define sequences of feature engineering steps to get your data ready for modeling. For example, create a recipe to replace missing values using the mean of each numeric column and then normalize numeric data to have a standard deviation of one and a mean of zero.\n\nimport ibisml as ml\n\nimputer = ml.ImputeMean(ml.numeric())\nscaler = ml.ScaleStandard(ml.numeric())\nrec = ml.Recipe(imputer, scaler)\n\nA recipe can be chained in a Pipeline like any other transformer.\n\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\npipe = Pipeline([(\"rec\", rec), (\"svc\", SVC())])\n\nThe pipeline can be used as any other estimator and avoids leaking the test set into the train set.\n\nfrom sklearn.datasets import make_classification\nfrom sklearn.model_selection import train_test_split\n\nX, y = make_classification(random_state=0)\nX_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)\npipe.fit(X_train, y_train).score(X_test, y_test)\n\n0.88\n\n\n\n\n\n\n\n Back to top"
   },
   {
     "objectID": "reference/steps-standardization.html",

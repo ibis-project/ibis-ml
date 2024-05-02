@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="portable feature engineering pipelines">
+<meta name="description" content="IbisML is a library for building scalable ML pipelines using Ibis.">
 
-<title>ibisml</title>
+<title>IbisML</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -106,12 +106,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="styles.css">
-<meta name="twitter:title" content="ibisml">
-<meta name="twitter:description" content="portable feature engineering pipelines">
+<meta name="twitter:title" content="IbisML">
+<meta name="twitter:description" content="IbisML is a library for building scalable ML pipelines using Ibis.">
 <meta name="twitter:card" content="summary">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -122,7 +122,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <img src="./logo.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">ibisml</span>
+    <span class="navbar-title">IbisML</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -188,12 +188,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibisml">
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibis-ml">
             Source code
             </a>
           </li>
           <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibisml/issues">
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibis-ml/issues">
             Open an issue
             </a>
           </li>
@@ -208,28 +208,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#help-wanted" id="toc-help-wanted" class="nav-link active" data-scroll-target="#help-wanted">Help Wanted!</a></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">ibisml</h1>
+<h1 class="title">Welcome to IbisML</h1>
 </div>
 
-<div>
-  <div class="description">
-    <em>portable feature engineering pipelines</em>
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -244,45 +231,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><code>ibisml</code> is a <em>work-in-progress</em> library for developing Machine Learning feature engineering pipelines using <a href="https://ibis-project.org/">ibis</a>. These pipelines can then be used to transform and feed data to other machine learning libraries like <a href="https://xgboost.readthedocs.io">xgboost</a> or <a href="https://scikit-learn.org">scikit-learn</a>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibisml <span class="im">as</span> ml</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A recipe for a feature engineering pipeline that:</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - imputes missing values in numeric columns with their mean</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># - applies standard scaling to all numeric columns</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># - one-hot-encodes all nominal columns</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>recipe <span class="op">=</span> ml.Recipe(</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    ml.ImputeMean(ml.numeric()),</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    ml.ScaleStandard(ml.numeric()),</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    ml.OneHotEncode(ml.nominal()),</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the recipe inside of a larger Scikit-Learn pipeline</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([(<span class="st">"recipe"</span>, recipe), (<span class="st">"model"</span>, LinearSVC())])</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the recipe against some local training data,</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># just as you would with any other scikit-learn model</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_training_data()</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X, y)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model against some local testing data.</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> load_testing_data()</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>pipeline.score(X_test, y_test)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Now apply the same preprocessing pipeline against any of ibis's</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># supported backends</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(...)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>X_remote <span class="op">=</span> con.table[<span class="st">"mytable"</span>]</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> batch <span class="kw">in</span> recipe.to_pyarrow_batches(X_remote):</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>By using <code>ibis</code> for preprocessing and feature engineering, feature engineering pipelines may be compiled to SQL and executed on a wide range of <a href="https://ibis-project.org/support_matrix">performant and scalable backends</a>. No more need to rewrite code for production deployments, pipelines may be developed locally (against e.g.&nbsp;<code>duckdb</code>) and deployed to production (against e.g.&nbsp;<code>spark</code>) with only a single line of code change.</p>
-<section id="help-wanted" class="level2">
-<h2 class="anchored" data-anchor-id="help-wanted">Help Wanted!</h2>
-<p><code>ibisml</code> is a work-in-progress. If you’re interested in getting involved (whether through feature requests, PRs, or just sharing opinions), we’d love to hear from you.</p>
+<section id="a-library-for-building-scalable-ml-pipelines" class="level3">
+<h3 class="anchored" data-anchor-id="a-library-for-building-scalable-ml-pipelines">A library for building scalable ML pipelines</h3>
+<ul>
+<li>Preprocess your data at scale on any <a href="https://ibis-project.org/">Ibis</a>-supported backend.</li>
+<li>Compose <a href="./reference/core.html#ibisml.Recipe"><code>Recipe</code></a>s with other scikit-learn estimators using <a href="https://scikit-learn.org/stable/modules/compose.html%20#pipeline-chaining-estimators"><code>Pipeline</code></a>s.</li>
+<li>Seamlessly integrate with <a href="https://scikit-learn.org/stable/">scikit-learn</a>, <a href="https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html">XGBoost</a>, and <a href="https://skorch.readthedocs.io/en/stable/">PyTorch</a> models.</li>
+</ul>
+</section>
+<section id="get-started" class="level1">
+<h1>Get started</h1>
+<section id="install-ibisml" class="level3">
+<h3 class="anchored" data-anchor-id="install-ibisml">Install IbisML</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install ibisml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-your-first-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="create-your-first-recipe">Create your first recipe</h3>
+<p>With recipes, you can define sequences of feature engineering steps to get your data ready for modeling. For example, create a recipe to replace missing values using the mean of each numeric column and then normalize numeric data to have a standard deviation of one and a mean of zero.</p>
+<div id="597a117a" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibisml <span class="im">as</span> ml</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>imputer <span class="op">=</span> ml.ImputeMean(ml.numeric())</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> ml.ScaleStandard(ml.numeric())</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>rec <span class="op">=</span> ml.Recipe(imputer, scaler)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A recipe can be chained in a <a href="https://scikit-learn.org/stable/modules/%20generated/sklearn.pipeline.Pipeline.html"><code>Pipeline</code></a> like any other <a href="https://scikit-learn.org/stable/glossary.html#term-transformer">transformer</a>.</p>
+<div id="aba1f239" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> Pipeline([(<span class="st">"rec"</span>, rec), (<span class="st">"svc"</span>, SVC())])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The pipeline can be used as any other estimator and avoids leaking the test set into the train set.</p>
+<div id="2bd3997c" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_classification</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_classification(random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>pipe.fit(X_train, y_train).score(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>0.88</code></pre>
+</div>
+</div>
 
 
+</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
@@ -886,18 +880,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/ibis-project">
+    <a class="nav-link" href="https://github.com/ibis-project/ibis-ml">
       <i class="bi bi-github" role="img">
 </i> 
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://gitter.im/ibis-dev/Lobby">
-      <i class="bi bi-slack" role="img">
+    <a class="nav-link" href="https://ibis-project.zulipchat.com/#narrow/stream/426262-ibis-ml">
+      <i class="bi bi-zulip" role="img">
 </i> 
     </a>
   </li>  
