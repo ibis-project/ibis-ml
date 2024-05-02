@@ -14,15 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install Quarto
+      - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Install ibisml and dependencies
+      - name: Install IbisML and dependencies
         run: |
           pip install -e "."
           pip install quartodoc
