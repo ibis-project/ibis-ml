@@ -12,7 +12,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'ibis-project/ibisml' }}
+    if: ${{ github.repository == 'ibis-project/ibis-ml' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
