@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ibis-ml"
-description = "Tools for developing ML pipelines using Ibis"
+description = "IbisML is a library for building scalable ML pipelines using Ibis."
 readme = "README.md"
 requires-python = ">= 3.8"
 license = { text = "Apache 2.0" }
@@ -15,6 +15,9 @@ dependencies = ["ibis-framework"]
 dask = ["dask[dataframe]"]
 doc = ["ibis-framework[duckdb,examples]", "jupyter", "quartodoc", "scikit-learn", "skorch", "torch"]
 dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
+
+[tool.coverage.report]
+exclude_also = ["if TYPE_CHECKING:"]
 
 [tool.setuptools]
 include-package-data = false
