@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, Any, Iterable
 import ibis
 import ibis.expr.types as ir
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
-from ibisml.steps.impute import FillNA
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
+from ibis_ml.steps.impute import FillNA
 
 
 def _compute_categories(
@@ -94,7 +94,7 @@ class OneHotEncode(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     One-hot encode all string columns.
 
@@ -183,7 +183,7 @@ class CategoricalEncode(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Categorical encode all string columns.
 
@@ -261,7 +261,7 @@ class CountEncode(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Count encode all string columns.
 
@@ -309,7 +309,7 @@ class TargetEncode(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Target encode all string columns.
 

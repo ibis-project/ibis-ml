@@ -1,7 +1,7 @@
 import ibis
 import pandas as pd
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 def test_zero_variance():

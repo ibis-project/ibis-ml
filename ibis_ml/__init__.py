@@ -1,7 +1,7 @@
 """IbisML is a library for building scalable ML pipelines using Ibis."""
 
-from ibisml.core import Recipe, Step
-from ibisml.select import (
+from ibis_ml.core import Recipe, Step
+from ibis_ml.select import (
     categorical,
     cols,
     contains,
@@ -22,7 +22,7 @@ from ibisml.select import (
     timestamp,
     where,
 )
-from ibisml.steps import *
+from ibis_ml.steps import *
 
 from ._version import __version__
 

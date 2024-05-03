@@ -88,7 +88,7 @@ format:
     css: styles.css
 
 quartodoc:
-  package: ibisml
+  package: ibis_ml
   title: Reference
   sidebar: reference/_sidebar.yml
   dynamic: true
@@ -98,7 +98,7 @@ quartodoc:
       signature_name: short
   sections:
     - title: Core
-      package: ibisml
+      package: ibis_ml
       contents:
         - kind: page
           path: core
@@ -136,7 +136,7 @@ quartodoc:
 
     - title: Steps
       desc: Define steps in a recipe
-      package: ibisml
+      package: ibis_ml
       contents:
         - kind: page
           path: steps-imputation

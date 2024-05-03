@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterable, Literal, Sequence
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 if TYPE_CHECKING:
     import ibis.expr.types as ir
@@ -38,7 +38,7 @@ class ExpandDateTime(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Expand date and time columns using the default components
 
@@ -169,7 +169,7 @@ class ExpandDate(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Expand date columns using the default components
 
@@ -273,7 +273,7 @@ class ExpandTime(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Expand time columns using the default components
 

@@ -261,7 +261,7 @@ def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
     """Wrap the `categorize` function in a closure, so cloudpickle will encode
     the full function.
 
-    This avoids requiring `ibisml` or `ibis` exist on the worker nodes of the
+    This avoids requiring `ibis_ml` or `ibis` exist on the worker nodes of the
     dask cluster.
     """
 

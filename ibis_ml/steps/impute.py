@@ -4,8 +4,8 @@ from typing import Any, Iterable
 
 import ibis.expr.types as ir
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 
 def _fillna(col, val):
@@ -28,7 +28,7 @@ class FillNA(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Fill all NULL values in numeric columns with 0.
 
@@ -91,7 +91,7 @@ class ImputeMean(_BaseImpute):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Replace NULL values in all numeric columns with their respective means,
     computed from the training dataset.
@@ -119,7 +119,7 @@ class ImputeMedian(_BaseImpute):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Replace NULL values in all numeric columns with their respective medians,
     computed from the training dataset.
@@ -147,7 +147,7 @@ class ImputeMode(_BaseImpute):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Replace NULL values in all numeric columns with their respective modes,
     computed from the training dataset.

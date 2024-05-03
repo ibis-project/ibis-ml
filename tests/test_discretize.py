@@ -3,7 +3,7 @@ import pandas as pd
 import pandas.testing as tm
 import pytest
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 @pytest.mark.parametrize("strategy", ["uniform", "quantile"])

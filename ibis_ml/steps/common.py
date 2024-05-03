@@ -6,8 +6,8 @@ import ibis.expr.datatypes as dt
 import ibis.expr.types as ir
 from ibis.common.deferred import Deferred
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 
 class Drop(Step):
@@ -20,7 +20,7 @@ class Drop(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Drop all non-numeric columns
 
@@ -59,7 +59,7 @@ class Cast(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Cast all numeric columns to float64
 
@@ -107,7 +107,7 @@ class MutateAt(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
     >>> from ibis import _
 
     Replace all numeric columns with their absolute values.
@@ -170,7 +170,7 @@ class Mutate(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
     >>> from ibis import _
 
     Define a new column ``c`` as ``a**2 + b**2``
