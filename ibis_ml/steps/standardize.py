@@ -4,8 +4,8 @@ from typing import Any, Iterable
 
 import ibis.expr.types as ir
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 
 class ScaleMinMax(Step):
@@ -19,7 +19,7 @@ class ScaleMinMax(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Normalize all numeric columns.
 
@@ -78,7 +78,7 @@ class ScaleStandard(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Normalize all numeric columns.
 

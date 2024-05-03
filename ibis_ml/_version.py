@@ -1,3 +1,3 @@
 from importlib.metadata import version
 
-__version__ = version("ibisml")
+__version__ = version("ibis_ml")

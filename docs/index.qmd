@@ -11,7 +11,7 @@ hide-description: true
 
 - Preprocess your data at scale on any [Ibis](https://ibis-project.org/)-supported
   backend.
-- Compose [`Recipe`](/reference/core.html#ibisml.Recipe)s with other scikit-learn
+- Compose [`Recipe`](/reference/core.html#ibis_ml.Recipe)s with other scikit-learn
   estimators using
   [`Pipeline`](https://scikit-learn.org/stable/modules/compose.html#pipeline-chaining-estimators)s.
 - Seamlessly integrate with [scikit-learn](https://scikit-learn.org/stable/),
@@ -23,7 +23,7 @@ hide-description: true
 ### Install IbisML
 
 ```bash
-pip install ibisml
+pip install ibis-ml
 ```
 
 ### Create your first recipe
@@ -34,7 +34,7 @@ mean of each numeric column and then normalize numeric data to have a standard d
 of one and a mean of zero.
 
 ```{python}
-import ibisml as ml
+import ibis_ml as ml
 
 imputer = ml.ImputeMean(ml.numeric())
 scaler = ml.ScaleStandard(ml.numeric())

@@ -6,8 +6,8 @@ import ibis
 import ibis.expr.types as ir
 import numpy as np
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 
 class DiscretizeKBins(Step):
@@ -34,8 +34,8 @@ class DiscretizeKBins(Step):
     Examples
     --------
     >>> import ibis
-    >>> import ibisml as ml
-    >>> from ibisml.core import Metadata
+    >>> import ibis_ml as ml
+    >>> from ibis_ml.core import Metadata
     >>> ibis.options.interactive = True
 
     Load penguins dataset

@@ -2,7 +2,7 @@ import ibis
 import ibis.expr.datatypes as dt
 import pytest
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 def eval_select(selector):

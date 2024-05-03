@@ -1,7 +1,7 @@
 import ibis
 from ibis import _
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 def test_expand_date():

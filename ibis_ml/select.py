@@ -8,7 +8,7 @@ import ibis.expr.datatypes as dt
 import ibis.expr.types as ir
 
 if TYPE_CHECKING:
-    from ibisml.core import Metadata
+    from ibis_ml.core import Metadata
 
 
 class Selector:

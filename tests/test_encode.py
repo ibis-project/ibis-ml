@@ -5,7 +5,7 @@ import pandas.testing as tm
 import pytest
 from sklearn.preprocessing import TargetEncoder
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 @pytest.fixture()

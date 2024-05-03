@@ -11,7 +11,7 @@ IbisML is a library for building scalable ML pipelines using Ibis:
 
 - Preprocess your data at scale on any [Ibis](https://ibis-project.org/)-supported
   backend.
-- Compose [`Recipe`](/reference/core.html#ibisml.Recipe)s with other scikit-learn
+- Compose [`Recipe`](/reference/core.html#ibis_ml.Recipe)s with other scikit-learn
   estimators using
   [`Pipeline`](https://scikit-learn.org/stable/modules/compose.html#pipeline-chaining-estimators)s.
 - Seamlessly integrate with [scikit-learn](https://scikit-learn.org/stable/),
@@ -20,7 +20,7 @@ IbisML is a library for building scalable ML pipelines using Ibis:
 
 ```python
 import ibis
-import ibisml as ml
+import ibis_ml as ml
 
 # A recipe for a feature engineering pipeline that:
 # - imputes missing values in numeric columns with their mean

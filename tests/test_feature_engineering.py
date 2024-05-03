@@ -2,7 +2,7 @@ import ibis
 import pandas.testing as tm
 import pytest
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 @pytest.fixture()

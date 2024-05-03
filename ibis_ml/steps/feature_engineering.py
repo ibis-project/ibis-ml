@@ -8,8 +8,8 @@ from typing import Any, Iterable
 
 import ibis.expr.types as ir
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 
 class PolynomialFeatures(Step):
@@ -25,7 +25,7 @@ class PolynomialFeatures(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     Generate polynomial features for all numeric columns with a degree is 2.
 

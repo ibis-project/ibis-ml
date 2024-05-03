@@ -2,7 +2,7 @@ import ibis
 import ibis.expr.datatypes as dt
 from ibis import _
 
-import ibisml as ml
+import ibis_ml as ml
 
 
 def test_drop():

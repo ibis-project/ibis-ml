@@ -4,8 +4,8 @@ from typing import Any, Iterable
 
 import ibis.expr.types as ir
 
-from ibisml.core import Metadata, Step
-from ibisml.select import SelectionType, selector
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
 
 
 class ZeroVariance(Step):
@@ -22,7 +22,7 @@ class ZeroVariance(Step):
 
     Examples
     --------
-    >>> import ibisml as ml
+    >>> import ibis_ml as ml
 
     To remove columns with zero variance:
     >>> step = ml.ZeroVariance(ml.everything())

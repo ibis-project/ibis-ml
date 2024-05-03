@@ -6,8 +6,8 @@ import pyarrow as pa
 import pytest
 from ibis import _
 
-import ibisml as ml
-from ibisml.core import normalize_table
+import ibis_ml as ml
+from ibis_ml.core import normalize_table
 
 
 class Shuffle(ml.Step):
