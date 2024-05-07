@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#feature-selection" id="toc-feature-selection" class="nav-link active" data-scroll-target="#feature-selection">Feature selection</a></li>
-  <li><a href="#ibisml.ZeroVariance" id="toc-ibisml.ZeroVariance" class="nav-link" data-scroll-target="#ibisml.ZeroVariance">ZeroVariance</a>
+  <li><a href="#ibis_ml.ZeroVariance" id="toc-ibis_ml.ZeroVariance" class="nav-link" data-scroll-target="#ibis_ml.ZeroVariance">ZeroVariance</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
@@ -338,7 +338,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Feature selection</h1>
 <p>Selecting useful features for modeling</p>
 </section>
-<section id="ibisml.ZeroVariance" class="level1">
+<section id="ibis_ml.ZeroVariance" class="level1">
 <h1>ZeroVariance</h1>
 <p><code>ZeroVariance(self, inputs, *, tolerance=0.0001)</code></p>
 <p>A step for removing columns with zero variance.</p>
@@ -347,7 +347,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 6%">
-<col style="width: 15%">
+<col style="width: 16%">
 <col style="width: 70%">
 <col style="width: 6%">
 </colgroup>
@@ -362,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to analyze for zero variance.</td>
 <td><em>required</em></td>
 </tr>
@@ -377,7 +377,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To remove columns with zero variance:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ZeroVariance(ml.everything())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To remove all numeric columns with zero variance:</p>

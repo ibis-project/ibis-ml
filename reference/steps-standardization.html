@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#standardization" id="toc-standardization" class="nav-link active" data-scroll-target="#standardization">Standardization</a></li>
-  <li><a href="#ibisml.ScaleStandard" id="toc-ibisml.ScaleStandard" class="nav-link" data-scroll-target="#ibisml.ScaleStandard">ScaleStandard</a>
+  <li><a href="#ibis_ml.ScaleStandard" id="toc-ibis_ml.ScaleStandard" class="nav-link" data-scroll-target="#ibis_ml.ScaleStandard">ScaleStandard</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
@@ -338,7 +338,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Standardization</h1>
 <p>Standardization and normalization of numeric columns</p>
 </section>
-<section id="ibisml.ScaleStandard" class="level1">
+<section id="ibis_ml.ScaleStandard" class="level1">
 <h1>ScaleStandard</h1>
 <p><code>ScaleStandard(self, inputs)</code></p>
 <p>A step for normalizing select numeric columns to have a standard deviation of one and a mean of zero.</p>
@@ -347,7 +347,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 8%">
-<col style="width: 24%">
+<col style="width: 25%">
 <col style="width: 56%">
 <col style="width: 10%">
 </colgroup>
@@ -362,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to normalize. All columns must be numeric.</td>
 <td><em>required</em></td>
 </tr>
@@ -371,7 +371,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Normalize all numeric columns.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ScaleStandard(ml.numeric())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Normalize a specific set of columns.</p>

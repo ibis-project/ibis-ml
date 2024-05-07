@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#discretization" id="toc-discretization" class="nav-link active" data-scroll-target="#discretization">Discretization</a></li>
-  <li><a href="#ibisml.DiscretizeKBins" id="toc-ibisml.DiscretizeKBins" class="nav-link" data-scroll-target="#ibisml.DiscretizeKBins">DiscretizeKBins</a>
+  <li><a href="#ibis_ml.DiscretizeKBins" id="toc-ibis_ml.DiscretizeKBins" class="nav-link" data-scroll-target="#ibis_ml.DiscretizeKBins">DiscretizeKBins</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#raises" id="toc-raises" class="nav-link" data-scroll-target="#raises">Raises</a></li>
@@ -339,7 +339,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Discretization</h1>
 <p>Discretization of numeric columns</p>
 </section>
-<section id="ibisml.DiscretizeKBins" class="level1">
+<section id="ibis_ml.DiscretizeKBins" class="level1">
 <h1>DiscretizeKBins</h1>
 <p><code>DiscretizeKBins(self, inputs, *, n_bins=5, strategy='uniform')</code></p>
 <p>A step for binning numeric data into intervals.</p>
@@ -363,7 +363,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to bin.</td>
 <td><em>required</em></td>
 </tr>
@@ -406,8 +406,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> ibisml.core <span class="im">import</span> Metadata</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> ibis_ml.core <span class="im">import</span> Metadata</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> ibis.options.interactive <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Load penguins dataset</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> p <span class="op">=</span> ibis.examples.penguins.fetch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

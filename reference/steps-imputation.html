@@ -320,22 +320,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#imputation" id="toc-imputation" class="nav-link active" data-scroll-target="#imputation">Imputation</a></li>
-  <li><a href="#ibisml.ImputeMean" id="toc-ibisml.ImputeMean" class="nav-link" data-scroll-target="#ibisml.ImputeMean">ImputeMean</a>
+  <li><a href="#ibis_ml.ImputeMean" id="toc-ibis_ml.ImputeMean" class="nav-link" data-scroll-target="#ibis_ml.ImputeMean">ImputeMean</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul></li>
-  <li><a href="#ibisml.ImputeMode" id="toc-ibisml.ImputeMode" class="nav-link" data-scroll-target="#ibisml.ImputeMode">ImputeMode</a>
+  <li><a href="#ibis_ml.ImputeMode" id="toc-ibis_ml.ImputeMode" class="nav-link" data-scroll-target="#ibis_ml.ImputeMode">ImputeMode</a>
   <ul class="collapse">
   <li><a href="#parameters-1" id="toc-parameters-1" class="nav-link" data-scroll-target="#parameters-1">Parameters</a></li>
   <li><a href="#examples-1" id="toc-examples-1" class="nav-link" data-scroll-target="#examples-1">Examples</a></li>
   </ul></li>
-  <li><a href="#ibisml.ImputeMedian" id="toc-ibisml.ImputeMedian" class="nav-link" data-scroll-target="#ibisml.ImputeMedian">ImputeMedian</a>
+  <li><a href="#ibis_ml.ImputeMedian" id="toc-ibis_ml.ImputeMedian" class="nav-link" data-scroll-target="#ibis_ml.ImputeMedian">ImputeMedian</a>
   <ul class="collapse">
   <li><a href="#parameters-2" id="toc-parameters-2" class="nav-link" data-scroll-target="#parameters-2">Parameters</a></li>
   <li><a href="#examples-2" id="toc-examples-2" class="nav-link" data-scroll-target="#examples-2">Examples</a></li>
   </ul></li>
-  <li><a href="#ibisml.FillNA" id="toc-ibisml.FillNA" class="nav-link" data-scroll-target="#ibisml.FillNA">FillNA</a>
+  <li><a href="#ibis_ml.FillNA" id="toc-ibis_ml.FillNA" class="nav-link" data-scroll-target="#ibis_ml.FillNA">FillNA</a>
   <ul class="collapse">
   <li><a href="#parameters-3" id="toc-parameters-3" class="nav-link" data-scroll-target="#parameters-3">Parameters</a></li>
   <li><a href="#examples-3" id="toc-examples-3" class="nav-link" data-scroll-target="#examples-3">Examples</a></li>
@@ -353,7 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Imputation</h1>
 <p>Imputation and handling of missing values</p>
 </section>
-<section id="ibisml.ImputeMean" class="level1">
+<section id="ibis_ml.ImputeMean" class="level1">
 <h1>ImputeMean</h1>
 <p><code>ImputeMean(self, inputs)</code></p>
 <p>A step for replacing NULL values in select columns with their respective mean in the training set.</p>
@@ -377,7 +377,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to impute. All columns must be numeric.</td>
 <td><em>required</em></td>
 </tr>
@@ -386,12 +386,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Replace NULL values in all numeric columns with their respective means, computed from the training dataset.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ImputeMean(ml.numeric())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="ibisml.ImputeMode" class="level1">
+<section id="ibis_ml.ImputeMode" class="level1">
 <h1>ImputeMode</h1>
 <p><code>ImputeMode(self, inputs)</code></p>
 <p>A step for replacing NULL values in select columns with their respective modes in the training set.</p>
@@ -400,7 +400,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 11%">
-<col style="width: 33%">
+<col style="width: 34%">
 <col style="width: 40%">
 <col style="width: 13%">
 </colgroup>
@@ -415,7 +415,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to impute.</td>
 <td><em>required</em></td>
 </tr>
@@ -424,12 +424,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples-1" class="level2">
 <h2 class="anchored" data-anchor-id="examples-1">Examples</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Replace NULL values in all numeric columns with their respective modes, computed from the training dataset.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ImputeMode(ml.numeric())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="ibisml.ImputeMedian" class="level1">
+<section id="ibis_ml.ImputeMedian" class="level1">
 <h1>ImputeMedian</h1>
 <p><code>ImputeMedian(self, inputs)</code></p>
 <p>A step for replacing NULL values in select columns with their respective medians in the training set.</p>
@@ -453,7 +453,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to impute. All columns must be numeric.</td>
 <td><em>required</em></td>
 </tr>
@@ -462,12 +462,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples-2" class="level2">
 <h2 class="anchored" data-anchor-id="examples-2">Examples</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Replace NULL values in all numeric columns with their respective medians, computed from the training dataset.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ImputeMedian(ml.numeric())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="ibisml.FillNA" class="level1">
+<section id="ibis_ml.FillNA" class="level1">
 <h1>FillNA</h1>
 <p><code>FillNA(self, inputs, fill_value)</code></p>
 <p>A step for filling NULL values in the input with a specific value.</p>
@@ -476,8 +476,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 10%">
-<col style="width: 21%">
-<col style="width: 59%">
+<col style="width: 22%">
+<col style="width: 58%">
 <col style="width: 8%">
 </colgroup>
 <thead>
@@ -491,7 +491,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of columns to fillna.</td>
 <td><em>required</em></td>
 </tr>
@@ -506,7 +506,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples-3" class="level2">
 <h2 class="anchored" data-anchor-id="examples-3">Examples</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Fill all NULL values in numeric columns with 0.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.FillNA(ml.numeric(), <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Fill all NULL values in specific columns with 1.</p>

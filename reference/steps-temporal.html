@@ -320,17 +320,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#temporal" id="toc-temporal" class="nav-link active" data-scroll-target="#temporal">Temporal</a></li>
-  <li><a href="#ibisml.ExpandDateTime" id="toc-ibisml.ExpandDateTime" class="nav-link" data-scroll-target="#ibisml.ExpandDateTime">ExpandDateTime</a>
+  <li><a href="#ibis_ml.ExpandDateTime" id="toc-ibis_ml.ExpandDateTime" class="nav-link" data-scroll-target="#ibis_ml.ExpandDateTime">ExpandDateTime</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul></li>
-  <li><a href="#ibisml.ExpandDate" id="toc-ibisml.ExpandDate" class="nav-link" data-scroll-target="#ibisml.ExpandDate">ExpandDate</a>
+  <li><a href="#ibis_ml.ExpandDate" id="toc-ibis_ml.ExpandDate" class="nav-link" data-scroll-target="#ibis_ml.ExpandDate">ExpandDate</a>
   <ul class="collapse">
   <li><a href="#parameters-1" id="toc-parameters-1" class="nav-link" data-scroll-target="#parameters-1">Parameters</a></li>
   <li><a href="#examples-1" id="toc-examples-1" class="nav-link" data-scroll-target="#examples-1">Examples</a></li>
   </ul></li>
-  <li><a href="#ibisml.ExpandTime" id="toc-ibisml.ExpandTime" class="nav-link" data-scroll-target="#ibisml.ExpandTime">ExpandTime</a>
+  <li><a href="#ibis_ml.ExpandTime" id="toc-ibis_ml.ExpandTime" class="nav-link" data-scroll-target="#ibis_ml.ExpandTime">ExpandTime</a>
   <ul class="collapse">
   <li><a href="#parameters-2" id="toc-parameters-2" class="nav-link" data-scroll-target="#parameters-2">Parameters</a></li>
   <li><a href="#examples-2" id="toc-examples-2" class="nav-link" data-scroll-target="#examples-2">Examples</a></li>
@@ -348,7 +348,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Temporal</h1>
 <p>Feature extraction for temporal columns</p>
 </section>
-<section id="ibisml.ExpandDateTime" class="level1">
+<section id="ibis_ml.ExpandDateTime" class="level1">
 <h1>ExpandDateTime</h1>
 <p><code>ExpandDateTime(self, inputs, components=('dow', 'month', 'year', 'hour', 'minute', 'second'))</code></p>
 <p>A step for expanding date and time columns into one or more features.</p>
@@ -373,7 +373,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of date and time columns to expand into new features.</td>
 <td><em>required</em></td>
 </tr>
@@ -388,14 +388,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand date and time columns using the default components</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDateTime(ml.datetime())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand specific columns using specific components for date and time</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDateTime([<span class="st">"x"</span>, <span class="st">"y"</span>], [<span class="st">"day"</span>, <span class="st">"year"</span>, <span class="st">"hour"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="ibisml.ExpandDate" class="level1">
+<section id="ibis_ml.ExpandDate" class="level1">
 <h1>ExpandDate</h1>
 <p><code>ExpandDate(self, inputs, components=('dow', 'month', 'year'))</code></p>
 <p>A step for expanding date columns into one or more features.</p>
@@ -420,7 +420,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of date columns to expand into new features.</td>
 <td><em>required</em></td>
 </tr>
@@ -435,14 +435,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples-1" class="level2">
 <h2 class="anchored" data-anchor-id="examples-1">Examples</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand date columns using the default components</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDate(ml.date())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand specific columns using specific components</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandDate([<span class="st">"x"</span>, <span class="st">"y"</span>], [<span class="st">"day"</span>, <span class="st">"year"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="ibisml.ExpandTime" class="level1">
+<section id="ibis_ml.ExpandTime" class="level1">
 <h1>ExpandTime</h1>
 <p><code>ExpandTime(self, inputs, components=('hour', 'minute', 'second'))</code></p>
 <p>A step for expanding time columns into one or more features.</p>
@@ -467,7 +467,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibisml.select.SelectionType</td>
+<td>ibis_ml.select.SelectionType</td>
 <td>A selection of time columns to expand into new features.</td>
 <td><em>required</em></td>
 </tr>
@@ -482,7 +482,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="examples-2" class="level2">
 <h2 class="anchored" data-anchor-id="examples-2">Examples</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibisml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand time columns using the default components</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ExpandTime(ml.time())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Expand specific columns using specific components</p>
