@@ -9,6 +9,7 @@ from ibis_ml.steps.encode import (
 from ibis_ml.steps.feature_engineering import PolynomialFeatures
 from ibis_ml.steps.feature_selection import ZeroVariance
 from ibis_ml.steps.impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
+from ibis_ml.steps.outlier import HandleUnivariateOutliers
 from ibis_ml.steps.standardize import ScaleMinMax, ScaleStandard
 from ibis_ml.steps.temporal import ExpandDate, ExpandDateTime, ExpandTime
 
@@ -22,6 +23,7 @@ __all__ = (
     "ExpandDateTime",
     "ExpandTime",
     "FillNA",
+    "HandleUnivariateOutliers",
     "ImputeMean",
     "ImputeMedian",
     "ImputeMode",
