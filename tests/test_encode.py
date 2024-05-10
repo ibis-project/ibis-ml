@@ -159,3 +159,15 @@ def test_target_encode_multiinput_multioutput():
     step.fit_table(t_train, ml.core.Metadata(targets=("Target_1", "Target_2")))
     res = step.transform_table(t_test)
     tm.assert_frame_equal(res.to_pandas(), expected)
+
+
+def test_target_encode_null():
+    t = ibis.memtable(
+        {"Color": ["Red"] * 5 + [None] * 3, "Target": [1, 1, 0, 0, 0, 1, 0, 0]}
+    )
+    expected = pd.DataFrame({"Color": [2 / 5] * 5 + [1 / 3] * 3})
+
+    step = ml.TargetEncode("Color")
+    step.fit_table(t, ml.core.Metadata(targets=("Target",)))
+    res = step.transform_table(t)
+    tm.assert_frame_equal(res.to_pandas()[expected.columns], expected)
