@@ -10,6 +10,7 @@ from ibis_ml.select import SelectionType, selector
 
 class HandleUnivariateOutliers(Step):
     """A step for detecting and treating univariate outliers in numeric columns.
+
     Parameters
     ----------
     inputs
@@ -36,6 +37,7 @@ class HandleUnivariateOutliers(Step):
         The treatment to apply to the outliers. 'capping' replaces outlier values
         with the upper or lower bound, while 'trimming' removes outlier rows from
         the dataset.
+
     Examples
     --------
     >>> import ibis_ml as ml
@@ -64,13 +66,13 @@ class HandleUnivariateOutliers(Step):
     ):
         if method not in ["z-score", "IQR"]:
             raise ValueError(
-                f"Unsupported methods {method!r} encountered."
-                "Supported methodes are 'z-score' and 'IQR'."
+                f"Unsupported method {method!r} encountered."
+                "Supported methods are 'z-score' and 'IQR'."
             )
         if treatment not in ["capping", "trimming"]:
             raise ValueError(
                 f"Unsupported treatment {treatment!r} encountered."
-                "Supported treatment are 'capping' and 'trimming'."
+                "Supported treatments are 'capping' and 'trimming'."
             )
         self.inputs = selector(inputs)
         self.method = method
