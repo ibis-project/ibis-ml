@@ -9,7 +9,7 @@ import ibis.expr.types as ir
 
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
-from ibis_ml.steps.impute import FillNA
+from ibis_ml.steps._impute import FillNA
 
 
 def _compute_categories(
