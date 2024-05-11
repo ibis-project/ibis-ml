@@ -4,7 +4,7 @@ import pandas as pd
 import ibis_ml as ml
 
 
-def test_zero_variance():
+def test_drop_zero_variance():
     zv_numeric_col = [1.0] * 10
     non_zv_numeric_col = list(range(10))
     zv_string_col = ["String"] * 10
@@ -42,7 +42,7 @@ def test_zero_variance():
         }
     )
 
-    step = ml.ZeroVariance(ml.everything())
+    step = ml.DropZeroVariance(ml.everything())
     step.fit_table(t_train, ml.core.Metadata())
     res = step.transform_table(t_test)
     sol = t_test.drop(zv_cols)

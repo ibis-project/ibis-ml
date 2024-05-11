@@ -11,8 +11,8 @@ def train_table():
     return ibis.memtable({"x": list(range(N)), "y": [10] * N, "z": ["s"] * N})
 
 
-def test_PolynomialFeatures(train_table):
-    step = ml.PolynomialFeatures(ml.numeric(), degree=2)
+def test_create_polynomial_features(train_table):
+    step = ml.CreatePolynomialFeatures(ml.numeric(), degree=2)
     step.fit_table(train_table, ml.core.Metadata())
     result = step.transform_table(train_table)
     expected = train_table.mutate(
