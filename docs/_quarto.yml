@@ -181,17 +181,17 @@ quartodoc:
           path: steps-feature-selection
           summary:
             name: Feature selection
-            desc: Selecting useful features for modeling
+            desc: Selection of features for modeling
           contents:
-            - ZeroVariance
+            - DropZeroVariance
 
         - kind: page
           path: steps-feature-engineering
           summary:
-            name: Feature engineering
-            desc: Generating new features
+            name: Feature generation
+            desc: Construction of new features from existing ones
           contents:
-            - PolynomialFeatures
+            - CreatePolynomialFeatures
 
         - kind: page
           path: steps-outlier
