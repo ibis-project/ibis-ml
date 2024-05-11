@@ -8,7 +8,7 @@ from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
 
 
-class ZeroVariance(Step):
+class DropZeroVariance(Step):
     """A step for removing columns with zero variance.
 
     Parameters
@@ -25,13 +25,13 @@ class ZeroVariance(Step):
     >>> import ibis_ml as ml
 
     To remove columns with zero variance:
-    >>> step = ml.ZeroVariance(ml.everything())
+    >>> step = ml.DropZeroVariance(ml.everything())
 
     To remove all numeric columns with zero variance:
-    >>> step = ml.ZeroVariance(ml.numeric())
+    >>> step = ml.DropZeroVariance(ml.numeric())
 
     To remove all string or categorical columns with only one unique value:
-    >>> step = ml.ZeroVariance(ml.nominal())
+    >>> step = ml.DropZeroVariance(ml.nominal())
     """
 
     def __init__(self, inputs: SelectionType, *, tolerance: int | float = 1e-4):
