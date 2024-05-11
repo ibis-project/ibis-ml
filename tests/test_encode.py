@@ -110,6 +110,7 @@ def test_target_encode_multioutput():
     # https://towardsdatascience.com/target-encoding-for-multi-class-classification-c9a7bcb1a53
     t = ibis.memtable(
         {
+            "Index": range(8),
             "Color": ["Red"] * 5 + ["Green"] * 3,
             "Target_1": [1, 1, 0, 0, 0, 1, 0, 0],
             "Target_2": [0, 0, 1, 0, 0, 0, 1, 0],
@@ -126,7 +127,7 @@ def test_target_encode_multioutput():
 
     step = ml.TargetEncode("Color")
     step.fit_table(t, ml.core.Metadata(targets=("Target_1", "Target_2", "Target_3")))
-    res = step.transform_table(t)
+    res = step.transform_table(t).order_by("Index")
     tm.assert_frame_equal(res.to_pandas()[expected.columns], expected)
 
 
@@ -141,6 +142,7 @@ def test_target_encode_multiinput_multioutput():
     )
     t_test = ibis.memtable(
         {
+            "Index": range(10),
             "Animal": ["Dog"] * 3 + ["Cat"] * 3 + ["Snake"] * 3 + ["Ibis"] * 1,
             "Color": ["Red"] * 5 + ["Green"] * 5,
         }
@@ -157,17 +159,21 @@ def test_target_encode_multiinput_multioutput():
 
     step = ml.TargetEncode(ml.nominal())
     step.fit_table(t_train, ml.core.Metadata(targets=("Target_1", "Target_2")))
-    res = step.transform_table(t_test)
+    res = step.transform_table(t_test).order_by("Index").drop("Index")
     tm.assert_frame_equal(res.to_pandas(), expected)
 
 
 def test_target_encode_null():
     t = ibis.memtable(
-        {"Color": ["Red"] * 5 + [None] * 3, "Target": [1, 1, 0, 0, 0, 1, 0, 0]}
+        {
+            "Index": range(8),
+            "Color": ["Red"] * 5 + [None] * 3,
+            "Target": [1, 1, 0, 0, 0, 1, 0, 0],
+        }
     )
     expected = pd.DataFrame({"Color": [2 / 5] * 5 + [1 / 3] * 3})
 
     step = ml.TargetEncode("Color")
     step.fit_table(t, ml.core.Metadata(targets=("Target",)))
-    res = step.transform_table(t)
+    res = step.transform_table(t).order_by("Index")
     tm.assert_frame_equal(res.to_pandas()[expected.columns], expected)
