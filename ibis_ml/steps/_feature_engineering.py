@@ -12,7 +12,7 @@ from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
 
 
-class PolynomialFeatures(Step):
+class CreatePolynomialFeatures(Step):
     """A step for generating polynomial features.
 
     Parameters
@@ -29,11 +29,11 @@ class PolynomialFeatures(Step):
 
     Generate polynomial features for all numeric columns with a degree is 2.
 
-    >>> step = ml.PolynomialFeatures(ml.numeric(), degree=2)
+    >>> step = ml.CreatePolynomialFeatures(ml.numeric(), degree=2)
 
     Generate polynomial features a specific set of columns.
 
-    >>> step = ml.PolynomialFeatures(["x", "y"], degree=2)
+    >>> step = ml.CreatePolynomialFeatures(["x", "y"], degree=2)
     """
 
     def __init__(self, inputs: SelectionType, *, degree: int = 2):
