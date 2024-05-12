@@ -15,28 +15,29 @@ class HandleUnivariateOutliers(Step):
     ----------
     inputs
         A selection of columns to analyze for outliers. All columns must be numeric.
-    method : {'z-score', 'IQR'}, default `z-score`
+    method
         The method to use for detecting outliers.
-            - 'z-score' detects outliers the standard deviation from the mean
+            "z-score" detects outliers based on the standard deviation from the mean
             for normally distributed data.
-            - 'IQR' etects outliers using the interquartile range for skewed data.
-    deviation_factor : int or float, default `3`
+            "IQR" detects outliers using the interquartile range for skewed data.
+    treatment
+        The treatment to apply to the outliers. ``capping`` replaces outlier values
+        with the upper or lower bound, while ``trimming`` removes outlier rows from
+        the dataset.
+    deviation_factor
         The magnitude of deviation from the center is used to calculate
         the upper and lower bound for outlier detection.
-        For z-score:
-            Upper Bound: Mean + deviation_factor * standard deviation.
-            Lower Bound: Mean - deviation_factor * standard deviation.
-                - 68% of the data lies within 1 standard deviation.
-                - 95% of the data lies within 2 standard deviations.
-                - 99.7% of the data lies within 3 standard deviations.
-        For IQR:
-            IQR = Q3 - Q1
-            Upper Bound = Q3 + deviation_factor * IQR
-            Lower Bound = Q1 - deviation_factor * IQR
-    treatment : {'capping', 'trimming'}, default 'capping'
-        The treatment to apply to the outliers. 'capping' replaces outlier values
-        with the upper or lower bound, while 'trimming' removes outlier rows from
-        the dataset.
+        For "z-score",
+            ``Upper Bound = mean + deviation_factor * standard deviation``.
+            ``Lower Bound =  mean - deviation_factor * standard deviation``.
+                68% of the data lies within 1 standard deviation.
+                95% of the data lies within 2 standard deviations.
+                99.7% of the data lies within 3 standard deviations.
+        For "IQR",
+            ``IQR = Q3 - Q1``.
+            ``Upper Bound = Q3 + deviation_factor * IQR``.
+            ``Lower Bound = Q1 - deviation_factor * IQR``.
+
 
     Examples
     --------
@@ -48,7 +49,7 @@ class HandleUnivariateOutliers(Step):
 
     Trimming outliers in a specific set of columns using IQR method.
 
-    >>> step = ml.UnivariateOutlier(
+    >>> step = ml.HandleUnivariateOutliers(
         ["x", "y"],
         method="IQR",
         deviation_factor=2.0,
@@ -61,8 +62,8 @@ class HandleUnivariateOutliers(Step):
         inputs: SelectionType,
         *,
         method: str = "z-score",
-        deviation_factor: int | float = 3,
         treatment: str = "capping",
+        deviation_factor: int | float = 3,
     ):
         if method not in ["z-score", "IQR"]:
             raise ValueError(

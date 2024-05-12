@@ -76,6 +76,7 @@ website:
             - reference/steps-discretization.qmd
             - reference/steps-feature-selection.qmd
             - reference/steps-feature-engineering.qmd
+            - reference/steps-outlier.qmd
             - reference/steps-temporal.qmd
             - reference/steps-other.qmd
 
@@ -191,6 +192,14 @@ quartodoc:
             desc: Generating new features
           contents:
             - PolynomialFeatures
+
+        - kind: page
+          path: steps-outlier
+          summary:
+            name: Outliers
+            desc: Handle outliers
+          contents:
+            - HandleUnivariateOutliers
 
         - kind: page
           path: steps-temporal
