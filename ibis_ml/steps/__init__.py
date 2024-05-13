@@ -1,11 +1,6 @@
 from ibis_ml.steps._common import Cast, Drop, Mutate, MutateAt
 from ibis_ml.steps._discretize import DiscretizeKBins
-from ibis_ml.steps._encode import (
-    CategoricalEncode,
-    CountEncode,
-    OneHotEncode,
-    TargetEncode,
-)
+from ibis_ml.steps._encode import CountEncode, OneHotEncode, OrdinalEncode, TargetEncode
 from ibis_ml.steps._generate_features import CreatePolynomialFeatures
 from ibis_ml.steps._impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
 from ibis_ml.steps._select_features import DropZeroVariance
@@ -14,7 +9,6 @@ from ibis_ml.steps._temporal import ExpandDate, ExpandDateTime, ExpandTime
 
 __all__ = (
     "Cast",
-    "CategoricalEncode",
     "CountEncode",
     "CreatePolynomialFeatures",
     "DiscretizeKBins",
@@ -30,6 +24,7 @@ __all__ = (
     "Mutate",
     "MutateAt",
     "OneHotEncode",
+    "OrdinalEncode",
     "ScaleMinMax",
     "ScaleStandard",
     "TargetEncode",

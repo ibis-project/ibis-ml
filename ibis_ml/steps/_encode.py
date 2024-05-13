@@ -162,13 +162,13 @@ class OneHotEncode(Step):
         ).drop(*self.categories_)
 
 
-class CategoricalEncode(Step):
-    """A step for categorical encoding select columns.
+class OrdinalEncode(Step):
+    """A step for Ordinal encoding select columns.
 
     Parameters
     ----------
     inputs
-        A selection of columns to categorical encode.
+        A selection of columns to Ordinal encode.
     min_frequency
         A minimum frequency of elements in the training set required to treat a
         column as a distinct category. May be either:
@@ -185,18 +185,18 @@ class CategoricalEncode(Step):
     --------
     >>> import ibis_ml as ml
 
-    Categorical encode all string columns.
+    Ordinal encode all string columns.
 
-    >>> step = ml.CategoricalEncode(ml.string())
+    >>> step = ml.OrdinalEncode(ml.string())
 
-    Categorical encode a specific column, only including categories with at
+    Ordinal encode a specific column, only including categories with at
     least 20 samples.
 
-    >>> step = ml.CategoricalEncode("x", min_frequency=20)
+    >>> step = ml.OrdinalEncode("x", min_frequency=20)
 
-    Categorical encode a specific column, including at most 10 categories.
+    Ordinal encode a specific column, including at most 10 categories.
 
-    >>> step = ml.CategoricalEncode("x", max_categories=10)
+    >>> step = ml.OrdinalEncode("x", max_categories=10)
     """
 
     def __init__(

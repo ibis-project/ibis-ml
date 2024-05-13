@@ -156,7 +156,7 @@ quartodoc:
             desc: Encoding of categorical and string columns
           contents:
             - OneHotEncode
-            - CategoricalEncode
+            - OrdinalEncode
             - CountEncode
             - TargetEncode
 
