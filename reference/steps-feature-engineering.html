@@ -176,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../reference/steps-feature-engineering.html">
- <span class="dropdown-text">Feature engineering</span></a>
+ <span class="dropdown-text">Feature generation</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../reference/steps-temporal.html">
@@ -215,7 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/steps-imputation.html">Steps</a></li><li class="breadcrumb-item"><a href="../reference/steps-feature-engineering.html">Feature engineering</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/steps-imputation.html">Steps</a></li><li class="breadcrumb-item"><a href="../reference/steps-feature-engineering.html">Feature generation</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -292,7 +292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/steps-feature-engineering.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Feature engineering</span></a>
+ <span class="menu-text">Feature generation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -319,8 +319,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link active" data-scroll-target="#feature-engineering">Feature engineering</a></li>
-  <li><a href="#ibis_ml.PolynomialFeatures" id="toc-ibis_ml.PolynomialFeatures" class="nav-link" data-scroll-target="#ibis_ml.PolynomialFeatures">PolynomialFeatures</a>
+  <li><a href="#feature-generation" id="toc-feature-generation" class="nav-link active" data-scroll-target="#feature-generation">Feature generation</a></li>
+  <li><a href="#ibis_ml.CreatePolynomialFeatures" id="toc-ibis_ml.CreatePolynomialFeatures" class="nav-link" data-scroll-target="#ibis_ml.CreatePolynomialFeatures">CreatePolynomialFeatures</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
@@ -334,13 +334,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="feature-engineering" class="level1">
-<h1>Feature engineering</h1>
-<p>Generating new features</p>
+<section id="feature-generation" class="level1">
+<h1>Feature generation</h1>
+<p>Construction of new features from existing ones</p>
 </section>
-<section id="ibis_ml.PolynomialFeatures" class="level1">
-<h1>PolynomialFeatures</h1>
-<p><code>PolynomialFeatures(self, inputs, *, degree=2)</code></p>
+<section id="ibis_ml.CreatePolynomialFeatures" class="level1">
+<h1>CreatePolynomialFeatures</h1>
+<p><code>CreatePolynomialFeatures(self, inputs, *, degree=2)</code></p>
 <p>A step for generating polynomial features.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
@@ -379,9 +379,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Generate polynomial features for all numeric columns with a degree is 2.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.PolynomialFeatures(ml.numeric(), degree<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CreatePolynomialFeatures(ml.numeric(), degree<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Generate polynomial features a specific set of columns.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.PolynomialFeatures([<span class="st">"x"</span>, <span class="st">"y"</span>], degree<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CreatePolynomialFeatures([<span class="st">"x"</span>, <span class="st">"y"</span>], degree<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>

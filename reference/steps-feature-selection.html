@@ -176,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../reference/steps-feature-engineering.html">
- <span class="dropdown-text">Feature engineering</span></a>
+ <span class="dropdown-text">Feature generation</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../reference/steps-temporal.html">
@@ -292,7 +292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../reference/steps-feature-engineering.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Feature engineering</span></a>
+ <span class="menu-text">Feature generation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#feature-selection" id="toc-feature-selection" class="nav-link active" data-scroll-target="#feature-selection">Feature selection</a></li>
-  <li><a href="#ibis_ml.ZeroVariance" id="toc-ibis_ml.ZeroVariance" class="nav-link" data-scroll-target="#ibis_ml.ZeroVariance">ZeroVariance</a>
+  <li><a href="#ibis_ml.DropZeroVariance" id="toc-ibis_ml.DropZeroVariance" class="nav-link" data-scroll-target="#ibis_ml.DropZeroVariance">DropZeroVariance</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
@@ -336,11 +336,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="feature-selection" class="level1">
 <h1>Feature selection</h1>
-<p>Selecting useful features for modeling</p>
+<p>Selection of features for modeling</p>
 </section>
-<section id="ibis_ml.ZeroVariance" class="level1">
-<h1>ZeroVariance</h1>
-<p><code>ZeroVariance(self, inputs, *, tolerance=0.0001)</code></p>
+<section id="ibis_ml.DropZeroVariance" class="level1">
+<h1>DropZeroVariance</h1>
+<p><code>DropZeroVariance(self, inputs, *, tolerance=0.0001)</code></p>
 <p>A step for removing columns with zero variance.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
@@ -379,11 +379,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To remove columns with zero variance:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ZeroVariance(ml.everything())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.DropZeroVariance(ml.everything())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To remove all numeric columns with zero variance:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ZeroVariance(ml.numeric())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.DropZeroVariance(ml.numeric())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To remove all string or categorical columns with only one unique value:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.ZeroVariance(ml.nominal())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.DropZeroVariance(ml.nominal())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
