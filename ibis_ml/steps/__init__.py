@@ -7,8 +7,8 @@ from ibis_ml.steps._encode import (
     TargetEncode,
 )
 from ibis_ml.steps._generate_features import CreatePolynomialFeatures
-from ibis_ml.steps._impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
 from ibis_ml.steps._handle_outliers import HandleUnivariateOutliers
+from ibis_ml.steps._impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
 from ibis_ml.steps._select_features import DropZeroVariance
 from ibis_ml.steps._standardize import ScaleMinMax, ScaleStandard
 from ibis_ml.steps._temporal import ExpandDate, ExpandDateTime, ExpandTime
