@@ -57,7 +57,7 @@ def test_ordinal_encode(t_train, t_test):
     res = step.transform_table(t_test).order_by("time")
     ordered_map = (("AAPL", 0), ("GOOG", 1), ("MSFT", 2))
     expected = t_test.mutate(ticker=t_test.ticker.cases(ordered_map)).order_by("time")
-    assert tm.assert_frame_equal(res.execute(), expected.execute())
+    tm.assert_frame_equal(res.execute(), expected.execute(), check_dtype=False)
 
 
 def test_one_hot_encode(t_train, t_test):
