@@ -1,2 +1,10 @@
 /*-- scss:defaults --*/
 $code-color: #c2d94c;
+
+/*-- scss:rules --*/
+.bi-zulip::before {
+  content: url(./zulip-logo-dark.svg);
+  display: inline-block;
+  vertical-align: -0.125em;
+  width: 1em;
+}

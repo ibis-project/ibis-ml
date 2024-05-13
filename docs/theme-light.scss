@@ -2,3 +2,10 @@
 .quarto-title-banner .quarto-title .title {
   color: #ccd1d5;
 }
+
+.bi-zulip::before {
+  content: url(./zulip-logo-light.svg);
+  display: inline-block;
+  vertical-align: -0.125em;
+  width: 1em;
+}
