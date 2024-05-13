@@ -325,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul></li>
-  <li><a href="#ibis_ml.CategoricalEncode" id="toc-ibis_ml.CategoricalEncode" class="nav-link" data-scroll-target="#ibis_ml.CategoricalEncode">CategoricalEncode</a>
+  <li><a href="#ibis_ml.OrdinalEncode" id="toc-ibis_ml.OrdinalEncode" class="nav-link" data-scroll-target="#ibis_ml.OrdinalEncode">OrdinalEncode</a>
   <ul class="collapse">
   <li><a href="#parameters-1" id="toc-parameters-1" class="nav-link" data-scroll-target="#parameters-1">Parameters</a></li>
   <li><a href="#examples-1" id="toc-examples-1" class="nav-link" data-scroll-target="#examples-1">Examples</a></li>
@@ -408,10 +408,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.OneHotEncode(<span class="st">"x"</span>, max_categories<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="ibis_ml.CategoricalEncode" class="level1">
-<h1>CategoricalEncode</h1>
-<p><code>CategoricalEncode(self, inputs, *, min_frequency=None, max_categories=None)</code></p>
-<p>A step for categorical encoding select columns.</p>
+<section id="ibis_ml.OrdinalEncode" class="level1">
+<h1>OrdinalEncode</h1>
+<p><code>OrdinalEncode(self, inputs, *, min_frequency=None, max_categories=None)</code></p>
+<p>A step for encoding select columns as integer arrays.</p>
 <section id="parameters-1" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-1">Parameters</h2>
 <table class="table">
@@ -433,7 +433,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>inputs</code></td>
 <td>ibis_ml.select.SelectionType</td>
-<td>A selection of columns to categorical encode.</td>
+<td>A selection of columns to ordinal encode.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
@@ -454,12 +454,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="examples-1" class="level2">
 <h2 class="anchored" data-anchor-id="examples-1">Examples</h2>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Categorical encode all string columns.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CategoricalEncode(ml.string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Categorical encode a specific column, only including categories with at least 20 samples.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CategoricalEncode(<span class="st">"x"</span>, min_frequency<span class="op">=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Categorical encode a specific column, including at most 10 categories.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.CategoricalEncode(<span class="st">"x"</span>, max_categories<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Ordinal encode all string columns.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.OrdinalEncode(ml.string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Ordinal encode a specific column, only including categories with at least 20 samples.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.OrdinalEncode(<span class="st">"x"</span>, min_frequency<span class="op">=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Ordinal encode a specific column, including at most 10 categories.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> ml.OrdinalEncode(<span class="st">"x"</span>, max_categories<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="ibis_ml.CountEncode" class="level1">
