@@ -1,6 +1,0 @@
-.bi-zulip::before {
-  content: url(./zulip-logo.svg);
-  display: inline-block;
-  vertical-align: -0.125em;
-  width: 1em;
-}
