@@ -357,7 +357,10 @@ class TargetEncode(Step):
     def transform_table(self, table: ir.Table) -> ir.Table:
         for c, encodings in self.encodings_.items():
             joined = table.left_join(
-                encodings, table[c] == encodings[0], lname="left_{name}", rname=""
+                encodings,
+                (table[c] == encodings[0]) | table[c].isnull() & encodings[0].isnull(),  # noqa: PD003
+                lname="left_{name}",
+                rname="",
             )
             table = joined.drop(encodings.columns[0], f"left_{c}").rename(
                 {c: encodings.columns[1]}
