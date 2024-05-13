@@ -55,8 +55,8 @@ def test_ordinal_encode(t_train, t_test):
     step = ml.OrdinalEncode("ticker")
     step.fit_table(t_train, ml.core.Metadata())
     res = step.transform_table(t_test).order_by("time")
-    ordered_map = (("AAPL", 0), ("GOOG", 1), ("MSFT", 2))
-    expected = t_test.mutate(ticker=t_test.ticker.cases(ordered_map)).order_by("time")
+    ticker_encoding_map = (("AAPL", 0), ("GOOG", 1), ("MSFT", 2))
+    expected = t_test.mutate(ticker=t_test.ticker.cases(ticker_encoding_map)).order_by("time")
     tm.assert_frame_equal(res.execute(), expected.execute(), check_dtype=False)
 
 

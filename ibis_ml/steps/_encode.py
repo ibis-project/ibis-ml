@@ -163,12 +163,12 @@ class OneHotEncode(Step):
 
 
 class OrdinalEncode(Step):
-    """A step for Ordinal encoding select columns.
+    """A step for encoding select columns as integer arrays.
 
     Parameters
     ----------
     inputs
-        A selection of columns to Ordinal encode.
+        A selection of columns to ordinal encode.
     min_frequency
         A minimum frequency of elements in the training set required to treat a
         column as a distinct category. May be either:
