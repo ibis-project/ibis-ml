@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from functools import cache
 from typing import TYPE_CHECKING, Any, Callable, Literal, cast
@@ -18,6 +19,7 @@ if TYPE_CHECKING:
     import dask.dataframe as dd
     import polars as pl
     import xgboost as xgb
+    from sklearn.utils._estimator_html_repr import _VisualBlock
 
 
 def gen_name(prefix: str = "") -> str:
@@ -258,11 +260,11 @@ def _categorize_wrap_reader(
 
 @cache
 def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
-    """Wrap the `categorize` function in a closure, so cloudpickle will encode
-    the full function.
+    """Wrap the `categorize` function in a closure, so cloudpickle will
+    encode the full function.
 
-    This avoids requiring `ibis_ml` or `ibis` exist on the worker nodes of the
-    dask cluster.
+    This avoids requiring `ibis_ml` or `ibis` to exist on the worker
+    nodes of the Dask cluster.
     """
 
     def categorize(df: pd.DataFrame, categories: dict[str, list[Any]]) -> pd.DataFrame:
@@ -300,6 +302,39 @@ class Step:
         return out
 
 
+def _name_estimators(estimators):
+    """Generate names for estimators.
+
+    Notes
+    -----
+    Copied from [1]_.
+
+    References
+    ----------
+    .. [1] https://github.com/scikit-learn/scikit-learn/blob/952ef66/sklearn/pipeline.py#L533-L555
+    """
+
+    names = [
+        estimator if isinstance(estimator, str) else type(estimator).__name__.lower()
+        for estimator in estimators
+    ]
+    namecount = defaultdict(int)
+    for name in names:
+        namecount[name] += 1
+
+    for k, v in list(namecount.items()):
+        if v == 1:
+            del namecount[k]
+
+    for i in reversed(range(len(estimators))):
+        name = names[i]
+        if name in namecount:
+            names[i] += "-%d" % namecount[name]
+            namecount[name] -= 1
+
+    return list(zip(names, estimators))
+
+
 class Recipe:
     def __init__(self, *steps: Step):
         self.steps = steps
@@ -310,8 +345,43 @@ class Recipe:
         """The output format to use for ``transform``"""
         return self._output_format
 
-    def get_params(self, deep=True):
-        return {"steps": self.steps}
+    def get_params(self, deep=True) -> dict[str, Any]:
+        """Get parameters for this estimator.
+
+        Returns the parameters given in the constructor as well as the
+        estimators contained within the `steps` of the `Recipe`.
+
+        Parameters
+        ----------
+        deep : bool, default=True
+            If True, will return the parameters for this estimator and
+            contained subobjects that are estimators.
+
+        Returns
+        -------
+        params : mapping of string to any
+            Parameter names mapped to their values.
+
+        Notes
+        -----
+        Derived from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/ee5a1b6/sklearn/utils/metaestimators.py#L30-L50
+        """
+        out = {"steps": self.steps}
+        if not deep:
+            return out
+
+        estimators = _name_estimators(self.steps)
+        out.update(estimators)
+
+        for name, estimator in estimators:
+            if hasattr(estimator, "get_params"):
+                for key, value in estimator.get_params(deep=True).items():
+                    out[f"{name}__{key}"] = value
+        return out
 
     def set_params(self, **kwargs):
         if "steps" in kwargs:
@@ -334,7 +404,7 @@ class Recipe:
             - `"default"`: Default output format of a transformer
             - `"pandas"`: Pandas dataframe
             - `"polars"`: Polars dataframe
-            - `"pyarrow"`: Pyarrow table
+            - `"pyarrow"`: PyArrow table
             - `None`: Transform configuration is unchanged
 
         """
@@ -361,6 +431,34 @@ class Recipe:
     def is_fitted(self) -> bool:
         """Check if this recipe has already been fit."""
         return all(s.is_fitted() for s in self.steps)
+
+    def _sk_visual_block_(self) -> _VisualBlock:
+        """Build and return an HTML representation of a `Recipe` object.
+
+        Notes
+        -----
+        Derived from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/82df48934eba1df9a1ed3be98aaace8eada59e6e/sklearn/pipeline.py#L667-L684
+        """
+        from sklearn.utils._estimator_html_repr import _VisualBlock
+
+        names, estimators = zip(
+            *[
+                (f"{name}: {est.__class__.__name__}", est)
+                for name, est in _name_estimators(self.steps)
+            ]
+        )
+        name_details = [str(est) for est in estimators]
+        return _VisualBlock(
+            "serial",
+            self.steps,
+            names=names,
+            name_details=name_details,
+            dash_wrapped=False,
+        )
 
     def _fit_table(
         self, table: ir.Table, targets: tuple[str, ...] = (), index: str | None = None
