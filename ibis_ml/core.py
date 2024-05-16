@@ -455,7 +455,7 @@ class Recipe:
         return _VisualBlock(
             "serial",
             self.steps,
-            names=names,
+            names=list(names),
             name_details=name_details,
             dash_wrapped=False,
         )
