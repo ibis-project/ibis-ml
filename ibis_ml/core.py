@@ -340,6 +340,9 @@ class Recipe:
         self.steps = steps
         self._output_format = "default"
 
+    def __repr__(self):
+        return f"Recipe({', '.join(repr(step) for step in self.steps)})"
+
     @property
     def output_format(self) -> Literal["default", "pandas", "pyarrow", "polars"]:
         """The output format to use for ``transform``"""
