@@ -99,7 +99,8 @@ class DiscretizeKBins(Step):
             aggs.append(col.max().name(f"{col_name}_max"))
             aggs.append(col.min().name(f"{col_name}_min"))
 
-        results = table.aggregate(aggs).execute().to_dict("records")[0]
+        self._fit_expr = [table.aggregate(aggs)]
+        results = self._fit_expr[-1].execute().to_dict("records")[0]
 
         return {
             col_name: np.linspace(
@@ -121,7 +122,8 @@ class DiscretizeKBins(Step):
                 )
             aggs.extend([col.quantile(q).name(f"{col_name}_{q}") for q in percentiles])
 
-        results = table.aggregate(aggs).execute().to_dict("records")[0]
+        self._fit_expr = [table.aggregate(aggs)]
+        results = self._fit_expr[-1].execute().to_dict("records")[0]
 
         return {
             col_name: [results[f"{col_name}_{q}"] for q in percentiles]

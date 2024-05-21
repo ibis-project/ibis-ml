@@ -1,0 +1,72 @@
+---
+title: "Transformation support matrix"
+format: dashboard
+hide:
+  - toc
+---
+
+## {height=25%}
+
+::: {.card title="Welcome to the transformation support matrix!"}
+
+This is a Quarto dashboard that shows
+the IbisML transformations each backend supports.
+
+Due to differences in SQL dialects and upstream support for different
+operations in different backends, support for the full breadth of the IbisML Transfromations
+varies.
+
+::: {.callout}
+Some steps have multiple implementations. For example, `DiscretizeKBins` supports different `strategy`(such as `quantile`, `uniform`) for defining the widths of the bins. We display the support for each implementation.
+:::
+
+:::
+
+### {width=25%}
+
+```{python}
+#| content: valuebox
+#| title: "Number of backends"
+import ibis
+
+dict(
+    value=len(ibis.util.backend_entry_points()),
+    color="info",
+    icon="signpost-split-fill",
+)
+```
+
+### {width=25%}
+
+```{python}
+#| content: valuebox
+#| title: "Number of SQL backends"
+import importlib
+from ibis.backends.sql import SQLBackend
+
+sql_backends = sum(
+    issubclass(
+        importlib.import_module(f"ibis.backends.{entry_point.name}").Backend, SQLBackend
+    )
+    for entry_point in ibis.util.backend_entry_points()
+)
+assert sql_backends > 0
+dict(value=sql_backends, color="green", icon="database")
+```
+
+## {height=70%}
+
+```{python}
+from itables import show
+from support_matrix import make_support_matrix
+
+
+matrix = make_support_matrix()
+
+show(
+    matrix.replace({True: "✔", False: "🚫"}),
+    ordering=False,
+    paging=False,
+    buttons=["copy", "excel", "csv"],
+)
+```
