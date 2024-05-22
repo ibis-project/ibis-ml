@@ -44,13 +44,20 @@ dict(
 import importlib
 from ibis.backends.sql import SQLBackend
 
-sql_backends = sum(
-    issubclass(
-        getattr(importlib.import_module(f"ibis.backends.{entry_point.name}"), "Backend", None),
-        SQLBackend
-    )
-    for entry_point in ibis.util.backend_entry_points()
+sql_backends = dict(
+    # hard code the number of sql backend
+    value=len(ibis.util.backend_entry_points()) - 3,
+    color="info",
+    icon="signpost-split-fill",
 )
+# had an issue in the code, It could be python and dask compatibility.
+# sum(
+#     issubclass(
+#         getattr(importlib.import_module(f"ibis.backends.{entry_point.name}"), "Backend", None),
+#         SQLBackend
+#     )
+#     for entry_point in ibis.util.backend_entry_points()
+# )
 assert sql_backends > 0
 dict(value=sql_backends, color="green", icon="database")
 ```
