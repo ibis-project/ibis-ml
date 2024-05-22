@@ -13,7 +13,15 @@ dependencies = ["ibis-framework"]
 
 [project.optional-dependencies]
 dask = ["dask[dataframe]"]
-doc = ["ibis-framework[duckdb,examples]", "jupyter", "quartodoc", "scikit-learn", "skorch", "torch"]
+doc = [
+  "ibis-framework[bigquery,datafusion,druid,exasol,trino,duckdb,examples]",
+  "jupyter",
+  "quartodoc", 
+  "scikit-learn",
+  "skorch", 
+  "torch",
+  "itables",
+  ]
 dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
 
 [tool.coverage.report]
@@ -75,6 +83,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
+"docs/**/*.py" = ["INP001"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false

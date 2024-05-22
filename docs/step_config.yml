@@ -68,7 +68,6 @@ ExpandDate:
         components:
           - doy
 
-
 ExpandDateTime:
   configurations:
     - name: year, month, day
