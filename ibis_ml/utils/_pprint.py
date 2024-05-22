@@ -8,18 +8,7 @@ def _pprint_recipe(self, object, stream, indent, allowance, context, level):
     if getattr(self, "_indent_at_name", True):
         indent += len(object.__class__.__name__)
 
-    # TODO(deepyaman): Format parameters (beyond `steps`) more robustly.
-    indent += self._indent_per_level
-    k, v = "steps", list(object.steps)
-    rep = self._repr(k, context, level)
-    rep = rep.strip("'")
-    middle = "="
-    stream.write(rep)
-    stream.write(middle)
-    self._format(
-        v, stream, indent + len(rep) + len(middle), allowance + 1, context, level
-    )
-
+    self._format_items(object.steps, stream, indent, allowance + 1, context, level)
     stream.write(")")
 
 
@@ -150,7 +139,7 @@ def _safe_repr(self, object, context, maxlevels, level):
     if issubclass(typ, Recipe) and r is Recipe.__repr__:
         objid = id(object)
         if maxlevels and level >= maxlevels:
-            return f"{typ.__name__}(steps=[...])", False, objid in context
+            return f"{typ.__name__}(...)", False, objid in context
         if objid in context:
             return pprint._recursion(object), False, True  # noqa: SLF001
         context[objid] = 1
@@ -167,7 +156,7 @@ def _safe_repr(self, object, context, maxlevels, level):
             if orecur:
                 recursive = True
         del context[objid]
-        return f"{typ.__name__}(steps=[{', '.join(components)}])", readable, recursive
+        return f"{typ.__name__}({', '.join(components)})", readable, recursive
 
     if issubclass(typ, Step) and r is Step.__repr__:
         objid = id(object)
