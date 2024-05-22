@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+import pprint
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from functools import cache
@@ -283,6 +284,9 @@ def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
 
 
 class Step:
+    def __repr__(self):
+        return pprint.pformat(self)
+
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         pass
 
@@ -341,7 +345,7 @@ class Recipe:
         self._output_format = "default"
 
     def __repr__(self):
-        return f"Recipe({', '.join(repr(step) for step in self.steps)})"
+        return pprint.pformat(self)
 
     @property
     def output_format(self) -> Literal["default", "pandas", "pyarrow", "polars"]:

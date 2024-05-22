@@ -25,11 +25,13 @@ from ibis_ml.select import (
     where,
 )
 from ibis_ml.steps import *
-from ibis_ml.utils._pprint import _pprint_recipe
+from ibis_ml.utils._pprint import _pprint_recipe, _pprint_step, _safe_repr
 
 from ._version import __version__
 
 pprint.PrettyPrinter._dispatch[Recipe.__repr__] = _pprint_recipe  # noqa: SLF001
+pprint.PrettyPrinter._dispatch[Step.__repr__] = _pprint_step  # noqa: SLF001
+pprint.PrettyPrinter._safe_repr = _safe_repr  # noqa: SLF001
 
 
 def _auto_patch_skorch() -> None:
