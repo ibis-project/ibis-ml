@@ -15,7 +15,7 @@ dependencies = ["ibis-framework"]
 dask = ["dask[dataframe]"]
 doc = [
   "clickhouse-connect",
-  "ibis-framework[bigquery,datafusion,druid,exasol,trino,duckdb,examples]",
+  "ibis-framework[bigquery,clickhouse,dask,datafusion,druid,exasol,flink,impala,mssql,mysql,oracle,polars,postgres,pyspark,risingwave,snowflake,sqlite,trino,duckdb,examples]",
   "itables",
   "jupyter",
   "quartodoc", 
