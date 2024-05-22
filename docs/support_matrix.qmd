@@ -46,7 +46,8 @@ from ibis.backends.sql import SQLBackend
 
 sql_backends = sum(
     issubclass(
-        importlib.import_module(f"ibis.backends.{entry_point.name}").Backend, SQLBackend
+        getattr(importlib.import_module(f"ibis.backends.{entry_point.name}"), "Backend", None),
+        SQLBackend
     )
     for entry_point in ibis.util.backend_entry_points()
 )
