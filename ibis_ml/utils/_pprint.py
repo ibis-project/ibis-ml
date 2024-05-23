@@ -37,6 +37,7 @@ def _pprint_step(self, object, stream, indent, allowance, context, level):
             next_ent = next(it)
         except StopIteration:
             last = True
+        # TODO(deepyaman): Support `compact` option for `PrettyPrinter`.
         stream.write(delim)
         delim = delimnl
         k, v = ent
@@ -61,7 +62,17 @@ def _pprint_step(self, object, stream, indent, allowance, context, level):
 
 
 def _safe_repr(self, object, context, maxlevels, level):
-    # Return triple (repr_string, isreadable, isrecursive).
+    """Return triple (repr_string, isreadable, isrecursive).
+
+    Notes
+    -----
+    Same as the built-in ``pprint.PrettyPrinter._safe_repr``, with added
+    support for ``Recipe`` and ``Step`` objects.
+
+    References
+    ----------
+    .. [1] https://github.com/python/cpython/blob/3.12/Lib/pprint.py#L554-L633
+    """
     typ = type(object)
     if typ in pprint._builtin_scalars:  # noqa: SLF001
         return repr(object), True, False
