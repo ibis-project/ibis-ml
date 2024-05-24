@@ -1,29 +1,26 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
 [project]
 name = "ibis-ml"
-description = "IbisML is a library for building scalable ML pipelines using Ibis."
-readme = "README.md"
-requires-python = ">= 3.8"
-license = { text = "Apache 2.0" }
-dynamic = ["version"]
+authors = [{name = "Ibis Maintainers", email = "maintainers@ibis-project.org"}]
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: Apache Software License"]
 dependencies = ["ibis-framework"]
+dynamic = ["version", "description"]
 
 [project.optional-dependencies]
 dask = ["dask[dataframe]"]
 doc = ["ibis-framework[duckdb,examples]", "jupyter", "quartodoc", "scikit-learn", "skorch", "torch"]
 dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
 
+[project.urls]
+Home = "https://ibis-project.github.io/ibis-ml/"
+
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:"]
-
-[tool.setuptools]
-include-package-data = false
-
-[tool.setuptools.packages.find]
-include = ["ibis_ml*"]
 
 [tool.ruff.lint]
 select = [
