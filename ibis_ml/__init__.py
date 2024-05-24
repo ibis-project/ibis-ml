@@ -1,5 +1,7 @@
 """IbisML is a library for building scalable ML pipelines using Ibis."""
 
+__version__ = "0.0.1"
+
 import pprint
 
 from ibis_ml.core import Recipe, Step
@@ -26,8 +28,6 @@ from ibis_ml.select import (
 )
 from ibis_ml.steps import *
 from ibis_ml.utils._pprint import _pprint_recipe, _pprint_step, _safe_repr
-
-from ._version import __version__
 
 # Add support for `Recipe`s and `Step`s to the built-in `PrettyPrinter`.
 pprint.PrettyPrinter._dispatch[Recipe.__repr__] = _pprint_recipe  # noqa: SLF001
