@@ -414,8 +414,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 2%">
-<col style="width: 15%">
-<col style="width: 76%">
+<col style="width: 17%">
+<col style="width: 75%">
 <col style="width: 5%">
 </colgroup>
 <thead>
@@ -435,7 +435,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td><code>components</code></td>
-<td>typing.Sequence[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]</td>
+<td>collections.abc.Sequence[typing.Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]</td>
 <td>A sequence of components to expand. Options include - <code>day</code>: the day of the month as a numeric value - <code>week</code>: the week of the year as a numeric value - <code>month</code>: the month of the year as a categorical value - <code>year</code>: the year as a numeric value - <code>dow</code>: the day of the week as a categorical value - <code>doy</code>: the day of the year as a numeric value Defaults to <code>["dow", "month", "year"]</code>.</td>
 <td><code>('dow', 'month', 'year')</code></td>
 </tr>
@@ -461,8 +461,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 28%">
-<col style="width: 55%">
+<col style="width: 30%">
+<col style="width: 53%">
 <col style="width: 11%">
 </colgroup>
 <thead>
@@ -482,7 +482,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td><code>components</code></td>
-<td>typing.Sequence[typing.Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]</td>
+<td>collections.abc.Sequence[typing.Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]</td>
 <td>A sequence of components to expand. Options include <code>hour</code>, <code>minute</code>, <code>second</code>, and <code>millisecond</code>. Defaults to <code>["hour", "minute", "second"]</code>.</td>
 <td><code>('hour', 'minute', 'second')</code></td>
 </tr>
