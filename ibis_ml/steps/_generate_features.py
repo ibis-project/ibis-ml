@@ -4,12 +4,15 @@ import functools
 import operator
 from collections import Counter
 from itertools import combinations_with_replacement
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any
 
 import ibis.expr.types as ir
 
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class CreatePolynomialFeatures(Step):

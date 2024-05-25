@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any
 
 import ibis
 import ibis.expr.types as ir
@@ -8,6 +8,9 @@ import numpy as np
 
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class DiscretizeKBins(Step):
