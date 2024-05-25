@@ -64,6 +64,8 @@ select = [
   "RUF",  # Ruff-specific rules
 ]
 ignore = [
+  "UP038",  # non-pep604-isinstance, results in slower code
+  "B905",   # zip-without-explicit-strict, stylistic choice
   "COM812", # missing-trailing-comma
   "ISC001", # single-line-implicit-string-concatenation
   "RET505", # superfluous-else-return, stylistic choice

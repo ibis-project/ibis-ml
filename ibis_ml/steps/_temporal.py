@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterable, Literal, Sequence
+from typing import TYPE_CHECKING, Any, Literal
 
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
     import ibis.expr.types as ir
 
 
