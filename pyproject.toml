@@ -1,15 +1,16 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
 [project]
 name = "ibis-ml"
-description = "IbisML is a library for building scalable ML pipelines using Ibis."
-readme = "README.md"
-requires-python = ">= 3.8"
-license = { text = "Apache 2.0" }
-dynamic = ["version"]
+authors = [{name = "Ibis Maintainers", email = "maintainers@ibis-project.org"}]
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: Apache Software License"]
 dependencies = ["ibis-framework"]
+dynamic = ["version", "description"]
 
 [project.optional-dependencies]
 dask = ["dask[dataframe]"]
@@ -25,14 +26,11 @@ doc = [
   ]
 dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
 
+[project.urls]
+Home = "https://ibis-project.github.io/ibis-ml/"
+
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:"]
-
-[tool.setuptools]
-include-package-data = false
-
-[tool.setuptools.packages.find]
-include = ["ibis_ml*"]
 
 [tool.ruff.lint]
 select = [
@@ -75,6 +73,8 @@ select = [
   "RUF",  # Ruff-specific rules
 ]
 ignore = [
+  "UP038",  # non-pep604-isinstance, results in slower code
+  "B905",   # zip-without-explicit-strict, stylistic choice
   "COM812", # missing-trailing-comma
   "ISC001", # single-line-implicit-string-concatenation
   "RET505", # superfluous-else-return, stylistic choice

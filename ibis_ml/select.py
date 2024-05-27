@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
-from typing import TYPE_CHECKING, Callable, ClassVar, Union
+from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING, ClassVar
 
 import ibis.expr.datatypes as dt
 import ibis.expr.types as ir
@@ -73,7 +73,7 @@ class Selector:
         ]
 
 
-SelectionType = Union[str, Iterable[str], Callable[[ir.Column], bool], Selector]
+SelectionType = str | Iterable[str] | Callable[[ir.Column], bool] | Selector
 
 
 def selector(obj: SelectionType) -> Selector:

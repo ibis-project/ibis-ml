@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any
 
 import ibis
 import ibis.expr.types as ir
@@ -10,6 +10,9 @@ import ibis.expr.types as ir
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
 from ibis_ml.steps._impute import FillNA
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 def _compute_categories(

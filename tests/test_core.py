@@ -61,6 +61,21 @@ def test_sklearn_clone(table):
     assert r1.to_ibis(table).equals(r2.to_ibis(table))
 
 
+def test_get_visual_block_recipe():
+    pytest.importorskip("sklearn")
+    from sklearn.utils._estimator_html_repr import _get_visual_block
+
+    rec = ml.Recipe(ml.ImputeMean(ml.numeric()), ml.ScaleStandard(ml.numeric()))
+    est_html_info = _get_visual_block(rec)
+    assert est_html_info.kind == "serial"
+    assert est_html_info.estimators == rec.steps
+    assert est_html_info.names == [
+        "imputemean: ImputeMean",
+        "scalestandard: ScaleStandard",
+    ]
+    assert est_html_info.name_details == [str(est) for est in rec.steps]
+
+
 @pytest.mark.parametrize("include_y", [False, True])
 def test_in_memory_workflow(df, include_y):
     X = df[["a", "b", "c"]]
