@@ -12,15 +12,19 @@ hide:
 This is a Quarto dashboard that shows
 the IbisML transformations each backend supports.
 
-Due to differences in SQL dialects and upstream support for different
-operations in different backends, support for the full breadth of the IbisML Transfromations
-varies.
-
 ::: {.callout}
-Some steps have multiple implementations. For example, `DiscretizeKBins` supports different `strategy`(such as `quantile`, `uniform`) for defining the widths of the bins. We display the support for each implementation.
-:::
+Due to differences in SQL dialects and upstream support for different
+operations in different backends, support for the full breadth of the IbisML transfromations
+varies:
+
+1. ✅ Fully supported
+2. 🚫 Not supported
+3. 🟡 Partial support (hover over for more information)
+4. 🔍 Backend-specific support (check [operation support matrix](https://ibis-project.org/support_matrix) for details)
 
 :::
+:::
+
 
 ### {width=25%}
 
@@ -66,16 +70,20 @@ import re
 
 matrix = make_support_matrix()
 
+def custom_replace(value):
+    if value is True:
+        return "✅"
+    elif value is False:
+        return "🚫"
+    elif value == "backend-specific":
+        return "<span title='check backend-specific support'>🔍</span>"
+    else:
+        return f"<span title='Support: {value}'>🟡</span>"
+
 show(
-    matrix.replace({
-        True: "✔️",
-        False: "🚫",
-        "backend-specific": "<a href='https://ibis-project.org/support_matrix' title='Click for backend-specific support'>🔧</a>",
-        "type-specific": "<a title='check backend specific type'>🔍</a>",
-    }),
+    matrix.applymap(custom_replace),
     ordering=False,
     paging=False,
     buttons=["copy", "excel", "csv"],
 )
-
 ```

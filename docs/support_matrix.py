@@ -103,7 +103,7 @@ def make_support_matrix():
     }
     special_step = {
         "Drop": {"support": [], "not_support": []},
-        "Cast": {"support": ["type-specific"], "not_support": ["type-specific"]},
+        "Cast": backend_specific,
         "MutateAt": backend_specific,
         "Mutate": backend_specific,
     }
@@ -175,7 +175,7 @@ def make_support_matrix():
     )
 
     def count_partial(column):
-        return sum(1 for value in column if isinstance(value, str))
+        return sum(1 for value in column if isinstance(value, str) and value not in ("backend-specific", "type-specific"))
 
     partial_coverage = pd.Index(
         support_matrix.apply(count_partial)
