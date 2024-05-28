@@ -61,14 +61,21 @@ dict(value=len(ibis.util.backend_entry_points()) - 3, color="green", icon="datab
 ```{python}
 from itables import show
 from support_matrix import make_support_matrix
+import re
 
 
 matrix = make_support_matrix()
 
 show(
-    matrix.replace({True: "✔", False: "🚫"}),
+    matrix.replace({
+        True: "✔️",
+        False: "🚫",
+        "backend-specific": "<a href='https://ibis-project.org/support_matrix' title='Click for backend-specific support'>🔧</a>",
+        "type-specific": "<a title='check backend specific type'>🔍</a>",
+    }),
     ordering=False,
     paging=False,
     buttons=["copy", "excel", "csv"],
 )
+
 ```

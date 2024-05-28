@@ -26,7 +26,7 @@ def check_backend(backend, exprs):
             for expr in exprs:
                 con.execute(expr)
             return True
-        except ibis.common.exceptions.IbisError:
+        except (TypeError, ValueError, AttributeError):
             return False
     else:
         try:
@@ -103,7 +103,7 @@ def make_support_matrix():
     }
     special_step = {
         "Drop": {"support": [], "not_support": []},
-        "Cast": backend_specific,
+        "Cast": {"support": ["type-specific"], "not_support": ["type-specific"]},
         "MutateAt": backend_specific,
         "Mutate": backend_specific,
     }
@@ -132,10 +132,11 @@ def make_support_matrix():
                 step = getattr(ml, step_dict["name"])(**step_dict["params"])
                 metadata = ml.core.Metadata(targets=("target",))
                 step.fit_table(data, metadata)
-                output = step.transform_table(data)
+
                 all_expr = []
                 if hasattr(step, "_fit_expr"):
                     all_expr.extend(step._fit_expr)  # noqa: SLF001
+                output = step.transform_table(data)
                 all_expr.append(output)
 
                 if check_backend(backend, all_expr):
