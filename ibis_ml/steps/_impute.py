@@ -74,7 +74,7 @@ class _BaseImpute(Step):
         self._fit_expr = [
             table.aggregate([self._stat(table[c]).name(c) for c in columns])
         ]
-        self.fill_values_ = self._fit_expr[-1].execute().to_dict("records")[0]
+        self.fill_values_ = self._fit_expr[0].execute().to_dict("records")[0]
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(

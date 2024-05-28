@@ -337,7 +337,7 @@ class TargetEncode(Step):
             [table[c].mean().name(c) for c in metadata.targets]
         )
         self._fit_expr.append(target_means_expr)
-        self.target_means_ = self._fit_expr[-1].execute().to_dict("records")[0]
+        self.target_means_ = target_means_expr.execute().to_dict("records")[0]
 
         target_aggs = {}
         for target in metadata.targets:
@@ -359,7 +359,7 @@ class TargetEncode(Step):
 
             encoding_expr = agged.mutate(**target_encodings).drop(target_aggs)
             self._fit_expr.append(encoding_expr)
-            self.encodings_[column] = ibis.memtable(self._fit_expr[-1].to_pyarrow())
+            self.encodings_[column] = ibis.memtable(encoding_expr.to_pyarrow())
             metadata.drop_categories(column)
 
     def transform_table(self, table: ir.Table) -> ir.Table:

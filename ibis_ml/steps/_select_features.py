@@ -61,7 +61,7 @@ class DropZeroVariance(Step):
                     aggs.append(c.nunique().name(f"{name}_var"))
 
             self._fit_expr = [table.aggregate(aggs)]
-            results = self._fit_expr[-1].execute().to_dict("records")[0]
+            results = self._fit_expr[0].execute().to_dict("records")[0]
             for name in columns:
                 c = table[name]
                 if isinstance(c, ir.NumericColumn):

@@ -20,7 +20,7 @@ varies:
 1. ✅ Fully supported
 2. 🚫 Not supported
 3. 🟡 Partial support (hover over for more information)
-4. 🔍 Backend-specific support (check [operation support matrix](https://ibis-project.org/support_matrix) for details)
+4. 🔍 Support varies by operation or data type across different backends (check [operation support matrix](https://ibis-project.org/support_matrix) for details)
 
 :::
 :::
