@@ -175,7 +175,12 @@ def make_support_matrix():
     )
 
     def count_partial(column):
-        return sum(1 for value in column if isinstance(value, str) and value not in ("backend-specific", "type-specific"))
+        return sum(
+            1
+            for value in column
+            if isinstance(value, str)
+            and value not in ("backend-specific", "type-specific")
+        )
 
     partial_coverage = pd.Index(
         support_matrix.apply(count_partial)
