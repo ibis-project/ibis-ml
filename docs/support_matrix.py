@@ -165,7 +165,7 @@ def make_support_matrix():
     )
 
     def count_full(column):
-        return sum(1 for value in column if isinstance(value, bool))
+        return sum(value for value in column if isinstance(value, bool))
 
     all_visible_ops_count = len(support_matrix)
     fully_coverage = pd.Index(
