@@ -19,6 +19,26 @@ def get_leaf_classes(op):
             yield from get_leaf_classes(child_class)
 
 
+def check_backend(backend, exprs):
+    if backend in ("pandas", "polars", "dask"):
+        try:
+            con = ibis.connect(f"{backend}://")
+            for expr in exprs:
+                con.execute(expr)
+            return True
+        except ibis.common.exceptions.IbisError:
+            return False
+    else:
+        try:
+            for expr in exprs:
+                ibis.to_sql(expr, backend)
+            return True
+        except ibis.common.exceptions.TranslationError:
+            return False
+        except AttributeError:
+            return False
+
+
 def make_support_matrix():
     all_steps = list(get_leaf_classes(ml.Step))
     with Path("./step_config.yml").open() as file:
@@ -27,53 +47,46 @@ def make_support_matrix():
     expanded_steps = []
     for step in all_steps:
         step_name = step.__name__
-        default_input = "numeric"
+        module_category = str(step.__module__).split(".")[-1][1:]
         configurations = step_config.get(step_name, {}).get("configurations", [])
 
         if configurations:
-            for name_config in configurations:
-                default_input = name_config["config"].get("inputs", default_input)
-                expanded_steps.append(
+            expanded_steps.append(
+                [
                     {
-                        "name": step.__name__,
-                        "step_params": name_config["name"],
-                        "category": str(step.__module__).split(".")[-1][1:],
+                        "name": step_name,
+                        "step_params": config["name"],
+                        "category": module_category,
                         "params": {
-                            **name_config["config"],
-                            "inputs": getattr(ml, default_input)(),
+                            **config["config"],
+                            "inputs": getattr(
+                                ml, config["config"].get("inputs", "numeric")
+                            )(),
                         },
                     }
-                )
+                    for config in configurations
+                ]
+            )
         else:
             expanded_steps.append(
-                {
-                    "name": step.__name__,
-                    "step_params": "",
-                    "category": str(step.__module__).split(".")[-1][1:],
-                    "params": {"inputs": getattr(ml, default_input)()},
-                }
+                [
+                    {
+                        "name": step_name,
+                        "step_params": "None",
+                        "category": module_category,
+                        "params": {"inputs": ml.numeric()},
+                    }
+                ]
             )
 
     backends = sorted(ep.name for ep in ibis.util.backend_entry_points())
     alltypes = {
-        "string_col": np.array(["a", None, "b"], dtype="str"),
-        "int_col": np.array([1, 2, 3], dtype="int64"),
-        "floating_col": np.array([1.0, 2.0, 3.0], dtype="float64"),
-        "date_col": [date(2017, 4, 2), date(2017, 4, 2), date(2017, 4, 2)],
-        "time_col": [time(9, 1, 1), time(10, 1, 11), None],
-        "datetime_col": [
-            datetime(2017, 4, 2, 10, 1, 0),
-            datetime(2018, 4, 2, 10, 1, 0),
-            None,
-        ],
-        "target": np.array([1, 0, 1], dtype="int8"),
-    }
-    no_time = {
-        "string_col": np.array(["a", None, "b"], dtype="str"),
-        "int_col": np.array([1, 2, 3], dtype="int64"),
-        "floating_col": np.array([1.0, None, np.nan], dtype="float64"),
-        "date_col": [date(2017, 4, 2), date(2017, 4, 2), date(2017, 4, 2)],
-        "datetime_col": [
+        "string": np.array(["a", None, "b"], dtype="str"),
+        "int": np.array([1, 2, 3], dtype="int64"),
+        "floating": np.array([1.0, 2.0, 3.0], dtype="float64"),
+        "date": [date(2017, 4, 2), date(2017, 4, 2), date(2017, 4, 2)],
+        "time": [time(9, 1, 1), time(10, 1, 11), None],
+        "datetime": [
             datetime(2017, 4, 2, 10, 1, 0),
             datetime(2018, 4, 2, 10, 1, 0),
             None,
@@ -82,72 +95,95 @@ def make_support_matrix():
     }
 
     steps = {"steps": expanded_steps}
+    unsupported_cols = {"druid": ["time"]}
+
+    backend_specific = {
+        "support": ["backend-specific"],
+        "not_support": ["backend-specific"],
+    }
+    special_step = {
+        "Drop": {"support": [], "not_support": []},
+        "Cast": backend_specific,
+        "MutateAt": backend_specific,
+        "Mutate": backend_specific,
+    }
 
     for backend in backends:
         results = []
-        for step_dict in expanded_steps:
-            step_name = step_dict["name"]
-            if step_name in ("Drop", "Cast", "MutateAt", "Mutate"):
-                step_dict["step_params"] = "operation-specific"
-                results.append(True)
-                continue
-            if backend in ["pandas", "polars", "dask"]:
-                # Dataframe backend does not have to_sql()
-                # dask does not support quantile
-                if backend == "dask" and step_dict["step_params"] == "quantile":
-                    results.append(False)
-                else:
-                    results.append(True)
-                continue
-
-            if backend == "druid":
-                # Druid does not support time type
-                data = ibis.memtable(no_time)
-                if step_name == "ExpandTime":
-                    results.append(False)
+        for expand_step in expanded_steps:
+            res = {"support": [], "not_support": []}
+            for step_dict in expand_step:
+                step_name = step_dict["name"]
+                input_type = type(step_dict["params"]["inputs"]).__name__
+                if step_name in special_step:
+                    res = special_step[step_name]
                     continue
-            else:
-                data = ibis.memtable(alltypes)
 
-            # construct a step
-            step = getattr(ml, step_dict["name"])(**step_dict["params"])
-            metadata = ml.core.Metadata(targets=("target",))
-            step.fit_table(data, metadata)
-            output = step.transform_table(data)
+                if input_type in unsupported_cols.get(backend, []):
+                    res["not_support"].append(step_dict["step_params"])
+                    continue
 
-            try:
+                df = pd.DataFrame(alltypes).drop(
+                    columns=unsupported_cols.get(backend, [])
+                )
+                data = ibis.memtable(df)
+
+                # construct a step
+                step = getattr(ml, step_dict["name"])(**step_dict["params"])
+                metadata = ml.core.Metadata(targets=("target",))
+                step.fit_table(data, metadata)
+                output = step.transform_table(data)
+                all_expr = []
                 if hasattr(step, "_fit_expr"):
-                    for expr in step._fit_expr:  # noqa: SLF001
-                        ibis.to_sql(expr, backend)
-                ibis.to_sql(output, backend)
+                    all_expr.extend(step._fit_expr)  # noqa: SLF001
+                all_expr.append(output)
+
+                if check_backend(backend, all_expr):
+                    res["support"].append(step_dict["step_params"])
+                else:
+                    res["not_support"].append(step_dict["step_params"])
+
+            if not res["not_support"]:
                 results.append(True)
-            except ibis.common.exceptions.TranslationError:
+            elif res["not_support"] and not res["support"]:
                 results.append(False)
-            except AttributeError:
-                # clickhouse does not support scale = 3 for ExtractMillisecond
-                results.append(False)
+            else:
+                results.append(",".join(set(res["support"])))
+
         steps[backend] = list(results)
 
     support_matrix = (
         pd.DataFrame(steps)
         .assign(
-            Category=lambda df: df["steps"].apply(lambda x: x["category"]),
-            Step=lambda df: df["steps"].apply(lambda x: x["name"]),
-            Param=lambda df: df["steps"].apply(lambda x: x["step_params"]),
+            Category=lambda df: df["steps"].apply(lambda x: x[0]["category"]),
+            Step=lambda df: df["steps"].apply(lambda x: x[0]["name"]),
         )
         .drop(["steps"], axis=1)
-        .set_index(["Category", "Step", "Param"])
+        .set_index(["Category", "Step"])
         .sort_index()
     )
 
+    def count_full(column):
+        return sum(1 for value in column if isinstance(value, bool))
+
     all_visible_ops_count = len(support_matrix)
-    coverage = pd.Index(
-        support_matrix.sum()
+    fully_coverage = pd.Index(
+        support_matrix.apply(count_full)
+        .map(lambda n: f"{n} ({round(100 * n / all_visible_ops_count)}%)")
+        .T
+    )
+
+    def count_partial(column):
+        return sum(1 for value in column if isinstance(value, str))
+
+    partial_coverage = pd.Index(
+        support_matrix.apply(count_partial)
         .map(lambda n: f"{n} ({round(100 * n / all_visible_ops_count)}%)")
         .T
     )
     support_matrix.columns = pd.MultiIndex.from_tuples(
-        list(zip(support_matrix.columns, coverage)), names=("Backend", "Step coverage")
+        list(zip(support_matrix.columns, fully_coverage, partial_coverage)),
+        names=("Backend", "Full coverage", "Partial coverage"),
     )
 
     return support_matrix

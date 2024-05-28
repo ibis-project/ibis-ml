@@ -9,12 +9,24 @@ DiscretizeKBins:
         strategy: quantile
         n_bins: 5
 
+HandleUnivariateOutliers:
+  configurations:
+    - name: z-score
+      config:
+        method: z-score
+    - name: IQR
+      config:
+        method: IQR
+
 DropZeroVariance:
   configurations:
-    - name: numeric
+    - name: int
       config:
-        inputs: numeric
-    - name: string
+        inputs: integer
+    - name: float
+      config:
+        inputs: floating
+    - name: str
       config:
         inputs: string
 
@@ -24,45 +36,55 @@ FillNA:
       config:
         inputs: floating
         fill_value: 0
-    - name: integer
+    - name: int
       config:
         inputs: integer
         fill_value: 0
-    - name: string
+    - name: str
       config:
         inputs: string
         fill_value: "NULL"
 
 ImputeMode:
   configurations:
-    - name: numeric
+    - name: int
       config:
-        inputs: numeric
-    - name: string
+        inputs: integer
+    - name: float
+      config:
+        inputs: floating
+    - name: str
       config:
         inputs: string
 
 ExpandDate:
   configurations:
-    - name: day, month, year
+    - name: d
       config:
         inputs: date
         components:
           - day
+    - name: w
+      config:
+        inputs: date
+        components:
           - week
-          - month
-          - year
-    - name: month
+    - name: m
       config:
         inputs: date
         components:
           - month
-    - name: day of week
+    - name: y
+      config:
+        inputs: date
+        components:
+          - year
+    - name: dow
       config:
         inputs: date
         components:
           - dow
-    - name: day of year
+    - name: doy
       config:
         inputs: date
         components:
@@ -70,27 +92,47 @@ ExpandDate:
 
 ExpandDateTime:
   configurations:
-    - name: year, month, day
+    - name: ms
+      config:
+        inputs: timestamp
+        components:
+          - millisecond
+    - name: s
+      config:
+        inputs: timestamp
+        components:
+          - second
+    - name: m
+      config:
+        inputs: timestamp
+        components:
+          - minute
+    - name: d
+      config:
+        inputs: timestamp
+        components:
+          - day
+    - name: week
+      config:
+        inputs: timestamp
+        components:
+          - week
+    - name: mon
       config:
         inputs: timestamp
         components:
           - month
-          - year
-          - hour
-          - minute
-          - second
-    - name: minute, second
+    - name: y
       config:
         inputs: timestamp
         components:
-          - minute
-          - second
-    - name: day of week
+          - year
+    - name: dow
       config:
         inputs: timestamp
         components:
           - dow
-    - name: day of year
+    - name: doy
       config:
         inputs: timestamp
         components:
@@ -98,25 +140,22 @@ ExpandDateTime:
 
 ExpandTime:
   configurations:
-    - name: hour
+    - name: h
       config:
         inputs: time
         components:
           - hour
-    - name: minute
+    - name: m
       config:
         inputs: time
         components:
           - minute
-    - name: second
+    - name: s
       config:
         inputs: time
         components:
-          - hour
-          - minute
           - second
-          - millisecond
-    - name: millisecond
+    - name: ms
       config:
         inputs: time
         components:
