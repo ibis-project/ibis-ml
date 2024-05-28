@@ -165,7 +165,7 @@ def make_support_matrix():
     )
 
     def count_full(column):
-        return sum(value for value in column if isinstance(value, bool))
+        return sum(1 for value in column if value is True or value == "backend-specific")
 
     all_visible_ops_count = len(support_matrix)
     fully_coverage = pd.Index(
@@ -175,12 +175,7 @@ def make_support_matrix():
     )
 
     def count_partial(column):
-        return sum(
-            1
-            for value in column
-            if isinstance(value, str)
-            and value not in ("backend-specific", "type-specific")
-        )
+        return sum(1 for value in column if isinstance(value, str) and value != "backend-specific")
 
     partial_coverage = pd.Index(
         support_matrix.apply(count_partial)
