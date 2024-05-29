@@ -48,6 +48,8 @@ website:
       - text: "Tutorial"
         href: tutorial/index.ipynb
       - sidebar:reference
+      - text: "Support Matrix"
+        href: support_matrix.qmd
     tools:
       - icon: github
         menu:

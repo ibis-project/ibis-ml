@@ -55,7 +55,9 @@ class ScaleMinMax(Step):
                 aggs.append(c.max().name(f"{name}_max"))
                 aggs.append(c.min().name(f"{name}_min"))
 
-            results = table.aggregate(aggs).execute().to_dict("records")[0]
+            expr = table.aggregate(aggs)
+            self._fit_expr = [expr]
+            results = expr.execute().to_dict("records")[0]
             for name in columns:
                 stats[name] = (results[f"{name}_max"], results[f"{name}_min"])
 
@@ -114,7 +116,8 @@ class ScaleStandard(Step):
                 aggs.append(c.mean().name(f"{name}_mean"))
                 aggs.append(c.std(how="pop").name(f"{name}_std"))
 
-            results = table.aggregate(aggs).execute().to_dict("records")[0]
+            self._fit_expr = [table.aggregate(aggs)]
+            results = self._fit_expr[-1].execute().to_dict("records")[0]
             for name in columns:
                 stats[name] = (results[f"{name}_mean"], results[f"{name}_std"])
 

@@ -279,9 +279,13 @@ class CountEncode(Step):
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         columns = self.inputs.select_columns(table, metadata)
-        self.value_counts_ = {}
+        self._fit_expr = [table[c].value_counts() for c in columns]
+        self.value_counts_ = {
+            c: ibis.memtable(expr.to_pyarrow())
+            for c, expr in zip(columns, self._fit_expr)
+        }
+
         for c in columns:
-            self.value_counts_[c] = ibis.memtable(table[c].value_counts().to_pyarrow())
             metadata.drop_categories(c)
 
     def transform_table(self, table: ir.Table) -> ir.Table:
@@ -328,11 +332,12 @@ class TargetEncode(Step):
         yield ("smooth", self.smooth)
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
-        self.target_means_ = (
-            table.aggregate([table[c].mean().name(c) for c in metadata.targets])
-            .execute()
-            .to_dict("records")[0]
+        self._fit_expr = []
+        target_means_expr = table.aggregate(
+            [table[c].mean().name(c) for c in metadata.targets]
         )
+        self._fit_expr.append(target_means_expr)
+        self.target_means_ = target_means_expr.execute().to_dict("records")[0]
 
         target_aggs = {}
         for target in metadata.targets:
@@ -352,9 +357,9 @@ class TargetEncode(Step):
                     + self.target_means_[target] * self.smooth
                 ) / (agged[f"{target}_count"] + self.smooth)
 
-            self.encodings_[column] = ibis.memtable(
-                agged.mutate(**target_encodings).drop(target_aggs).to_pyarrow()
-            )
+            encoding_expr = agged.mutate(**target_encodings).drop(target_aggs)
+            self._fit_expr.append(encoding_expr)
+            self.encodings_[column] = ibis.memtable(encoding_expr.to_pyarrow())
             metadata.drop_categories(column)
 
     def transform_table(self, table: ir.Table) -> ir.Table:

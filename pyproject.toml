@@ -14,7 +14,16 @@ dynamic = ["version", "description"]
 
 [project.optional-dependencies]
 dask = ["dask[dataframe]"]
-doc = ["ibis-framework[duckdb,examples]", "jupyter", "quartodoc", "scikit-learn", "skorch", "torch"]
+doc = [
+  "clickhouse-connect",
+  "ibis-framework[bigquery,clickhouse,dask,datafusion,duckdb,druid,examples,exasol,flink,impala,mssql,mysql,oracle,polars,postgres,pyspark,risingwave,snowflake,sqlite,trino]",
+  "itables",
+  "jupyter",
+  "quartodoc", 
+  "scikit-learn",
+  "skorch", 
+  "torch",
+  ]
 dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
 
 [project.urls]
@@ -75,6 +84,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
+"docs/**/*.py" = ["INP001"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
