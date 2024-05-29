@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11.8" # TODO(deepyaman): Update Python version when Ibis supports `dask>=2024.4.1`, which added https://github.com/dask/dask/pull/11035.
           cache: "pip"
 
       - name: Set up Quarto
