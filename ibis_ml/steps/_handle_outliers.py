@@ -108,7 +108,8 @@ class HandleUnivariateOutliers(Step):
                     aggs.append(c.quantile(0.25).name(f"{name}_25"))
                     aggs.append(c.quantile(0.75).name(f"{name}_75"))
 
-            results = table.aggregate(aggs).execute().to_dict("records")[0]
+            self._fit_expr = [table.aggregate(aggs)]
+            results = self._fit_expr[0].execute().to_dict("records")[0]
 
             for name in columns:
                 if self.method == "z-score":
