@@ -3,7 +3,7 @@
   <h3 class="no-anchor">Choose your tool</h3>
   <li class="nav-item" role="presentation">
     <a class="nav-link" href="scikit-learn.html">
-      <img src="images/scikit-learn-logo.svg">scikit-learn
+      <img src="images/scikit-learn-logo.svg">sklearn
     </a>
   </li>
   <li class="nav-item" role="presentation">
