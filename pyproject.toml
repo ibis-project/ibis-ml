@@ -16,15 +16,16 @@ dynamic = ["version", "description"]
 dask = ["dask[dataframe]"]
 doc = [
   "clickhouse-connect",
-  "ibis-framework[bigquery,clickhouse,dask,datafusion,duckdb,druid,examples,exasol,flink,impala,mssql,mysql,oracle,polars,postgres,pyspark,risingwave,snowflake,sqlite,trino]",
+  "ibis-framework[bigquery,clickhouse,dask,datafusion,druid,duckdb,examples,exasol,flink,impala,mssql,mysql,oracle,pandas,polars,postgres,pyspark,risingwave,snowflake,sqlite,trino]",
   "itables",
   "jupyter",
   "quartodoc", 
   "scikit-learn",
   "skorch", 
   "torch",
-  ]
-dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch"]
+  "xgboost",
+]
+dev = ["ibis-framework[duckdb,examples]", "pytest", "pytest-cov", "scikit-learn", "skorch", "torch", "xgboost"]
 
 [project.urls]
 Home = "https://ibis-project.github.io/ibis-ml/"
