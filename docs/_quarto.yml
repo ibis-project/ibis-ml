@@ -50,6 +50,7 @@ website:
       - sidebar:reference
       - text: "Support Matrix"
         href: support_matrix.qmd
+      - sidebar:FAQ
     tools:
       - icon: github
         menu:
@@ -81,6 +82,14 @@ website:
             - reference/steps-outlier.qmd
             - reference/steps-temporal.qmd
             - reference/steps-other.qmd
+    - id: FAQ
+      title: "FAQ"
+      style: "docked"
+      collapse-level: 2
+      contents:
+        - id: How_to_create_transformer
+          title: "How to create your own transformer"
+          href: tutorial/How_to_create_your_own_transformer.qmd
 
 format:
   html:
