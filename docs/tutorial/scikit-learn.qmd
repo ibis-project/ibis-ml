@@ -8,7 +8,27 @@ description: |
 
 ## Introduction
 
-...
+In this article, we'll explore [`Recipe`](/reference/core.html#ibis_ml.Recipe)s, which are designed to help you preprocess your data before training your model. Recipes are built as a series of preprocessing steps, such as:
+
+- converting qualitative predictors to indicator variables (also known as dummy variables),
+
+- transforming data to be on a different scale (e.g., taking the logarithm of a variable),
+
+- transforming whole groups of predictors together,
+
+- extracting key features from raw variables (e.g., getting the day of the week out of a date variable),
+
+and so on. If you are familiar with [scikit-learn's dataset transformations](https://scikit-learn.org/stable/data_transforms.html), a lot of this might sound familiar and like what a transformer already does. Recipes can be used to do many of the same things, but they can scale your workloads on any [Ibis](https://ibis-project.org/)-supported backend. This article shows how to use recipes for modeling.
+
+To use code in this article, you will need to install the following packages: Ibis, IbisML, and scikit-learn.
+
+```bash
+pip install 'ibis-framework[duckdb,examples]' ibis-ml scikit-learn
+```
+
+## The New York City flight data
+
+Let's use the [nycflights13 data](https://github.com/hadley/nycflights13) to predict whether a plane arrives more than 30 minutes late. This data set contains information on 325,819 flights departing near New York City in 2013. Let's start by loading the data and making a few changes to the variables:
 
 ```{python}
 #| output: false
@@ -56,10 +76,6 @@ flights
 weather = con.table("weather")
 weather
 ```
-
-## The New York City flight data
-
-Let's use the [nycflights13 data](https://github.com/hadley/nycflights13) to predict whether a plane arrives more than 30 minutes late. This data set contains information on 325,819 flights departing near New York City in 2013. Let's start by loading the data and making a few changes to the variables:
 
 ```{python}
 flight_data = (
