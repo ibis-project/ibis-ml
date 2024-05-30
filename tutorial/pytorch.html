@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Prepare data for modeling with modular preprocessing steps.">
+
+<title>IbisML - Preprocess your data with recipes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../logo.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="tutorial.css">
+<meta name="twitter:title" content="IbisML - Preprocess your data with recipes">
+<meta name="twitter:description" content="Prepare data for modeling with modular preprocessing steps.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../logo.svg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">IbisML</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorial/index.html"> 
+<span class="menu-text">Tutorial</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-reference" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Reference</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-reference">    
+        <li class="dropdown-header">Core</li>
+        <li>
+    <a class="dropdown-item" href="../reference/core.html">
+ <span class="dropdown-text">Common</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/selectors.html">
+ <span class="dropdown-text">Selectors</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Steps</li>
+        <li>
+    <a class="dropdown-item" href="../reference/steps-imputation.html">
+ <span class="dropdown-text">Imputation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-encoding.html">
+ <span class="dropdown-text">Encoding</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-standardization.html">
+ <span class="dropdown-text">Standardization</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-discretization.html">
+ <span class="dropdown-text">Discretization</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-feature-selection.html">
+ <span class="dropdown-text">Feature selection</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-feature-engineering.html">
+ <span class="dropdown-text">Feature generation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-outlier.html">
+ <span class="dropdown-text">Outliers</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-temporal.html">
+ <span class="dropdown-text">Temporal</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../reference/steps-other.html">
+ <span class="dropdown-text">Other</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../support_matrix.html"> 
+<span class="menu-text">Support Matrix</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibis-ml">
+            Source code
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibis-ml/issues">
+            Open an issue
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-new-york-city-flight-data" id="toc-the-new-york-city-flight-data" class="nav-link" data-scroll-target="#the-new-york-city-flight-data">The New York City flight data</a></li>
+  <li><a href="#data-splitting" id="toc-data-splitting" class="nav-link" data-scroll-target="#data-splitting">Data splitting</a></li>
+  <li><a href="#create-features" id="toc-create-features" class="nav-link" data-scroll-target="#create-features">Create features</a></li>
+  <li><a href="#fit-a-model-with-a-recipe" id="toc-fit-a-model-with-a-recipe" class="nav-link" data-scroll-target="#fit-a-model-with-a-recipe">Fit a model with a recipe</a></li>
+  <li><a href="#use-a-trained-workflow-to-predict" id="toc-use-a-trained-workflow-to-predict" class="nav-link" data-scroll-target="#use-a-trained-workflow-to-predict">Use a trained workflow to predict</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/tutorial/pytorch.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Preprocess your data with recipes</h1>
+</div>
+
+<div>
+  <div class="description">
+    <p>Prepare data for modeling with modular preprocessing steps.</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<ul id="choose-your-tool" class="nav nav-tabs" role="tablist">
+  <h3 class="no-anchor">Choose your tool</h3>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" href="scikit-learn.html">
+      <img src="images/scikit-learn-logo.svg">scikit-learn
+    </a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" href="xgboost.html">
+      <img src="images/xgboost-logo.png">XGBoost
+    </a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" href="pytorch.html">
+      <img src="images/pytorch-logo.svg">PyTorch
+    </a>
+  </li>
+</ul>
+
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  // get file name
+  const filename = window.location.pathname.split("/").slice(-1)[0];
+
+  // latch active
+  const toolLinks = window.document.querySelectorAll("#choose-your-tool a");
+  for (const tool of toolLinks) {
+    if (tool.href.endsWith(filename)) {
+      tool.classList.add("active");
+      break;
+    }
+  }
+
+  // save in local storage
+  window.localStorage.setItem("tutorialTool", filename);
+});
+
+</script>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>…</p>
+<div id="ba00125c" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(<span class="st">"duckdb://nycflights13.ddb"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>con.create_table(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"flights"</span>, ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite<span class="op">=</span><span class="va">True</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>con.create_table(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"weather"</span>, ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite<span class="op">=</span><span class="va">True</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can now see the example dataset copied over to the database:</p>
+<div id="7601690d" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(<span class="st">"duckdb://nycflights13.ddb"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>con.list_tables()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>['flights', 'weather']</code></pre>
+</div>
+</div>
+<p>We’ll turn on interactive mode, which partially executes queries to give users a preview of the results.</p>
+<div id="9eae9bf6" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ibis.options.interactive <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="41569663" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> con.table(<span class="st">"flights"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> flights.mutate(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    dep_time<span class="op">=</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        flights.dep_time.lpad(<span class="dv">4</span>, <span class="st">"0"</span>).substr(<span class="dv">0</span>, <span class="dv">2</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> <span class="st">":"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> flights.dep_time.substr(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> <span class="st">":00"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    ).try_cast(<span class="st">"time"</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    arr_delay<span class="op">=</span>flights.arr_delay.try_cast(<span class="bu">int</span>),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    air_time<span class="op">=</span>flights.air_time.try_cast(<span class="bu">int</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> year  </span>┃<span style="font-weight: bold"> month </span>┃<span style="font-weight: bold"> day   </span>┃<span style="font-weight: bold"> dep_time </span>┃<span style="font-weight: bold"> sched_dep_time </span>┃<span style="font-weight: bold"> dep_delay </span>┃<span style="font-weight: bold"> arr_time </span>┃<span style="font-weight: bold"> sched_arr_time </span>┃<span style="font-weight: bold"> arr_delay </span>┃<span style="font-weight: bold"> carrier </span>┃<span style="font-weight: bold"> flight </span>┃<span style="font-weight: bold"> tailnum </span>┃<span style="font-weight: bold"> origin </span>┃<span style="font-weight: bold"> dest   </span>┃<span style="font-weight: bold"> air_time </span>┃<span style="font-weight: bold"> distance </span>┃<span style="font-weight: bold"> hour  </span>┃<span style="font-weight: bold"> minute </span>┃<span style="font-weight: bold"> time_hour           </span>┃
+┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>          │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>   │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>          │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">timestamp(6)</span>        │
+├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:17:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">515</span> │ <span style="color: #008000; text-decoration-color: #008000">2        </span> │ <span style="color: #008000; text-decoration-color: #008000">830     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">819</span> │        <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">11</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1545</span> │ <span style="color: #008000; text-decoration-color: #008000">N14228 </span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">227</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">15</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 10:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:33:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">529</span> │ <span style="color: #008000; text-decoration-color: #008000">4        </span> │ <span style="color: #008000; text-decoration-color: #008000">850     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">830</span> │        <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">20</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1714</span> │ <span style="color: #008000; text-decoration-color: #008000">N24211 </span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">227</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1416</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">29</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 10:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:42:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">540</span> │ <span style="color: #008000; text-decoration-color: #008000">2        </span> │ <span style="color: #008000; text-decoration-color: #008000">923     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">850</span> │        <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">33</span> │ <span style="color: #008000; text-decoration-color: #008000">AA     </span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1141</span> │ <span style="color: #008000; text-decoration-color: #008000">N619AA </span> │ <span style="color: #008000; text-decoration-color: #008000">JFK   </span> │ <span style="color: #008000; text-decoration-color: #008000">MIA   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">160</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1089</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">40</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 10:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:44:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">545</span> │ <span style="color: #008000; text-decoration-color: #008000">-1       </span> │ <span style="color: #008000; text-decoration-color: #008000">1004    </span> │           <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1022</span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-18</span> │ <span style="color: #008000; text-decoration-color: #008000">B6     </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">725</span> │ <span style="color: #008000; text-decoration-color: #008000">N804JB </span> │ <span style="color: #008000; text-decoration-color: #008000">JFK   </span> │ <span style="color: #008000; text-decoration-color: #008000">BQN   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">183</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1576</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">45</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 10:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:54:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">600</span> │ <span style="color: #008000; text-decoration-color: #008000">-6       </span> │ <span style="color: #008000; text-decoration-color: #008000">812     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">837</span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-25</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">461</span> │ <span style="color: #008000; text-decoration-color: #008000">N668DN </span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ATL   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">116</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">762</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 11:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:54:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">558</span> │ <span style="color: #008000; text-decoration-color: #008000">-4       </span> │ <span style="color: #008000; text-decoration-color: #008000">740     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">728</span> │        <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1696</span> │ <span style="color: #008000; text-decoration-color: #008000">N39463 </span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">ORD   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">150</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">719</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">58</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 10:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:55:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">600</span> │ <span style="color: #008000; text-decoration-color: #008000">-5       </span> │ <span style="color: #008000; text-decoration-color: #008000">913     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">854</span> │        <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">19</span> │ <span style="color: #008000; text-decoration-color: #008000">B6     </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">507</span> │ <span style="color: #008000; text-decoration-color: #008000">N516JB </span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">FLL   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">158</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1065</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 11:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:57:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">600</span> │ <span style="color: #008000; text-decoration-color: #008000">-3       </span> │ <span style="color: #008000; text-decoration-color: #008000">709     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">723</span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-14</span> │ <span style="color: #008000; text-decoration-color: #008000">EV     </span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5708</span> │ <span style="color: #008000; text-decoration-color: #008000">N829AS </span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAD   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">53</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">229</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 11:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:57:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">600</span> │ <span style="color: #008000; text-decoration-color: #008000">-3       </span> │ <span style="color: #008000; text-decoration-color: #008000">838     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">846</span> │        <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-8</span> │ <span style="color: #008000; text-decoration-color: #008000">B6     </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">79</span> │ <span style="color: #008000; text-decoration-color: #008000">N593JB </span> │ <span style="color: #008000; text-decoration-color: #008000">JFK   </span> │ <span style="color: #008000; text-decoration-color: #008000">MCO   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">140</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">944</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 11:00:00</span> │
+│  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">05:58:00</span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">600</span> │ <span style="color: #008000; text-decoration-color: #008000">-2       </span> │ <span style="color: #008000; text-decoration-color: #008000">753     </span> │            <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">745</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span> │ <span style="color: #008000; text-decoration-color: #008000">AA     </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">301</span> │ <span style="color: #008000; text-decoration-color: #008000">N3ALAA </span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ORD   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">138</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">733</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 11:00:00</span> │
+│     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │              <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>         │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │              <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>       │      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                   │
+└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘
+</pre>
+</div>
+</div>
+<div id="5cc2bdbe" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>weather <span class="op">=</span> con.table(<span class="st">"weather"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>weather</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> origin </span>┃<span style="font-weight: bold"> year  </span>┃<span style="font-weight: bold"> month </span>┃<span style="font-weight: bold"> day   </span>┃<span style="font-weight: bold"> hour  </span>┃<span style="font-weight: bold"> temp   </span>┃<span style="font-weight: bold"> dewp   </span>┃<span style="font-weight: bold"> humid  </span>┃<span style="font-weight: bold"> wind_dir </span>┃<span style="font-weight: bold"> wind_speed         </span>┃<span style="font-weight: bold"> wind_gust </span>┃<span style="font-weight: bold"> precip  </span>┃<span style="font-weight: bold"> pressure </span>┃<span style="font-weight: bold"> visib   </span>┃<span style="font-weight: bold"> time_hour           </span>┃
+┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>   │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>             │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">float64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>   │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">float64</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">timestamp(6)</span>        │
+├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #008000; text-decoration-color: #008000">39.02 </span> │ <span style="color: #008000; text-decoration-color: #008000">26.06 </span> │ <span style="color: #008000; text-decoration-color: #008000">59.37 </span> │ <span style="color: #008000; text-decoration-color: #008000">270     </span> │ <span style="color: #008000; text-decoration-color: #008000">10.357019999999999</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012    </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 06:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │ <span style="color: #008000; text-decoration-color: #008000">39.02 </span> │ <span style="color: #008000; text-decoration-color: #008000">26.96 </span> │ <span style="color: #008000; text-decoration-color: #008000">61.63 </span> │ <span style="color: #008000; text-decoration-color: #008000">250     </span> │ <span style="color: #008000; text-decoration-color: #008000">8.05546           </span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.3  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 07:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span> │ <span style="color: #008000; text-decoration-color: #008000">39.02 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">64.43 </span> │ <span style="color: #008000; text-decoration-color: #008000">240     </span> │ <span style="color: #008000; text-decoration-color: #008000">11.5078           </span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.5  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 08:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span> │ <span style="color: #008000; text-decoration-color: #008000">39.92 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">62.21 </span> │ <span style="color: #008000; text-decoration-color: #008000">250     </span> │ <span style="color: #008000; text-decoration-color: #008000">12.658579999999999</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.2  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 09:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span> │ <span style="color: #008000; text-decoration-color: #008000">39.02 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">64.43 </span> │ <span style="color: #008000; text-decoration-color: #008000">260     </span> │ <span style="color: #008000; text-decoration-color: #008000">12.658579999999999</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1011.9  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 10:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span> │ <span style="color: #008000; text-decoration-color: #008000">37.94 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">67.21 </span> │ <span style="color: #008000; text-decoration-color: #008000">240     </span> │ <span style="color: #008000; text-decoration-color: #008000">11.5078           </span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.4  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 11:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7</span> │ <span style="color: #008000; text-decoration-color: #008000">39.02 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">64.43 </span> │ <span style="color: #008000; text-decoration-color: #008000">240     </span> │ <span style="color: #008000; text-decoration-color: #008000">14.960139999999999</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.2  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 12:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span> │ <span style="color: #008000; text-decoration-color: #008000">39.92 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">62.21 </span> │ <span style="color: #008000; text-decoration-color: #008000">250     </span> │ <span style="color: #008000; text-decoration-color: #008000">10.357019999999999</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.2  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 13:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">9</span> │ <span style="color: #008000; text-decoration-color: #008000">39.92 </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">62.21 </span> │ <span style="color: #008000; text-decoration-color: #008000">260     </span> │ <span style="color: #008000; text-decoration-color: #008000">14.960139999999999</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.7  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 14:00:00</span> │
+│ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2013</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10</span> │ <span style="color: #008000; text-decoration-color: #008000">41    </span> │ <span style="color: #008000; text-decoration-color: #008000">28.04 </span> │ <span style="color: #008000; text-decoration-color: #008000">59.65 </span> │ <span style="color: #008000; text-decoration-color: #008000">260     </span> │ <span style="color: #008000; text-decoration-color: #008000">13.809359999999998</span> │ <span style="color: #008000; text-decoration-color: #008000">NA       </span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span> │ <span style="color: #008000; text-decoration-color: #008000">1012.4  </span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-01-01 15:00:00</span> │
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>         │       <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │       <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                   │
+└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘
+</pre>
+</div>
+</div>
+</section>
+<section id="the-new-york-city-flight-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-new-york-city-flight-data">The New York City flight data</h2>
+<p>Let’s use the <a href="https://github.com/hadley/nycflights13">nycflights13 data</a> to predict whether a plane arrives more than 30 minutes late. This data set contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:</p>
+<div id="679e183b" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>flight_data <span class="op">=</span> (</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    flights.mutate(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert the arrival delay to a factor</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="co"># By default, PyTorch expects the target to have a Long datatype</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        arr_delay<span class="op">=</span>ibis.ifelse(flights.arr_delay <span class="op">&gt;=</span> <span class="dv">30</span>, <span class="dv">1</span>, <span class="dv">0</span>).cast(<span class="st">"int64"</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We will use the date (not date-time) in the recipe below</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        date<span class="op">=</span>flights.time_hour.date(),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Include the weather data</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    .inner_join(weather, [<span class="st">"origin"</span>, <span class="st">"time_hour"</span>])</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Only retain the specific columns we will use</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    .select(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dep_time"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"flight"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"origin"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dest"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"air_time"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"distance"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"carrier"</span>,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"date"</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"arr_delay"</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"time_hour"</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Exclude missing data</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    .dropna()</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>flight_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> dep_time </span>┃<span style="font-weight: bold"> flight </span>┃<span style="font-weight: bold"> origin </span>┃<span style="font-weight: bold"> dest   </span>┃<span style="font-weight: bold"> air_time </span>┃<span style="font-weight: bold"> distance </span>┃<span style="font-weight: bold"> carrier </span>┃<span style="font-weight: bold"> date       </span>┃<span style="font-weight: bold"> arr_delay </span>┃<span style="font-weight: bold"> time_hour           </span>┃
+┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">date</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">timestamp(6)</span>        │
+├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤
+│ <span style="color: #800080; text-decoration-color: #800080">05:57:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">461</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ATL   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">100</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">762</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">05:58:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4424</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">RDU   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">63</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">416</span> │ <span style="color: #008000; text-decoration-color: #008000">EV     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">05:58:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6177</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAD   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">45</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">212</span> │ <span style="color: #008000; text-decoration-color: #008000">EV     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:00:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">731</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">DTW   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">78</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">502</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:01:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">684</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">LAX   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">316</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2454</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:01:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">301</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ORD   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">164</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">733</span> │ <span style="color: #008000; text-decoration-color: #008000">AA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:01:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1837</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">MIA   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">148</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1096</span> │ <span style="color: #008000; text-decoration-color: #008000">AA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:01:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1279</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">MEM   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">128</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">963</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:02:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1691</span> │ <span style="color: #008000; text-decoration-color: #008000">JFK   </span> │ <span style="color: #008000; text-decoration-color: #008000">LAX   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">309</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2475</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">06:04:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1447</span> │ <span style="color: #008000; text-decoration-color: #008000">JFK   </span> │ <span style="color: #008000; text-decoration-color: #008000">CLT   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">75</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">541</span> │ <span style="color: #008000; text-decoration-color: #008000">US     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-06-26 10:00:00</span> │
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>          │         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                   │
+└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘
+</pre>
+</div>
+</div>
+<p>We can see that about 16% of the flights in this data set arrived more than 30 minutes late.</p>
+<div id="359ef5eb" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>flight_data.arr_delay.value_counts().rename(n<span class="op">=</span><span class="st">"arr_delay_count"</span>).mutate(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    prop<span class="op">=</span>ibis._.n <span class="op">/</span> ibis._.n.<span class="bu">sum</span>()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓
+┃<span style="font-weight: bold"> arr_delay </span>┃<span style="font-weight: bold"> n      </span>┃<span style="font-weight: bold"> prop     </span>┃
+┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">float64</span>  │
+├───────────┼────────┼──────────┤
+│         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">273279</span> │ <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.838745</span> │
+│         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span> │  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">52540</span> │ <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.161255</span> │
+└───────────┴────────┴──────────┘
+</pre>
+</div>
+</div>
+</section>
+<section id="data-splitting" class="level2">
+<h2 class="anchored" data-anchor-id="data-splitting">Data splitting</h2>
+<p>To get started, let’s split this single dataset into two: a <em>training</em> set and a <em>testing</em> set. We’ll keep most of the rows in the original dataset (subset chosen randomly) in the <em>training</em> set. The training data will be used to <em>fit</em> the model, and the <em>testing</em> set will be used to measure model performance.</p>
+<p>Because the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. <a href="https://www.euclaim.com/blog/flight-numbers-explained#:~:text=Can%20flight%20numbers%20be%20reused,of%20travel%20is%20always%20unique.">It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.</a></p>
+<div id="7a139bad" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key <span class="op">=</span> flight_data.mutate(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    unique_key<span class="op">=</span>ibis.literal(<span class="st">","</span>).join(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        [flight_data.carrier, flight_data.flight.cast(<span class="bu">str</span>), flight_data.date.cast(<span class="bu">str</span>)]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> dep_time </span>┃<span style="font-weight: bold"> flight </span>┃<span style="font-weight: bold"> origin </span>┃<span style="font-weight: bold"> dest   </span>┃<span style="font-weight: bold"> air_time </span>┃<span style="font-weight: bold"> distance </span>┃<span style="font-weight: bold"> carrier </span>┃<span style="font-weight: bold"> date       </span>┃<span style="font-weight: bold"> arr_delay </span>┃<span style="font-weight: bold"> time_hour           </span>┃<span style="font-weight: bold"> unique_key         </span>┃
+┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">date</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">timestamp(6)</span>        │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>             │
+├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┼────────────────────┤
+│ <span style="color: #800080; text-decoration-color: #800080">10:45:00</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">67</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">ORD   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">120</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">719</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 15:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,67,2013-02-14  </span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:48:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">373</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">FLL   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">179</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1076</span> │ <span style="color: #008000; text-decoration-color: #008000">B6     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 15:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">B6,373,2013-02-14 </span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:48:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">764</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">207</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 15:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,764,2013-02-14 </span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:51:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2044</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">MIA   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">171</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1096</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 16:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">DL,2044,2013-02-14</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:51:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2171</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">DCA   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">40</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">214</span> │ <span style="color: #008000; text-decoration-color: #008000">US     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 16:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">US,2171,2013-02-14</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:57:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1275</span> │ <span style="color: #008000; text-decoration-color: #008000">JFK   </span> │ <span style="color: #008000; text-decoration-color: #008000">SLC   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">286</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1990</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 16:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">DL,1275,2013-02-14</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:57:00</span> │    <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">366</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">STL   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">135</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">888</span> │ <span style="color: #008000; text-decoration-color: #008000">WN     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 16:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">WN,366,2013-02-14 </span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:57:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1550</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">SFO   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">338</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2565</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 15:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1550,2013-02-14</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:58:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4694</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">MKE   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">113</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">725</span> │ <span style="color: #008000; text-decoration-color: #008000">EV     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 15:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">EV,4694,2013-02-14</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">10:58:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1647</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ATL   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">117</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">762</span> │ <span style="color: #008000; text-decoration-color: #008000">DL     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-14 16:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">DL,1647,2013-02-14</span> │
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>          │         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                   │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                  │
+└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┴────────────────────┘
+</pre>
+</div>
+</div>
+<div id="71f8035a" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">FIXME</span><span class="co">(deepyaman): Proposed key isn't unique for actual departure date.</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key.group_by(<span class="st">"unique_key"</span>).mutate(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    cnt<span class="op">=</span>flight_data_with_unique_key.count()</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)[ibis._.cnt <span class="op">&gt;</span> <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃<span style="font-weight: bold"> dep_time </span>┃<span style="font-weight: bold"> flight </span>┃<span style="font-weight: bold"> origin </span>┃<span style="font-weight: bold"> dest   </span>┃<span style="font-weight: bold"> air_time </span>┃<span style="font-weight: bold"> distance </span>┃<span style="font-weight: bold"> carrier </span>┃<span style="font-weight: bold"> date       </span>┃<span style="font-weight: bold"> arr_delay </span>┃<span style="font-weight: bold"> time_hour           </span>┃<span style="font-weight: bold"> unique_key         </span>┃<span style="font-weight: bold"> cnt   </span>┃
+┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">time</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>    │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>  │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">date</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span>     │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">timestamp(6)</span>        │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">string</span>             │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">int64</span> │
+├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┼────────────────────┼───────┤
+│ <span style="color: #800080; text-decoration-color: #800080">20:00:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1022</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">186</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14 00:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1022,2013-09-14</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">19:59:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1022</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">167</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14 23:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1022,2013-09-14</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">19:12:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1023</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ORD   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">112</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">733</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29 23:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1023,2013-05-29</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">21:16:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1023</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">175</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1023,2013-05-29</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">21:22:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1052</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">173</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1052,2013-08-27</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">15:18:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1052</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">174</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27 19:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1052,2013-08-27</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">19:27:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1053</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">CLE   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">69</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">404</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20 00:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1053,2013-12-20</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">18:39:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1053</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">CLE   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">72</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">404</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20 23:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1053,2013-12-20</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">17:20:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1071</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">PHX   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">281</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2133</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26 22:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1071,2013-02-26</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">20:16:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1071</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">BQN   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">196</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1585</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1071,2013-02-26</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>          │         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                   │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                  │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │
+└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┴────────────────────┴───────┘
+</pre>
+</div>
+</div>
+<div id="84a79ab1" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix the random numbers by setting the seed</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># This enables the analysis to be reproducible when random numbers are used</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">222</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Put 3/4 of the data into the training set</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>random_key <span class="op">=</span> <span class="bu">str</span>(random.getrandbits(<span class="dv">256</span>))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>data_split <span class="op">=</span> flight_data_with_unique_key.mutate(</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    train<span class="op">=</span>(flight_data_with_unique_key.unique_key <span class="op">+</span> random_key).<span class="bu">hash</span>().<span class="bu">abs</span>() <span class="op">%</span> <span class="dv">4</span> <span class="op">&lt;</span> <span class="dv">3</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frames for the two sets:</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> data_split[data_split.train].drop(<span class="st">"unique_key"</span>, <span class="st">"train"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> data_split[<span class="op">~</span>data_split.train].drop(<span class="st">"unique_key"</span>, <span class="st">"train"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="create-features" class="level2">
+<h2 class="anchored" data-anchor-id="create-features">Create features</h2>
+<div id="549a33b0" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis_ml <span class="im">as</span> ml</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>flights_rec <span class="op">=</span> ml.Recipe(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    ml.ExpandDate(<span class="st">"date"</span>, components<span class="op">=</span>[<span class="st">"dow"</span>, <span class="st">"month"</span>]),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    ml.Drop(<span class="st">"date"</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    ml.TargetEncode(ml.nominal()),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    ml.DropZeroVariance(ml.everything()),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    ml.MutateAt(<span class="st">"dep_time"</span>, ibis._.hour() <span class="op">*</span> <span class="dv">60</span> <span class="op">+</span> ibis._.minute()),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># By default, PyTorch requires that the type of `X` is `np.float32`.</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># https://discuss.pytorch.org/t/mat1-and-mat2-must-have-the-same-dtype-but-got-double-and-float/197555/2</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    ml.Cast(ml.numeric(), <span class="st">"float32"</span>),</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fit-a-model-with-a-recipe" class="level2">
+<h2 class="anchored" data-anchor-id="fit-a-model-with-a-recipe">Fit a model with a recipe</h2>
+<p>Let’s model the flight data. We can use any scikit-learn-compatible estimator.</p>
+<p>We will want to use our recipe across several steps as we train and test our model. We will:</p>
+<ol type="1">
+<li><p><strong>Process the recipe using the training set</strong>: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.</p></li>
+<li><p><strong>Apply the recipe to the training set</strong>: We create the final predictor set on the training set.</p></li>
+<li><p><strong>Apply the recipe to the test set</strong>: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.</p></li>
+</ol>
+<p>To simplify this process, we can use a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">scikit-learn <code>Pipeline</code></a>.</p>
+<div id="3eadafad" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skorch <span class="im">import</span> NeuralNetClassifier</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MyModule(nn.Module):</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, num_units<span class="op">=</span><span class="dv">10</span>, nonlin<span class="op">=</span>nn.ReLU()):</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dense0 <span class="op">=</span> nn.Linear(<span class="dv">10</span>, num_units)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.nonlin <span class="op">=</span> nonlin</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(<span class="fl">0.5</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dense1 <span class="op">=</span> nn.Linear(num_units, num_units)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.output <span class="op">=</span> nn.Linear(num_units, <span class="dv">2</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.softmax <span class="op">=</span> nn.Softmax(dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, X, <span class="op">**</span>kwargs):</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> <span class="va">self</span>.nonlin(<span class="va">self</span>.dense0(X))</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> <span class="va">self</span>.dropout(X)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> <span class="va">self</span>.nonlin(<span class="va">self</span>.dense1(X))</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> <span class="va">self</span>.softmax(<span class="va">self</span>.output(X))</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> X</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>net <span class="op">=</span> NeuralNetClassifier(</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    MyModule,</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    max_epochs<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    lr<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Shuffle training data on each epoch</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    iterator_train__shuffle<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> Pipeline([(<span class="st">"flights_rec"</span>, flights_rec), (<span class="st">"net"</span>, net)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, there is a single function that can be used to prepare the recipe and train the model from the resulting predictors:</p>
+<div id="f239b812" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_data.drop(<span class="st">"arr_delay"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data.arr_delay</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>pipe.fit(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  epoch    train_loss    valid_acc    valid_loss     dur
+-------  ------------  -----------  ------------  ------
+      1        2.6008       0.8388        2.5698  2.3236
+      2        2.5530       0.8388        2.5698  2.3482
+      3        2.5546       0.8388        2.5698  2.3235
+      4        2.5544       0.8388        2.5698  2.3021
+      5        2.5528       0.8388        2.5698  2.3017
+      6        2.5538       0.8388        2.5698  2.3038
+      7        2.5545       0.8388        2.5698  2.2947
+      8        2.5536       0.8388        2.5698  2.2928
+      9        2.5531       0.8388        2.5698  2.2973
+     10        2.5531       0.8388        2.5698  2.3028</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<style>#sk-container-id-1 {
+  /* Definition of color scheme common for light and dark mode */
+  --sklearn-color-text: black;
+  --sklearn-color-line: gray;
+  /* Definition of color scheme for unfitted estimators */
+  --sklearn-color-unfitted-level-0: #fff5e6;
+  --sklearn-color-unfitted-level-1: #f6e4d2;
+  --sklearn-color-unfitted-level-2: #ffe0b3;
+  --sklearn-color-unfitted-level-3: chocolate;
+  /* Definition of color scheme for fitted estimators */
+  --sklearn-color-fitted-level-0: #f0f8ff;
+  --sklearn-color-fitted-level-1: #d4ebff;
+  --sklearn-color-fitted-level-2: #b3dbfd;
+  --sklearn-color-fitted-level-3: cornflowerblue;
+
+  /* Specific color for light theme */
+  --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, white)));
+  --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, black)));
+  --sklearn-color-icon: #696969;
+
+  @media (prefers-color-scheme: dark) {
+    /* Redefinition of color scheme for dark theme */
+    --sklearn-color-text-on-default-background: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-background: var(--sg-background-color, var(--theme-background, var(--jp-layout-color0, #111)));
+    --sklearn-color-border-box: var(--sg-text-color, var(--theme-code-foreground, var(--jp-content-font-color1, white)));
+    --sklearn-color-icon: #878787;
+  }
+}
+
+#sk-container-id-1 {
+  color: var(--sklearn-color-text);
+}
+
+#sk-container-id-1 pre {
+  padding: 0;
+}
+
+#sk-container-id-1 input.sk-hidden--visually {
+  border: 0;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+#sk-container-id-1 div.sk-dashed-wrapped {
+  border: 1px dashed var(--sklearn-color-line);
+  margin: 0 0.4em 0.5em 0.4em;
+  box-sizing: border-box;
+  padding-bottom: 0.4em;
+  background-color: var(--sklearn-color-background);
+}
+
+#sk-container-id-1 div.sk-container {
+  /* jupyter's `normalize.less` sets `[hidden] { display: none; }`
+     but bootstrap.min.css set `[hidden] { display: none !important; }`
+     so we also need the `!important` here to be able to override the
+     default hidden behavior on the sphinx rendered scikit-learn.org.
+     See: https://github.com/scikit-learn/scikit-learn/issues/21755 */
+  display: inline-block !important;
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-text-repr-fallback {
+  display: none;
+}
+
+div.sk-parallel-item,
+div.sk-serial,
+div.sk-item {
+  /* draw centered vertical line to link estimators */
+  background-image: linear-gradient(var(--sklearn-color-text-on-default-background), var(--sklearn-color-text-on-default-background));
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Parallel-specific style estimator block */
+
+#sk-container-id-1 div.sk-parallel-item::after {
+  content: "";
+  width: 100%;
+  border-bottom: 2px solid var(--sklearn-color-text-on-default-background);
+  flex-grow: 1;
+}
+
+#sk-container-id-1 div.sk-parallel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--sklearn-color-background);
+  position: relative;
+}
+
+#sk-container-id-1 div.sk-parallel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#sk-container-id-1 div.sk-parallel-item:first-child::after {
+  align-self: flex-end;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:last-child::after {
+  align-self: flex-start;
+  width: 50%;
+}
+
+#sk-container-id-1 div.sk-parallel-item:only-child::after {
+  width: 0;
+}
+
+/* Serial-specific style estimator block */
+
+#sk-container-id-1 div.sk-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--sklearn-color-background);
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+
+/* Toggleable style: style used for estimator/Pipeline/ColumnTransformer box that is
+clickable and can be expanded/collapsed.
+- Pipeline and ColumnTransformer use this feature and define the default style
+- Estimators will overwrite some part of the style using the `sk-estimator` class
+*/
+
+/* Pipeline and ColumnTransformer style (default) */
+
+#sk-container-id-1 div.sk-toggleable {
+  /* Default theme specific background. It is overwritten whether we have a
+  specific estimator or a Pipeline/ColumnTransformer */
+  background-color: var(--sklearn-color-background);
+}
+
+/* Toggleable label */
+#sk-container-id-1 label.sk-toggleable__label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:before {
+  /* Arrow on the left of the label */
+  content: "▸";
+  float: left;
+  margin-right: 0.25em;
+  color: var(--sklearn-color-icon);
+}
+
+#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {
+  color: var(--sklearn-color-text);
+}
+
+/* Toggleable content - dropdown */
+
+#sk-container-id-1 div.sk-toggleable__content {
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  text-align: left;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content pre {
+  margin: 0.2em;
+  border-radius: 0.25em;
+  color: var(--sklearn-color-text);
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-toggleable__content.fitted pre {
+  /* unfitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {
+  /* Expand drop-down */
+  max-height: 200px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {
+  content: "▾";
+}
+
+/* Pipeline/ColumnTransformer-specific style */
+
+#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator-specific style */
+
+/* Colorize estimator box */
+#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted input.sk-toggleable__control:checked~label.sk-toggleable__label {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+#sk-container-id-1 div.sk-label label.sk-toggleable__label,
+#sk-container-id-1 div.sk-label label {
+  /* The background is the default theme color */
+  color: var(--sklearn-color-text-on-default-background);
+}
+
+/* On hover, darken the color of the background */
+#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+/* Label box, darken color on hover, fitted */
+#sk-container-id-1 div.sk-label.fitted:hover label.sk-toggleable__label.fitted {
+  color: var(--sklearn-color-text);
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Estimator label */
+
+#sk-container-id-1 div.sk-label label {
+  font-family: monospace;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 1.2em;
+}
+
+#sk-container-id-1 div.sk-label-container {
+  text-align: center;
+}
+
+/* Estimator-specific */
+#sk-container-id-1 div.sk-estimator {
+  font-family: monospace;
+  border: 1px dotted var(--sklearn-color-border-box);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  margin-bottom: 0.5em;
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-0);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-0);
+}
+
+/* on hover */
+#sk-container-id-1 div.sk-estimator:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-2);
+}
+
+#sk-container-id-1 div.sk-estimator.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-2);
+}
+
+/* Specification for estimator info (e.g. "i" and "?") */
+
+/* Common style for "i" and "?" */
+
+.sk-estimator-doc-link,
+a:link.sk-estimator-doc-link,
+a:visited.sk-estimator-doc-link {
+  float: right;
+  font-size: smaller;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1em;
+  height: 1em;
+  width: 1em;
+  text-decoration: none !important;
+  margin-left: 1ex;
+  /* unfitted */
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+  color: var(--sklearn-color-unfitted-level-1);
+}
+
+.sk-estimator-doc-link.fitted,
+a:link.sk-estimator-doc-link.fitted,
+a:visited.sk-estimator-doc-link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+div.sk-estimator:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover,
+div.sk-label-container:hover .sk-estimator-doc-link:hover,
+.sk-estimator-doc-link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+div.sk-estimator.fitted:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover,
+div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
+.sk-estimator-doc-link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+/* Span, style for the box shown on hovering the info icon */
+.sk-estimator-doc-link span {
+  display: none;
+  z-index: 9999;
+  position: relative;
+  font-weight: normal;
+  right: .2ex;
+  padding: .5ex;
+  margin: .5ex;
+  width: min-content;
+  min-width: 20ex;
+  max-width: 50ex;
+  color: var(--sklearn-color-text);
+  box-shadow: 2pt 2pt 4pt #999;
+  /* unfitted */
+  background: var(--sklearn-color-unfitted-level-0);
+  border: .5pt solid var(--sklearn-color-unfitted-level-3);
+}
+
+.sk-estimator-doc-link.fitted span {
+  /* fitted */
+  background: var(--sklearn-color-fitted-level-0);
+  border: var(--sklearn-color-fitted-level-3);
+}
+
+.sk-estimator-doc-link:hover span {
+  display: block;
+}
+
+/* "?"-specific style due to the `<a>` HTML tag */
+
+#sk-container-id-1 a.estimator_doc_link {
+  float: right;
+  font-size: 1rem;
+  line-height: 1em;
+  font-family: monospace;
+  background-color: var(--sklearn-color-background);
+  border-radius: 1rem;
+  height: 1rem;
+  width: 1rem;
+  text-decoration: none;
+  /* unfitted */
+  color: var(--sklearn-color-unfitted-level-1);
+  border: var(--sklearn-color-unfitted-level-1) 1pt solid;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted {
+  /* fitted */
+  border: var(--sklearn-color-fitted-level-1) 1pt solid;
+  color: var(--sklearn-color-fitted-level-1);
+}
+
+/* On hover */
+#sk-container-id-1 a.estimator_doc_link:hover {
+  /* unfitted */
+  background-color: var(--sklearn-color-unfitted-level-3);
+  color: var(--sklearn-color-background);
+  text-decoration: none;
+}
+
+#sk-container-id-1 a.estimator_doc_link.fitted:hover {
+  /* fitted */
+  background-color: var(--sklearn-color-fitted-level-3);
+}
+</a></style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>Pipeline(steps=[('flights_rec',
+                 Recipe(ExpandDate(cols(('date',)),
+                                   components=['dow', 'month']),
+                        Drop(cols(('date',))),
+                        TargetEncode(nominal(), smooth=0.0),
+                        DropZeroVariance(everything(), tolerance=0.0001),
+                        MutateAt(cols(('dep_time',)),
+                                 ((_.hour() * 60) + _.minute())),
+                        MutateAt(timestamp(), _.epoch_seconds()),
+                        Cast(numeric(), 'float32'))),
+                ('net',
+                 &lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](
+  module_=MyModule(
+    (dense0): Linear(in_features=10, out_features=10, bias=True)
+    (nonlin): ReLU()
+    (dropout): Dropout(p=0.5, inplace=False)
+    (dense1): Linear(in_features=10, out_features=10, bias=True)
+    (output): Linear(in_features=10, out_features=2, bias=True)
+    (softmax): Softmax(dim=-1)
+  ),
+))])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item sk-dashed-wrapped"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox"><label for="sk-estimator-id-1" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;&nbsp;Pipeline<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.5/modules/generated/sklearn.pipeline.Pipeline.html">?<span>Documentation for Pipeline</span></a><span class="sk-estimator-doc-link fitted">i<span>Fitted</span></span></label><div class="sk-toggleable__content fitted"><pre>Pipeline(steps=[('flights_rec',
+                 Recipe(ExpandDate(cols(('date',)),
+                                   components=['dow', 'month']),
+                        Drop(cols(('date',))),
+                        TargetEncode(nominal(), smooth=0.0),
+                        DropZeroVariance(everything(), tolerance=0.0001),
+                        MutateAt(cols(('dep_time',)),
+                                 ((_.hour() * 60) + _.minute())),
+                        MutateAt(timestamp(), _.epoch_seconds()),
+                        Cast(numeric(), 'float32'))),
+                ('net',
+                 &lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](
+  module_=MyModule(
+    (dense0): Linear(in_features=10, out_features=10, bias=True)
+    (nonlin): ReLU()
+    (dropout): Dropout(p=0.5, inplace=False)
+    (dense1): Linear(in_features=10, out_features=10, bias=True)
+    (output): Linear(in_features=10, out_features=2, bias=True)
+    (softmax): Softmax(dim=-1)
+  ),
+))])</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox"><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">flights_rec: Recipe</label><div class="sk-toggleable__content fitted"><pre>Recipe(ExpandDate(cols(('date',)), components=['dow', 'month']),
+       Drop(cols(('date',))),
+       TargetEncode(nominal(), smooth=0.0),
+       DropZeroVariance(everything(), tolerance=0.0001),
+       MutateAt(cols(('dep_time',)), ((_.hour() * 60) + _.minute())),
+       MutateAt(timestamp(), _.epoch_seconds()),
+       Cast(numeric(), 'float32'))</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox"><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">ExpandDate</label><div class="sk-toggleable__content fitted"><pre>ExpandDate(cols(('date',)), components=['dow', 'month'])</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-4" type="checkbox"><label for="sk-estimator-id-4" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">Drop</label><div class="sk-toggleable__content fitted"><pre>Drop(cols(('date',)))</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox"><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">TargetEncode</label><div class="sk-toggleable__content fitted"><pre>TargetEncode(nominal(), smooth=0.0)</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox"><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">DropZeroVariance</label><div class="sk-toggleable__content fitted"><pre>DropZeroVariance(everything(), tolerance=0.0001)</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-7" type="checkbox"><label for="sk-estimator-id-7" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">MutateAt</label><div class="sk-toggleable__content fitted"><pre>MutateAt(cols(('dep_time',)), ((_.hour() * 60) + _.minute()))</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-8" type="checkbox"><label for="sk-estimator-id-8" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">MutateAt</label><div class="sk-toggleable__content fitted"><pre>MutateAt(timestamp(), _.epoch_seconds())</pre></div> </div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-9" type="checkbox"><label for="sk-estimator-id-9" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">Cast</label><div class="sk-toggleable__content fitted"><pre>Cast(numeric(), 'float32')</pre></div> </div></div></div></div><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-10" type="checkbox"><label for="sk-estimator-id-10" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">NeuralNetClassifier</label><div class="sk-toggleable__content fitted"><pre>&lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](
+  module_=MyModule(
+    (dense0): Linear(in_features=10, out_features=10, bias=True)
+    (nonlin): ReLU()
+    (dropout): Dropout(p=0.5, inplace=False)
+    (dense1): Linear(in_features=10, out_features=10, bias=True)
+    (output): Linear(in_features=10, out_features=2, bias=True)
+    (softmax): Softmax(dim=-1)
+  ),
+)</pre></div> </div></div></div></div></div></div>
+</div>
+</div>
+</section>
+<section id="use-a-trained-workflow-to-predict" class="level2">
+<h2 class="anchored" data-anchor-id="use-a-trained-workflow-to-predict">Use a trained workflow to predict</h2>
+<p>…</p>
+<div id="56569cd5" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test_data.drop(<span class="st">"arr_delay"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test_data.arr_delay</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>pipe.score(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>0.8385534190130481</code></pre>
+</div>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+      for (let i=0; i<annoteTargets.length; i++) {
+        const annoteTarget = annoteTargets[i];
+        const targetCell = annoteTarget.getAttribute("data-target-cell");
+        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+        const contentFn = () => {
+          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          if (content) {
+            const tipContent = content.cloneNode(true);
+            tipContent.classList.add("code-annotation-tip-content");
+            return tipContent.outerHTML;
+          }
+        }
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          onShow: (instance) => {
+            selectCodeLines(instance.reference);
+            instance.reference.classList.add('code-annotation-active');
+            window.tippy.hideAll();
+          },
+          onHide: (instance) => {
+            unselectCodeLines();
+            instance.reference.classList.remove('code-annotation-active');
+          },
+          maxWidth: 300,
+          delay: [50, 0],
+          duration: [200, 0],
+          offset: [5, 10],
+          arrow: true,
+          appendTo: function(el) {
+            return el.parentElement.parentElement.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'quarto',
+          placement: 'right',
+          popperOptions: {
+            modifiers: [
+            {
+              name: 'flip',
+              options: {
+                flipVariations: false, // true by default
+                allowedAutoPlacements: ['right'],
+                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                mainAxis: false,
+                altAxis: false
+              }
+            }
+            ]        
+          }      
+        };
+        window.tippy(annoteTarget, config); 
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/tutorial/pytorch.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/ibis-project/ibis-ml">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://ibis-project.zulipchat.com/#narrow/stream/426262-ibis-ml">
+      <i class="bi bi-zulip" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
