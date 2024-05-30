@@ -1,0 +1,226 @@
+---
+title: "Preprocess your data with recipes"
+description: |
+  Prepare data for modeling with modular preprocessing steps.
+---
+
+{{< include _tool-chooser.md >}}
+
+## Introduction
+
+...
+
+```{python}
+#| output: false
+
+import ibis
+
+con = ibis.connect("duckdb://nycflights13.ddb")
+con.create_table(
+    "flights", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True
+)
+con.create_table(
+    "weather", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True
+)
+```
+
+You can now see the example dataset copied over to the database:
+
+```{python}
+con = ibis.connect("duckdb://nycflights13.ddb")
+con.list_tables()
+```
+
+We'll turn on interactive mode, which partially executes queries to give users a preview of the results.
+
+```{python}
+ibis.options.interactive = True
+```
+
+```{python}
+flights = con.table("flights")
+flights = flights.mutate(
+    dep_time=(
+        flights.dep_time.lpad(4, "0").substr(0, 2)
+        + ":"
+        + flights.dep_time.substr(-2, 2)
+        + ":00"
+    ).try_cast("time"),
+    arr_delay=flights.arr_delay.try_cast(int),
+    air_time=flights.air_time.try_cast(int),
+)
+flights
+```
+
+```{python}
+weather = con.table("weather")
+weather
+```
+
+## The New York City flight data
+
+Let's use the [nycflights13 data](https://github.com/hadley/nycflights13) to predict whether a plane arrives more than 30 minutes late. This data set contains information on 325,819 flights departing near New York City in 2013. Let's start by loading the data and making a few changes to the variables:
+
+```{python}
+flight_data = (
+    flights.mutate(
+        # Convert the arrival delay to a factor
+        # By default, PyTorch expects the target to have a Long datatype
+        arr_delay=ibis.ifelse(flights.arr_delay >= 30, 1, 0).cast("int64"),
+        # We will use the date (not date-time) in the recipe below
+        date=flights.time_hour.date(),
+    )
+    # Include the weather data
+    .inner_join(weather, ["origin", "time_hour"])
+    # Only retain the specific columns we will use
+    .select(
+        "dep_time",
+        "flight",
+        "origin",
+        "dest",
+        "air_time",
+        "distance",
+        "carrier",
+        "date",
+        "arr_delay",
+        "time_hour",
+    )
+    # Exclude missing data
+    .dropna()
+)
+flight_data
+```
+
+We can see that about 16% of the flights in this data set arrived more than 30 minutes late.
+
+```{python}
+flight_data.arr_delay.value_counts().rename(n="arr_delay_count").mutate(
+    prop=ibis._.n / ibis._.n.sum()
+)
+```
+
+## Data splitting
+
+To get started, let's split this single dataset into two: a _training_ set and a _testing_ set. We'll keep most of the rows in the original dataset (subset chosen randomly) in the _training_ set. The training data will be used to _fit_ the model, and the _testing_ set will be used to measure model performance.
+
+Because the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. [It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.](https://www.euclaim.com/blog/flight-numbers-explained#:~:text=Can%20flight%20numbers%20be%20reused,of%20travel%20is%20always%20unique.)
+
+```{python}
+flight_data_with_unique_key = flight_data.mutate(
+    unique_key=ibis.literal(",").join(
+        [flight_data.carrier, flight_data.flight.cast(str), flight_data.date.cast(str)]
+    )
+)
+flight_data_with_unique_key
+```
+
+```{python}
+# FIXME(deepyaman): Proposed key isn't unique for actual departure date.
+flight_data_with_unique_key.group_by("unique_key").mutate(
+    cnt=flight_data_with_unique_key.count()
+)[ibis._.cnt > 1]
+```
+
+```{python}
+import random
+
+# Fix the random numbers by setting the seed
+# This enables the analysis to be reproducible when random numbers are used
+random.seed(222)
+
+# Put 3/4 of the data into the training set
+random_key = str(random.getrandbits(256))
+data_split = flight_data_with_unique_key.mutate(
+    train=(flight_data_with_unique_key.unique_key + random_key).hash().abs() % 4 < 3
+)
+
+# Create data frames for the two sets:
+train_data = data_split[data_split.train].drop("unique_key", "train")
+test_data = data_split[~data_split.train].drop("unique_key", "train")
+```
+
+## Create features
+
+```{python}
+import ibis_ml as ml
+
+flights_rec = ml.Recipe(
+    ml.ExpandDate("date", components=["dow", "month"]),
+    ml.Drop("date"),
+    ml.TargetEncode(ml.nominal()),
+    ml.DropZeroVariance(ml.everything()),
+    ml.MutateAt("dep_time", ibis._.hour() * 60 + ibis._.minute()),
+    ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),
+    # By default, PyTorch requires that the type of `X` is `np.float32`.
+    # https://discuss.pytorch.org/t/mat1-and-mat2-must-have-the-same-dtype-but-got-double-and-float/197555/2
+    ml.Cast(ml.numeric(), "float32"),
+)
+```
+
+## Fit a model with a recipe
+
+Let's model the flight data. We can use any scikit-learn-compatible estimator.
+
+We will want to use our recipe across several steps as we train and test our model. We will:
+
+1. **Process the recipe using the training set**: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
+
+1. **Apply the recipe to the training set**: We create the final predictor set on the training set.
+
+1. **Apply the recipe to the test set**: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
+
+To simplify this process, we can use a [scikit-learn `Pipeline`](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html).
+
+```{python}
+from sklearn.pipeline import Pipeline
+from skorch import NeuralNetClassifier
+from torch import nn
+
+
+class MyModule(nn.Module):
+    def __init__(self, num_units=10, nonlin=nn.ReLU()):
+        super().__init__()
+
+        self.dense0 = nn.Linear(10, num_units)
+        self.nonlin = nonlin
+        self.dropout = nn.Dropout(0.5)
+        self.dense1 = nn.Linear(num_units, num_units)
+        self.output = nn.Linear(num_units, 2)
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, X, **kwargs):
+        X = self.nonlin(self.dense0(X))
+        X = self.dropout(X)
+        X = self.nonlin(self.dense1(X))
+        X = self.softmax(self.output(X))
+        return X
+
+
+net = NeuralNetClassifier(
+    MyModule,
+    max_epochs=10,
+    lr=0.1,
+    # Shuffle training data on each epoch
+    iterator_train__shuffle=True,
+)
+
+pipe = Pipeline([("flights_rec", flights_rec), ("net", net)])
+```
+
+Now, there is a single function that can be used to prepare the recipe and train the model from the resulting predictors:
+
+```{python}
+X_train = train_data.drop("arr_delay")
+y_train = train_data.arr_delay
+pipe.fit(X_train, y_train)
+```
+
+## Use a trained workflow to predict
+
+...
+
+```{python}
+X_test = test_data.drop("arr_delay")
+y_test = test_data.arr_delay
+pipe.score(X_test, y_test)
+```
