@@ -1,4 +1,5 @@
 import ibis
+import numpy as np
 import pandas as pd
 
 import ibis_ml as ml
@@ -6,6 +7,7 @@ import ibis_ml as ml
 
 def test_drop_zero_variance():
     zv_numeric_col = [1.0] * 10
+    all_null_numeric_col = [np.nan] * 10
     non_zv_numeric_col = list(range(10))
     zv_string_col = ["String"] * 10
     non_zv_string_col = [f"String_{i}" for i in range(10)]
@@ -19,11 +21,13 @@ def test_drop_zero_variance():
         "zero_variance_numeric_col",
         "zero_variance_string_col",
         "zero_variance_timestamp_col",
+        "all_null_numeric_col",
     }
 
     t_train = ibis.memtable(
         {
             "zero_variance_numeric_col": zv_numeric_col,
+            "all_null_numeric_col": all_null_numeric_col,
             "non_zero_variance_numeric_col": non_zv_numeric_col,
             "zero_variance_string_col": zv_string_col,
             "non_zero_variance_string_col": non_zv_string_col,
@@ -34,6 +38,7 @@ def test_drop_zero_variance():
     t_test = ibis.memtable(
         {
             "zero_variance_numeric_col": [],
+            "all_null_numeric_col": [],
             "non_zero_variance_numeric_col": [],
             "zero_variance_string_col": [],
             "non_zero_variance_string_col": [],

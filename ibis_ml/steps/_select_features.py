@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Any
 
 import ibis.expr.types as ir
@@ -62,16 +63,16 @@ class DropZeroVariance(Step):
 
             self._fit_expr = [table.aggregate(aggs)]
             results = self._fit_expr[0].execute().to_dict("records")[0]
-            for name in columns:
-                c = table[name]
-                if isinstance(c, ir.NumericColumn):
+            for col_name in columns:
+                col_var = results[f"{col_name}_var"]
+                if isinstance(table[col_name], ir.NumericColumn):
                     # Check variance for numeric columns
-                    if results[f"{name}_var"] < self.tolerance:
-                        cols.append(name)
-                elif results[f"{name}_var"] < 2:
+                    if not col_var or math.isnan(col_var) or col_var < self.tolerance:
+                        cols.append(col_name)
+                elif not col_var or col_var < 2:
                     # Check unique count for non-numeric columns
-                    cols.append(name)
-                    metadata.drop_categories(name)
+                    cols.append(col_name)
+                    metadata.drop_categories(col_name)
 
         self.cols_ = cols
 
