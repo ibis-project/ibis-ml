@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -195,17 +195,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../support_matrix.html"> 
 <span class="menu-text">Support Matrix</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-faq" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">FAQ</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-faq">    
-        <li>
-    <a class="dropdown-item" href="../tutorial/How_to_create_your_own_transformer.html">
- <span class="dropdown-text">How to create your own transformer</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
@@ -384,11 +373,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The original input column is dropped, and N-category new columns are created with names like <code>{input_column}_{category}</code>. Unknown categories will be ignored during transformation; the resulting one-hot encoded columns for this feature will be all zeros.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 8%">
-<col style="width: 83%">
+<col style="width: 6%">
+<col style="width: 85%">
 <col style="width: 3%">
 </colgroup>
 <thead>
@@ -402,7 +391,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to one-hot encode.</td>
 <td><em>required</em></td>
 </tr>
@@ -438,11 +427,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for encoding select columns as integer arrays.</p>
 <section id="parameters-1" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-1">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 8%">
-<col style="width: 83%">
+<col style="width: 6%">
+<col style="width: 85%">
 <col style="width: 3%">
 </colgroup>
 <thead>
@@ -456,7 +445,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to ordinal encode.</td>
 <td><em>required</em></td>
 </tr>
@@ -492,12 +481,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for count encoding select columns.</p>
 <section id="parameters-2" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-2">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 32%">
-<col style="width: 44%">
 <col style="width: 12%">
+<col style="width: 19%">
+<col style="width: 52%">
+<col style="width: 15%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -510,7 +499,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to count encode.</td>
 <td><em>required</em></td>
 </tr>
@@ -530,11 +519,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for target encoding select columns.</p>
 <section id="parameters-3" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-3">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 12%">
-<col style="width: 77%">
+<col style="width: 6%">
+<col style="width: 83%">
 <col style="width: 5%">
 </colgroup>
 <thead>
@@ -548,7 +537,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to target encode.</td>
 <td><em>required</em></td>
 </tr>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -161,17 +161,6 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="../support_matrix.html"> 
 <span class="menu-text">Support Matrix</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-faq" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">FAQ</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-faq">    
-        <li>
-    <a class="dropdown-item" href="../tutorial/How_to_create_your_own_transformer.html">
- <span class="dropdown-text">How to create your own transformer</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
@@ -310,7 +299,28 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#common" id="toc-common" class="nav-link active" data-scroll-target="#common">Common</a></li>
-  <li><a href="#ibis_ml.Recipe" id="toc-ibis_ml.Recipe" class="nav-link" data-scroll-target="#ibis_ml.Recipe">Recipe</a></li>
+  <li><a href="#ibis_ml.Recipe" id="toc-ibis_ml.Recipe" class="nav-link" data-scroll-target="#ibis_ml.Recipe">Recipe</a>
+  <ul class="collapse">
+  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#ibis_ml.Recipe.fit" id="toc-ibis_ml.Recipe.fit" class="nav-link" data-scroll-target="#ibis_ml.Recipe.fit">fit</a></li>
+  <li><a href="#ibis_ml.Recipe.fit_transform" id="toc-ibis_ml.Recipe.fit_transform" class="nav-link" data-scroll-target="#ibis_ml.Recipe.fit_transform">fit_transform</a></li>
+  <li><a href="#ibis_ml.Recipe.get_params" id="toc-ibis_ml.Recipe.get_params" class="nav-link" data-scroll-target="#ibis_ml.Recipe.get_params">get_params</a></li>
+  <li><a href="#ibis_ml.Recipe.is_fitted" id="toc-ibis_ml.Recipe.is_fitted" class="nav-link" data-scroll-target="#ibis_ml.Recipe.is_fitted">is_fitted</a></li>
+  <li><a href="#ibis_ml.Recipe.set_output" id="toc-ibis_ml.Recipe.set_output" class="nav-link" data-scroll-target="#ibis_ml.Recipe.set_output">set_output</a></li>
+  <li><a href="#ibis_ml.Recipe.to_dask_dataframe" id="toc-ibis_ml.Recipe.to_dask_dataframe" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</a></li>
+  <li><a href="#ibis_ml.Recipe.to_dask_dmatrix" id="toc-ibis_ml.Recipe.to_dask_dmatrix" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</a></li>
+  <li><a href="#ibis_ml.Recipe.to_dmatrix" id="toc-ibis_ml.Recipe.to_dmatrix" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_dmatrix">to_dmatrix</a></li>
+  <li><a href="#ibis_ml.Recipe.to_ibis" id="toc-ibis_ml.Recipe.to_ibis" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_ibis">to_ibis</a></li>
+  <li><a href="#ibis_ml.Recipe.to_numpy" id="toc-ibis_ml.Recipe.to_numpy" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_numpy">to_numpy</a></li>
+  <li><a href="#ibis_ml.Recipe.to_pandas" id="toc-ibis_ml.Recipe.to_pandas" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_pandas">to_pandas</a></li>
+  <li><a href="#ibis_ml.Recipe.to_polars" id="toc-ibis_ml.Recipe.to_polars" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_polars">to_polars</a></li>
+  <li><a href="#ibis_ml.Recipe.to_pyarrow" id="toc-ibis_ml.Recipe.to_pyarrow" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_pyarrow">to_pyarrow</a></li>
+  <li><a href="#ibis_ml.Recipe.to_pyarrow_batches" id="toc-ibis_ml.Recipe.to_pyarrow_batches" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_pyarrow_batches">to_pyarrow_batches</a></li>
+  <li><a href="#ibis_ml.Recipe.transform" id="toc-ibis_ml.Recipe.transform" class="nav-link" data-scroll-target="#ibis_ml.Recipe.transform">transform</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/reference/core.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -327,8 +337,617 @@ ul.task-list li input[type="checkbox"] {
 <section id="ibis_ml.Recipe" class="level1">
 <h1>Recipe</h1>
 <p><code>Recipe(self, *steps)</code></p>
+<section id="attributes" class="level2">
+<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.output_format">output_format</a></td>
+<td>The output format to use for <code>transform</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.fit">fit</a></td>
+<td>Fit a recipe.</td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.fit_transform">fit_transform</a></td>
+<td>Fit and transform in one step.</td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.get_params">get_params</a></td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.is_fitted">is_fitted</a></td>
+<td>Check if this recipe has already been fit.</td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.set_output">set_output</a></td>
+<td>Set output type returned by <code>transform</code>.</td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</a></td>
+<td>Transform X and return a <code>dask.dataframe.DataFrame</code>.</td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</a></td>
+<td>Transform X and return a <code>xgboost.dask.DMatrix</code></td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.to_dmatrix">to_dmatrix</a></td>
+<td>Transform X and return a <code>xgboost.DMatrix</code></td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.to_ibis">to_ibis</a></td>
+<td>Transform X and return an ibis table.</td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.to_numpy">to_numpy</a></td>
+<td>Transform X and return a <code>numpy.ndarray</code>.</td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.to_pandas">to_pandas</a></td>
+<td>Transform X and return a <code>pandas.DataFrame</code>.</td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.to_polars">to_polars</a></td>
+<td>Transform X and return a <code>polars.DataFrame</code>.</td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.to_pyarrow">to_pyarrow</a></td>
+<td>Transform X and return a <code>pyarrow.Table</code>.</td>
+</tr>
+<tr class="even">
+<td><a href="#ibis_ml.Recipe.to_pyarrow_batches">to_pyarrow_batches</a></td>
+<td>Transform X and return a <code>pyarrow.RecordBatchReader</code>.</td>
+</tr>
+<tr class="odd">
+<td><a href="#ibis_ml.Recipe.transform">transform</a></td>
+<td>Transform the data.</td>
+</tr>
+</tbody>
+</table>
+<section id="ibis_ml.Recipe.fit" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.fit">fit</h3>
+<p><code>fit(X, y=None)</code></p>
+<p>Fit a recipe.</p>
+<section id="parameters" class="level4">
+<h4 class="anchored" data-anchor-id="parameters">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>Training data.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>y</code></td>
+<td>column - like</td>
+<td>Training targets.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level4">
+<h4 class="anchored" data-anchor-id="returns">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>self</td>
+<td>Returns the same instance.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.fit_transform" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.fit_transform">fit_transform</h3>
+<p><code>fit_transform(X, y=None)</code></p>
+<p>Fit and transform in one step.</p>
+<section id="parameters-1" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-1">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>Training data.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>y</code></td>
+<td>column - like</td>
+<td>Training targets.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-1" class="level4">
+<h4 class="anchored" data-anchor-id="returns-1">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Xt</td>
+<td>Transformed training data.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.get_params" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.get_params">get_params</h3>
+<p><code>get_params(deep=True)</code></p>
+<p>Get parameters for this estimator.</p>
+<p>Returns the parameters given in the constructor as well as the estimators contained within the <code>steps</code> of the <code>Recipe</code>.</p>
+<section id="parameters-2" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-2">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 79%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>deep</code></td>
+<td>bool</td>
+<td>If True, will return the parameters for this estimator and contained subobjects that are estimators.</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-2" class="level4">
+<h4 class="anchored" data-anchor-id="returns-2">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>mapping of string to any</td>
+<td>Parameter names mapped to their values.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes" class="level4">
+<h4 class="anchored" data-anchor-id="notes">Notes</h4>
+<p>Derived from [1]_.</p>
+</section>
+<section id="references" class="level4">
+<h4 class="anchored" data-anchor-id="references">References</h4>
+<p>.. [1] https://github.com/scikit-learn/scikit-learn/blob/ee5a1b6/sklearn/utils/metaestimators.py#L30-L50</p>
+</section>
+</section>
+<section id="ibis_ml.Recipe.is_fitted" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.is_fitted">is_fitted</h3>
+<p><code>is_fitted()</code></p>
+<p>Check if this recipe has already been fit.</p>
+</section>
+<section id="ibis_ml.Recipe.set_output" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.set_output">set_output</h3>
+<p><code>set_output(transform=None)</code></p>
+<p>Set output type returned by <code>transform</code>.</p>
+<p>This is part of the standard Scikit-Learn API.</p>
+<section id="parameters-3" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-3">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 83%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>transform</code></td>
+<td>(‘default’, ‘pandas’)</td>
+<td>Configure output of <code>transform</code> and <code>fit_transform</code>. - <code>"default"</code>: Default output format of a transformer - <code>"pandas"</code>: Pandas dataframe - <code>"polars"</code>: Polars dataframe - <code>"pyarrow"</code>: PyArrow table - <code>None</code>: Transform configuration is unchanged</td>
+<td><code>"default"</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_dask_dataframe" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</h3>
+<p><code>to_dask_dataframe(X, categories=False)</code></p>
+<p>Transform X and return a <code>dask.dataframe.DataFrame</code>.</p>
+<section id="parameters-4" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-4">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 82%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>categories</code></td>
+<td>bool</td>
+<td>Whether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_dask_dmatrix" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</h3>
+<p><code>to_dask_dmatrix(X)</code></p>
+<p>Transform X and return a <code>xgboost.dask.DMatrix</code></p>
+<section id="parameters-5" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-5">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_dmatrix" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dmatrix">to_dmatrix</h3>
+<p><code>to_dmatrix(X)</code></p>
+<p>Transform X and return a <code>xgboost.DMatrix</code></p>
+<section id="parameters-6" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-6">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_ibis" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_ibis">to_ibis</h3>
+<p><code>to_ibis(X)</code></p>
+<p>Transform X and return an ibis table.</p>
+<section id="parameters-7" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-7">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_numpy" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_numpy">to_numpy</h3>
+<p><code>to_numpy(X)</code></p>
+<p>Transform X and return a <code>numpy.ndarray</code>.</p>
+<section id="parameters-8" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-8">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_pandas" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pandas">to_pandas</h3>
+<p><code>to_pandas(X, categories=False)</code></p>
+<p>Transform X and return a <code>pandas.DataFrame</code>.</p>
+<section id="parameters-9" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-9">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 83%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>categories</code></td>
+<td>bool</td>
+<td>Whether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_polars" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_polars">to_polars</h3>
+<p><code>to_polars(X)</code></p>
+<p>Transform X and return a <code>polars.DataFrame</code>.</p>
+<section id="parameters-10" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-10">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_pyarrow" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pyarrow">to_pyarrow</h3>
+<p><code>to_pyarrow(X, categories=False)</code></p>
+<p>Transform X and return a <code>pyarrow.Table</code>.</p>
+<section id="parameters-11" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-11">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 83%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>categories</code></td>
+<td>bool</td>
+<td>Whether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.to_pyarrow_batches" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pyarrow_batches">to_pyarrow_batches</h3>
+<p><code>to_pyarrow_batches(X, categories=False)</code></p>
+<p>Transform X and return a <code>pyarrow.RecordBatchReader</code>.</p>
+<section id="parameters-12" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-12">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 83%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>The input data to transform.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>categories</code></td>
+<td>bool</td>
+<td>Whether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="ibis_ml.Recipe.transform" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.transform">transform</h3>
+<p><code>transform(X)</code></p>
+<p>Transform the data.</p>
+<section id="parameters-13" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-13">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>X</code></td>
+<td>table - like</td>
+<td>Data to transform.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-3" class="level4">
+<h4 class="anchored" data-anchor-id="returns-3">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Xt</td>
+<td>Transformed data.</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
+</section>
+</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->

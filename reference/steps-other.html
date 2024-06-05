@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -195,17 +195,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../support_matrix.html"> 
 <span class="menu-text">Support Matrix</span></a>
   </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-faq" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">FAQ</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-faq">    
-        <li>
-    <a class="dropdown-item" href="../tutorial/How_to_create_your_own_transformer.html">
- <span class="dropdown-text">How to create your own transformer</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
           </div> <!-- /navcollapse -->
           <div class="quarto-navbar-tools">
@@ -383,12 +372,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for casting selected columns to a specific dtype.</p>
 <section id="parameters" class="level2">
 <h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
-<col style="width: 4%">
-<col style="width: 51%">
-<col style="width: 39%">
-<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 27%">
+<col style="width: 58%">
+<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -401,13 +390,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to cast.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>dtype</code></td>
-<td>ibis.expr.datatypes.ibis.expr.datatypes.DataType | type[ibis.expr.datatypes.ibis.expr.datatypes.DataType] | str</td>
+<td>dt.DataType | type[dt.DataType] | str</td>
 <td>The dtype to cast to. May be a dtype instance, class, or a string representation of one.</td>
 <td><em>required</em></td>
 </tr>
@@ -429,12 +418,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for dropping selected columns from the output.</p>
 <section id="parameters-1" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-1">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
-<col style="width: 11%">
-<col style="width: 35%">
-<col style="width: 38%">
 <col style="width: 14%">
+<col style="width: 21%">
+<col style="width: 47%">
+<col style="width: 17%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -447,7 +436,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to drop.</td>
 <td><em>required</em></td>
 </tr>
@@ -469,12 +458,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for mutating a selection of columns.</p>
 <section id="parameters-2" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-2">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
+<col style="width: 4%">
+<col style="width: 18%">
+<col style="width: 73%">
 <col style="width: 3%">
-<col style="width: 36%">
-<col style="width: 56%">
-<col style="width: 2%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -487,19 +476,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>inputs</code></td>
-<td>ibis_ml.select.SelectionType</td>
+<td>SelectionType</td>
 <td>A selection of columns to use as inputs to <code>expr</code>/<code>named_exprs</code>.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td><code>expr</code></td>
-<td>collections.abc.Callable[[ibis.expr.types.ibis.expr.types.Column], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred | None</td>
+<td>Callable[[ir.Column], ir.Column] | Deferred | None</td>
 <td>An optional callable (<code>Column -&gt; Column</code>) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td><code>named_exprs</code></td>
-<td>collections.abc.Callable[[ibis.expr.types.ibis.expr.types.Column], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred</td>
+<td>Callable[[ir.Column], ir.Column] | Deferred</td>
 <td>Named callables (<code>Column -&gt; Column</code>) or deferred expressions to apply to all columns in inputs. Output columns will be named <code>{column}_{name}</code> where <code>column</code> is the input column name and <code>name</code> is the expression/callable name.</td>
 <td><code>{}</code></td>
 </tr>
@@ -522,12 +511,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A step for defining new columns with Ibis.</p>
 <section id="parameters-3" class="level2">
 <h2 class="anchored" data-anchor-id="parameters-3">Parameters</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
+<col style="width: 7%">
+<col style="width: 26%">
+<col style="width: 60%">
 <col style="width: 5%">
-<col style="width: 50%">
-<col style="width: 39%">
-<col style="width: 3%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -540,13 +529,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>exprs</code></td>
-<td>collections.abc.Callable[[ibis.expr.types.ibis.expr.types.Table], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred</td>
+<td>Callable[[ir.Table], ir.Column] | Deferred</td>
 <td>Callables (<code>Table -&gt; Column</code>) or deferred expressions to use to define new columns in the output table.</td>
 <td><code>()</code></td>
 </tr>
 <tr class="even">
 <td><code>named_exprs</code></td>
-<td>collections.abc.Callable[[ibis.expr.types.ibis.expr.types.Table], ibis.expr.types.ibis.expr.types.Column] | ibis.common.deferred.Deferred</td>
+<td>Callable[[ir.Table], ir.Column] | Deferred</td>
 <td>Named callables (<code>Table -&gt; Column</code>) or deferred expressions to use to define new columns in the output table.</td>
 <td><code>{}</code></td>
 </tr>
