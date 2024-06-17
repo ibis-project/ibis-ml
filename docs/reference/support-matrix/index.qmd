@@ -20,7 +20,7 @@ varies:
 1. ✅ Fully supported
 2. 🚫 Not supported
 3. 🟡 Partial support (hover over for more information)
-4. 🔍 Support varies by operation or data type across different backends (check [operation support matrix](https://ibis-project.org/support_matrix) for details)
+4. 🔍 Support varies by operation or data type across different backends (check the [Ibis operation support matrix](https://ibis-project.org/backends/support/matrix) for details)
 
 :::
 :::
@@ -65,10 +65,9 @@ dict(value=len(ibis.util.backend_entry_points()) - 3, color="green", icon="datab
 ```{python}
 from itables import show
 from support_matrix import make_support_matrix
-import re
-
 
 matrix = make_support_matrix()
+
 
 def custom_replace(value):
     if value is True:
@@ -79,6 +78,7 @@ def custom_replace(value):
         return "<span title='check backend-specific support'>🔍</span>"
     else:
         return f"<span title='Support: {value}'>🟡</span>"
+
 
 show(
     matrix.applymap(custom_replace),
