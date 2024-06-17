@@ -240,3 +240,5 @@ X_test = test_data.drop("arr_delay")
 y_test = test_data.arr_delay
 pipe.score(X_test, y_test)
 ```
+
+{{< include _acknowledgments.md >}}
