@@ -81,8 +81,7 @@ weather
 flight_data = (
     flights.mutate(
         # Convert the arrival delay to a factor
-        # By default, PyTorch expects the target to have a Long datatype
-        arr_delay=ibis.ifelse(flights.arr_delay >= 30, 1, 0).cast("int64"),
+        arr_delay=ibis.ifelse(flights.arr_delay >= 30, 1, 0),
         # We will use the date (not date-time) in the recipe below
         date=flights.time_hour.date(),
     )
@@ -167,9 +166,6 @@ flights_rec = ml.Recipe(
     ml.DropZeroVariance(ml.everything()),
     ml.MutateAt("dep_time", ibis._.hour() * 60 + ibis._.minute()),
     ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),
-    # By default, PyTorch requires that the type of `X` is `np.float32`.
-    # https://discuss.pytorch.org/t/mat1-and-mat2-must-have-the-same-dtype-but-got-double-and-float/197555/2
-    ml.Cast(ml.numeric(), "float32"),
 )
 ```
 
