@@ -48,8 +48,6 @@ website:
       - text: "Tutorial"
         href: tutorial/index.qmd
       - sidebar:reference
-      - text: "Support Matrix"
-        href: support_matrix.qmd
     tools:
       - icon: github
         menu:
@@ -81,6 +79,10 @@ website:
             - reference/steps-outlier.qmd
             - reference/steps-temporal.qmd
             - reference/steps-other.qmd
+
+        - section: Support
+          contents:
+            - reference/support-matrix/index.qmd
 
 format:
   html:

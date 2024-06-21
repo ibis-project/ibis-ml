@@ -28,7 +28,7 @@ pip install 'ibis-framework[duckdb,examples]' ibis-ml skorch torch
 
 ## The New York City flight data
 
-Let's use the [nycflights13 data](https://github.com/hadley/nycflights13) to predict whether a plane arrives more than 30 minutes late. This data set contains information on 325,819 flights departing near New York City in 2013. Let's start by loading the data and making a few changes to the variables:
+Let's use the [nycflights13 data](https://github.com/hadley/nycflights13) to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let's start by loading the data and making a few changes to the variables:
 
 ```{python}
 #| output: false
@@ -107,7 +107,7 @@ flight_data = (
 flight_data
 ```
 
-We can see that about 16% of the flights in this data set arrived more than 30 minutes late.
+We can see that about 16% of the flights in this dataset arrived more than 30 minutes late.
 
 ```{python}
 flight_data.arr_delay.value_counts().rename(n="arr_delay_count").mutate(
@@ -240,3 +240,5 @@ X_test = test_data.drop("arr_delay")
 y_test = test_data.arr_delay
 pipe.score(X_test, y_test)
 ```
+
+{{< include _acknowledgments.md >}}
