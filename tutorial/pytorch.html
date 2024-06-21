@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <section id="the-new-york-city-flight-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-new-york-city-flight-data">The New York City flight data</h2>
 <p>Let’s use the <a href="https://github.com/hadley/nycflights13">nycflights13 data</a> to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:</p>
-<div id="d5c9d90f" class="cell" data-execution_count="1">
+<div id="2eb17e1b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(<span class="st">"duckdb://nycflights13.ddb"</span>)</span>
@@ -337,7 +337,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can now see the example dataset copied over to the database:</p>
-<div id="ac550176" class="cell" data-execution_count="2">
+<div id="be7c1132" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(<span class="st">"duckdb://nycflights13.ddb"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>con.list_tables()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
@@ -345,10 +345,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 </div>
 <p>We’ll turn on interactive mode, which partially executes queries to give users a preview of the results.</p>
-<div id="a6d905be" class="cell" data-execution_count="3">
+<div id="417531e9" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ibis.options.interactive <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b17b0082" class="cell" data-execution_count="4">
+<div id="e1fda150" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> con.table(<span class="st">"flights"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> flights.mutate(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    dep_time<span class="op">=</span>(</span>
@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="6eaf8f20" class="cell" data-execution_count="5">
+<div id="bf76af60" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>weather <span class="op">=</span> con.table(<span class="st">"weather"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>weather</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -406,7 +406,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="931efa40" class="cell" data-execution_count="6">
+<div id="a3761c14" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>flight_data <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    flights.mutate(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert the arrival delay to a factor</span></span>
@@ -435,7 +435,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>flight_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_2521/2398233849.py:25: FutureWarning: `Table.dropna` is deprecated as of v9.1; use drop_null instead
+<pre><code>/tmp/ipykernel_2044/2398233849.py:25: FutureWarning: `Table.dropna` is deprecated as of v9.1; use drop_null instead
   .dropna()</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -460,7 +460,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 </div>
 <p>We can see that about 16% of the flights in this dataset arrived more than 30 minutes late.</p>
-<div id="38d70afb" class="cell" data-execution_count="7">
+<div id="cd7506fb" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>flight_data.arr_delay.value_counts().rename(n<span class="op">=</span><span class="st">"arr_delay_count"</span>).mutate(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    prop<span class="op">=</span>ibis._.n <span class="op">/</span> ibis._.n.<span class="bu">sum</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="anchored" data-anchor-id="data-splitting">Data splitting</h2>
 <p>To get started, let’s split this single dataset into two: a <em>training</em> set and a <em>testing</em> set. We’ll keep most of the rows in the original dataset (subset chosen randomly) in the <em>training</em> set. The training data will be used to <em>fit</em> the model, and the <em>testing</em> set will be used to measure model performance.</p>
 <p>Because the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. <a href="https://www.euclaim.com/blog/flight-numbers-explained#:~:text=Can%20flight%20numbers%20be%20reused,of%20travel%20is%20always%20unique.">It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.</a></p>
-<div id="f9dc7c3a" class="cell" data-execution_count="8">
+<div id="6a827327" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key <span class="op">=</span> flight_data.mutate(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    unique_key<span class="op">=</span>ibis.literal(<span class="st">","</span>).join(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        [flight_data.carrier, flight_data.flight.cast(<span class="bu">str</span>), flight_data.date.cast(<span class="bu">str</span>)]</span>
@@ -509,7 +509,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="755b52f2" class="cell" data-execution_count="9">
+<div id="c5d8b6a1" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">FIXME</span><span class="co">(deepyaman): Proposed key isn't unique for actual departure date.</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key.group_by(<span class="st">"unique_key"</span>).mutate(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    cnt<span class="op">=</span>flight_data_with_unique_key.count()</span>
@@ -535,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="41f569d3" class="cell" data-execution_count="10">
+<div id="8661d5d1" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix the random numbers by setting the seed</span></span>
@@ -555,7 +555,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </section>
 <section id="create-features" class="level2">
 <h2 class="anchored" data-anchor-id="create-features">Create features</h2>
-<div id="76efe06b" class="cell" data-execution_count="11">
+<div id="03371465" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis_ml <span class="im">as</span> ml</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>flights_rec <span class="op">=</span> ml.Recipe(</span>
@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><p><strong>Apply the recipe to the test set</strong>: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.</p></li>
 </ol>
 <p>To simplify this process, we can use a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">scikit-learn <code>Pipeline</code></a>.</p>
-<div id="4609e59a" class="cell" data-execution_count="12">
+<div id="7d863e6e" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skorch <span class="im">import</span> NeuralNetClassifier</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
@@ -617,23 +617,23 @@ document.addEventListener("DOMContentLoaded", function() {
 <span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> Pipeline([(<span class="st">"flights_rec"</span>, flights_rec), (<span class="st">"net"</span>, net)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, there is a single function that can be used to prepare the recipe and train the model from the resulting predictors:</p>
-<div id="7f5097ba" class="cell" data-execution_count="13">
+<div id="1fbfd962" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_data.drop(<span class="st">"arr_delay"</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data.arr_delay</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>pipe.fit(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  epoch    train_loss    valid_acc    valid_loss     dur
 -------  ------------  -----------  ------------  ------
-      1        4.3412       0.8386        2.5725  2.3314
-      2        3.9171       0.8386        2.5725  2.3412
-      3        3.8934       0.8386        2.5725  2.3275
-      4        2.9613       0.8386        2.5725  2.3522
-      5        2.5726       0.8386        2.5725  2.3200
-      6        2.5726       0.8386        2.5725  2.3272
-      7        2.5726       0.8386        2.5725  2.3300
-      8        2.5726       0.8386        2.5725  2.3298
-      9        2.5726       0.8386        2.5725  2.3286
-     10        2.5726       0.8386        2.5725  2.3396</code></pre>
+      1        4.7795       0.8386        2.5725  2.2106
+      2        4.5351       0.8386        2.5725  2.2019
+      3        4.5423       0.8386        2.5725  2.2755
+      4        4.5426       0.8386        2.5725  2.2143
+      5        4.5337       0.8386        2.5725  2.2314
+      6        4.5321       0.8386        2.5725  2.2126
+      7        4.5124       0.8386        2.5725  2.2130
+      8        4.5329       0.8386        2.5725  2.2149
+      9        4.5404       0.8386        2.5725  2.2108
+     10        4.5220       0.8386        2.5725  2.2182</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <style>#sk-container-id-1 {
@@ -1102,7 +1102,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <section id="use-a-trained-workflow-to-predict" class="level2">
 <h2 class="anchored" data-anchor-id="use-a-trained-workflow-to-predict">Use a trained workflow to predict</h2>
 <p>…</p>
-<div id="552a078c" class="cell" data-execution_count="14">
+<div id="ce568340" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test_data.drop(<span class="st">"arr_delay"</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test_data.arr_delay</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>pipe.score(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
