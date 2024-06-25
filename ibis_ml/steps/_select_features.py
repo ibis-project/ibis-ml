@@ -69,7 +69,7 @@ class DropZeroVariance(Step):
                     # Check variance for numeric columns
                     if math.isnan(col_var) or col_var < self.tolerance:
                         cols.append(col_name)
-                elif col_var is None or col_var < 2:
+                elif col_var < 2:
                     # Check unique count for non-numeric columns
                     cols.append(col_name)
                     metadata.drop_categories(col_name)
