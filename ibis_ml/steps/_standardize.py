@@ -10,6 +10,8 @@ from ibis_ml.select import SelectionType, selector
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+_DOCS_PAGE_NAME = "standardization"
+
 
 class ScaleMinMax(Step):
     """A step for normalizing selected numeric columns to have a maximum value of 1

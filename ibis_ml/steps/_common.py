@@ -12,6 +12,8 @@ from ibis_ml.select import SelectionType, selector
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
 
+_DOCS_PAGE_NAME = "other"
+
 
 class Drop(Step):
     """A step for dropping selected columns from the output.

@@ -12,6 +12,8 @@ from ibis_ml.select import SelectionType, selector
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+_DOCS_PAGE_NAME = "discretization"
+
 
 class DiscretizeKBins(Step):
     """A step for binning numeric data into intervals.

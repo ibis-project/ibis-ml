@@ -10,6 +10,8 @@ from ibis_ml.select import SelectionType, selector
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+_DOCS_PAGE_NAME = "outlier-handling"
+
 
 class HandleUnivariateOutliers(Step):
     """A step for detecting and treating univariate outliers in numeric columns.

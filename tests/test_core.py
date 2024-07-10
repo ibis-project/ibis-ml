@@ -360,3 +360,17 @@ def test_errors_nicely_if_not_fitted(table, method):
     r = ml.Recipe(ml.Drop(~ml.numeric()), ml.ScaleStandard(ml.numeric()))
     with pytest.raises(ValueError, match="not fitted"):
         getattr(r, method)(table)
+
+
+@pytest.mark.parametrize(
+    ("step", "url"),
+    [
+        (
+            ml.Drop(~ml.numeric()),
+            "https://ibis-project.github.io/ibis-ml/reference/steps-other.html#ibis_ml.Drop",
+        ),
+        (Shuffle(), ""),
+    ],
+)
+def test_get_doc_link(step, url):
+    assert step._get_doc_link() == url  # noqa: SLF001

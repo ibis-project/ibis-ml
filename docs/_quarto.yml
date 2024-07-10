@@ -75,9 +75,9 @@ website:
             - reference/steps-standardization.qmd
             - reference/steps-discretization.qmd
             - reference/steps-feature-selection.qmd
-            - reference/steps-feature-engineering.qmd
-            - reference/steps-outlier.qmd
-            - reference/steps-temporal.qmd
+            - reference/steps-feature-generation.qmd
+            - reference/steps-outlier-handling.qmd
+            - reference/steps-temporal-feature-extraction.qmd
             - reference/steps-other.qmd
 
         - section: Support
@@ -189,7 +189,7 @@ quartodoc:
             - DropZeroVariance
 
         - kind: page
-          path: steps-feature-engineering
+          path: steps-feature-generation
           summary:
             name: Feature generation
             desc: Construction of new features from existing ones
@@ -197,17 +197,17 @@ quartodoc:
             - CreatePolynomialFeatures
 
         - kind: page
-          path: steps-outlier
+          path: steps-outlier-handling
           summary:
-            name: Outliers
+            name: Outlier handling
             desc: Handle outliers
           contents:
             - HandleUnivariateOutliers
 
         - kind: page
-          path: steps-temporal
+          path: steps-temporal-feature-extraction
           summary:
-            name: Temporal
+            name: Temporal feature extraction
             desc: Feature extraction for temporal columns
           contents:
             - ExpandDateTime
