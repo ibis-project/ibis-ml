@@ -14,6 +14,8 @@ from ibis_ml.steps._impute import FillNA
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+_DOCS_PAGE_NAME = "encoding"
+
 
 def _compute_categories(
     table: ir.Table,

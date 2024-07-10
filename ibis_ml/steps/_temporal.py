@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
     import ibis.expr.types as ir
 
+_DOCS_PAGE_NAME = "temporal-feature-extraction"
+
 
 class ExpandDateTime(Step):
     """A step for expanding date and time columns into one or more features.

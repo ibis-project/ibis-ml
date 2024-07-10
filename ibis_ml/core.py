@@ -6,6 +6,7 @@ import pprint
 from collections import defaultdict
 from collections.abc import Callable, Iterable, Sequence
 from functools import cache
+from importlib import import_module
 from typing import TYPE_CHECKING, Any, Literal, cast
 
 import ibis
@@ -21,6 +22,8 @@ if TYPE_CHECKING:
     import polars as pl
     import xgboost as xgb
     from sklearn.utils._estimator_html_repr import _VisualBlock
+
+_DOC_LINK_TEMPLATE = "https://ibis-project.github.io/ibis-ml/reference/steps-{docs_page_name}.html#ibis_ml.{step_name}"
 
 
 def gen_name(prefix: str = "") -> str:
@@ -284,8 +287,34 @@ def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
 
 
 class Step:
-    def __repr__(self):
+    def __repr__(self) -> str:
         return pprint.pformat(self)
+
+    def _get_doc_link(self) -> str:
+        """Generates a link to the API documentation for a given step.
+
+        Returns
+        -------
+        url : str
+            The URL to the API documentation for this step. If the step does
+            not belong to module `ibis_ml`, the empty string (i.e. `""`) is
+            returned.
+
+        Notes
+        -----
+        Derived from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/458c558/sklearn/utils/_estimator_html_repr.py#L456-L486
+        """
+        step_module = self.__module__
+        if docs_page_name := getattr(import_module(step_module), "_DOCS_PAGE_NAME", ""):
+            return _DOC_LINK_TEMPLATE.format(
+                docs_page_name=docs_page_name, step_name=type(self).__name__
+            )
+        else:
+            return ""
 
     def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
         pass

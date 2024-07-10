@@ -14,6 +14,8 @@ from ibis_ml.select import SelectionType, selector
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+_DOCS_PAGE_NAME = "feature-generation"
+
 
 class CreatePolynomialFeatures(Step):
     """A step for generating polynomial features.

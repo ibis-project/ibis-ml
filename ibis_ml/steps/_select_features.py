@@ -11,6 +11,8 @@ from ibis_ml.select import SelectionType, selector
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+_DOCS_PAGE_NAME = "feature-selection"
+
 
 class DropZeroVariance(Step):
     """A step for removing columns with zero variance.
