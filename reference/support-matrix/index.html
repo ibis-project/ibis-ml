@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.54">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>IbisML - Transformation support matrix</title>
+<title>Transformation support matrix – IbisML</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
-<meta name="twitter:title" content="IbisML - Transformation support matrix">
+<meta name="twitter:title" content="Transformation support matrix – IbisML">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -101,7 +101,7 @@ ul.task-list li input[type="checkbox"] {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -115,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Tutorial</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-reference" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-reference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Reference</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-reference">    
@@ -151,16 +151,16 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Feature selection</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-feature-engineering.html">
+    <a class="dropdown-item" href="../../reference/steps-feature-generation.html">
  <span class="dropdown-text">Feature generation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-outlier.html">
- <span class="dropdown-text">Outliers</span></a>
+    <a class="dropdown-item" href="../../reference/steps-outlier-handling.html">
+ <span class="dropdown-text">Outlier handling</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-temporal.html">
- <span class="dropdown-text">Temporal</span></a>
+    <a class="dropdown-item" href="../../reference/steps-temporal-feature-extraction.html">
+ <span class="dropdown-text">Temporal feature extraction</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../../reference/steps-other.html">
@@ -176,9 +176,9 @@ ul.task-list li input[type="checkbox"] {
   </li>
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
     <div class="dropdown">
-      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/ibis-project/ibis-ml">
@@ -293,7 +293,7 @@ grid-auto-rows: minmax(0, 1fr);">
 <div class="card cell bslib-card html-fill-container" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
 <div class="card-body html-fill-item html-fill-container">
 <div class="cell-output cell-output-display html-fill-item html-fill-container">
-<table id="itables_13f86826_61db_4769_8f41_57b3e100f1f0" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
+<table id="itables_8133239a_9777_4388_adaa_89029d05d05a" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
 <thead>
     <tr>
       <th></th>
@@ -453,7 +453,7 @@ grid-auto-rows: minmax(0, 1fr);">
 </a>
 </div>
 <div class="html-fill-item html-fill-container">
-Loading ITables v2.1.3 from the internet...
+Loading ITables v2.1.4 from the internet...
 (need <a href="https://mwouts.github.io/itables/troubleshooting.html">help</a>?)</div></td>
 
 </tr></tbody>
@@ -463,9 +463,9 @@ Loading ITables v2.1.3 from the internet...
 <script type="module">
     import {DataTable, jQuery as $} from 'https://www.unpkg.com/dt_for_itables@2.0.11/dt_bundle.js';
 
-    document.querySelectorAll("#itables_13f86826_61db_4769_8f41_57b3e100f1f0:not(.dataTable)").forEach(table => {
+    document.querySelectorAll("#itables_8133239a_9777_4388_adaa_89029d05d05a:not(.dataTable)").forEach(table => {
         // Define the table data
-        const data = [["common", "Cast", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["common", "Drop", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["common", "Mutate", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["common", "MutateAt", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["discretize", "DiscretizeKBins", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>"], ["encode", "CountEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "OneHotEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "OrdinalEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "TargetEncode", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705"], ["generate_features", "CreatePolynomialFeatures", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["handle_outliers", "HandleUnivariateOutliers", "<span title='Support: z-score'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>"], ["impute", "FillNA", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705"], ["impute", "ImputeMean", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705"], ["impute", "ImputeMedian", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab"], ["impute", "ImputeMode", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\ud83d\udeab"], ["select_features", "DropZeroVariance", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: str'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["standardize", "ScaleMinMax", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["standardize", "ScaleStandard", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandDate", "\u2705", "\u2705", "<span title='Support: dow'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: w,y,d,m,doy'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: w,y,d,m,doy'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: w,dow,y,d,m'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: d,m,y'>\ud83d\udfe1</span>", "<span title='Support: dow'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandDateTime", "\u2705", "\u2705", "<span title='Support: ms,mon,dow,y,d,m,s,doy'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: mon,week,y,d,m,s,doy'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: ms,mon,week,y,d,m,s,doy'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: ms,mon,week,dow,y,d,m,s'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: mon,y,d,m,s'>\ud83d\udfe1</span>", "<span title='Support: ms,mon,dow,y,d,m,s,doy'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandTime", "\u2705", "<span title='Support: s,m,h'>\ud83d\udfe1</span>", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: s,m,h'>\ud83d\udfe1</span>", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"]];
+        const data = [["common", "Cast", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["common", "Drop", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["common", "Mutate", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["common", "MutateAt", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["discretize", "DiscretizeKBins", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>"], ["encode", "CountEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "OneHotEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "OrdinalEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "TargetEncode", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705"], ["generate_features", "CreatePolynomialFeatures", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["handle_outliers", "HandleUnivariateOutliers", "<span title='Support: z-score'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>"], ["impute", "FillNA", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: str,int'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: str,int'>\ud83d\udfe1</span>", "<span title='Support: str,int'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: str,int'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: str,int'>\ud83d\udfe1</span>", "\u2705"], ["impute", "ImputeMean", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705"], ["impute", "ImputeMedian", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab"], ["impute", "ImputeMode", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "<span title='Support: str,int'>\ud83d\udfe1</span>", "\ud83d\udeab"], ["select_features", "DropZeroVariance", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: str'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["standardize", "ScaleMinMax", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["standardize", "ScaleStandard", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandDate", "\u2705", "\u2705", "<span title='Support: dow'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: d,y,doy,m,w'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: d,y,doy,m,w'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: d,y,dow,m,w'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: y,m,d'>\ud83d\udfe1</span>", "<span title='Support: dow'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandDateTime", "\u2705", "\u2705", "<span title='Support: s,ms,d,y,doy,dow,m,mon'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: s,d,y,doy,m,week,mon'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: s,ms,d,y,doy,m,week,mon'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: s,ms,d,y,dow,m,week,mon'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: s,d,y,m,mon'>\ud83d\udfe1</span>", "<span title='Support: s,ms,d,y,doy,dow,m,mon'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandTime", "\u2705", "<span title='Support: s,h,m'>\ud83d\udfe1</span>", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: s,h,m'>\ud83d\udfe1</span>", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"]];
 
         // Define the dt_args
         let dt_args = {"ordering": false, "paging": false, "buttons": ["copy", "excel", "csv"], "autoWidth": false, "dom": "fiBrtlp", "info": true, "keys": true, "language": {"info": "Showing _TOTAL_ entries"}, "lengthChange": false, "order": [], "responsive": true, "searching": true};
@@ -668,18 +668,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -711,7 +700,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -719,7 +730,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
