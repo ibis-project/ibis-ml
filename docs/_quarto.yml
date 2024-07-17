@@ -86,7 +86,7 @@ website:
 
         - section: Utilities
           contents:
-            - reference/train-test-split.qmd
+            - reference/utils-train-test-split.qmd
 
 format:
   html:
@@ -234,9 +234,9 @@ quartodoc:
       package: ibis_ml
       contents:
         - kind: page
-          path: train-test-split
+          path: utils-train-test-split
           summary:
-            name: Train test split
+            name: Train-test split
             desc: Randomly split Ibis table
           contents:
             - train_test_split

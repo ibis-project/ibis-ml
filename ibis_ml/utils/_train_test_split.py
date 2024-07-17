@@ -46,11 +46,11 @@ def train_test_split(
 
     Returns
     -------
-    tuple(ir.Table, ir.Table)
+    tuple[ir.Table, ir.Table]
         A tuple containing two Ibis tables: (train_table, test_table).
 
     Raises
-    ----------
+    ------
     ValueError
         If test_size is not a float between 0 and 1.
 
@@ -74,6 +74,7 @@ def train_test_split(
     # Set the random seed for reproducibility
     if random_seed:
         random.seed(random_seed)
+
     # Generate a random 256-bit key
     random_key = str(random.getrandbits(256))
 
