@@ -84,6 +84,10 @@ website:
           contents:
             - reference/support-matrix/index.qmd
 
+        - section: Utilities
+          contents:
+            - reference/utils-train-test-split.qmd
+
 format:
   html:
     theme:
@@ -224,3 +228,15 @@ quartodoc:
             - Drop
             - MutateAt
             - Mutate
+
+    - title: Utilities
+      desc: Utility functions
+      package: ibis_ml
+      contents:
+        - kind: page
+          path: utils-train-test-split
+          summary:
+            name: Train-test split
+            desc: Randomly split Ibis table
+          contents:
+            - train_test_split
