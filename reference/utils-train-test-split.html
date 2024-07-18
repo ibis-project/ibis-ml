@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Transformation support matrix – IbisML</title>
+<title>utils-train-test-split – IbisML</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,36 +20,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../logo.svg" rel="icon" type="image/svg+xml">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="../../site_libs/quarto-dashboard/quarto-dashboard.js"></script>
-<script src="../../site_libs/quarto-dashboard/stickythead.js"></script>
-<script src="../../site_libs/quarto-dashboard/datatables.min.js" kdttablesentinel="true"></script>
-<script src="../../site_libs/quarto-dashboard/pdfmake.min.js" kdttablesentinel="true"></script>
-<script src="../../site_libs/quarto-dashboard/vfs_fonts.js" kdttablesentinel="true"></script>
-<script src="../../site_libs/quarto-dashboard/web-components.js" type="module"></script>
-<script src="../../site_libs/quarto-dashboard/components.js"></script>
-<link href="../../site_libs/quarto-dashboard/datatables.min.css" rel="stylesheet" kdttablesentinel="true">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../logo.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,27 +102,24 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
-<meta name="twitter:title" content="Transformation support matrix – IbisML">
+<meta name="twitter:title" content="IbisML">
+<meta name="twitter:description" content="IbisML is a library for building scalable ML pipelines using Ibis.">
 <meta name="twitter:card" content="summary">
 </head>
 
-<body class="quarto-dashboard nav-sidebar nav-fixed dashboard-fill fullcontent">
-
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../../logo.svg" alt="" class="navbar-logo">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../logo.svg" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">IbisML</span>
     </a>
   </div>
@@ -107,11 +130,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Overview</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../tutorial/index.html"> 
+    <a class="nav-link" href="../tutorial/index.html"> 
 <span class="menu-text">Tutorial</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -121,61 +144,61 @@ ul.task-list li input[type="checkbox"] {
     <ul class="dropdown-menu" aria-labelledby="nav-menu-reference">    
         <li class="dropdown-header">Core</li>
         <li>
-    <a class="dropdown-item" href="../../reference/core.html">
+    <a class="dropdown-item" href="../reference/core.html">
  <span class="dropdown-text">Common</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/selectors.html">
+    <a class="dropdown-item" href="../reference/selectors.html">
  <span class="dropdown-text">Selectors</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
         <li class="dropdown-header">Steps</li>
         <li>
-    <a class="dropdown-item" href="../../reference/steps-imputation.html">
+    <a class="dropdown-item" href="../reference/steps-imputation.html">
  <span class="dropdown-text">Imputation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-encoding.html">
+    <a class="dropdown-item" href="../reference/steps-encoding.html">
  <span class="dropdown-text">Encoding</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-standardization.html">
+    <a class="dropdown-item" href="../reference/steps-standardization.html">
  <span class="dropdown-text">Standardization</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-discretization.html">
+    <a class="dropdown-item" href="../reference/steps-discretization.html">
  <span class="dropdown-text">Discretization</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-feature-selection.html">
+    <a class="dropdown-item" href="../reference/steps-feature-selection.html">
  <span class="dropdown-text">Feature selection</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-feature-generation.html">
+    <a class="dropdown-item" href="../reference/steps-feature-generation.html">
  <span class="dropdown-text">Feature generation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-outlier-handling.html">
+    <a class="dropdown-item" href="../reference/steps-outlier-handling.html">
  <span class="dropdown-text">Outlier handling</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-temporal-feature-extraction.html">
+    <a class="dropdown-item" href="../reference/steps-temporal-feature-extraction.html">
  <span class="dropdown-text">Temporal feature extraction</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../reference/steps-other.html">
+    <a class="dropdown-item" href="../reference/steps-other.html">
  <span class="dropdown-text">Other</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
         <li class="dropdown-header">Support</li>
         <li>
-    <a class="dropdown-item" href="../../reference/support-matrix/index.html">
+    <a class="dropdown-item" href="../reference/support-matrix/index.html">
  <span class="dropdown-text">Transformation support matrix</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
         <li class="dropdown-header">Utilities</li>
         <li>
-    <a class="dropdown-item" href="../../reference/utils-train-test-split.html">
+    <a class="dropdown-item" href="../reference/utils-train-test-split.html">
  <span class="dropdown-text">Train-test split</span></a>
   </li>  
     </ul>
@@ -202,299 +225,287 @@ ul.task-list li input[type="checkbox"] {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
-<header id="quarto-dashboard-header">
-<nav class="navbar navbar-expand-md slim" data-bs-theme="dark">
-  <div class="navbar-container container-fluid">
-    <button class="navbar-toggler hidden" type="button" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-controls="dashboard-collapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>    
-
-
-    <div class="navbar-brand-container">       
-
-      <div class="navbar-title">
-        <div class="navbar-title-text"><a href="#">Transformation support matrix</a></div>
-        
-        
-      </div>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/utils-train-test-split.html">Utilities</a></li><li class="breadcrumb-item"><a href="../reference/utils-train-test-split.html">Train-test split</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
-</div>
-</nav>
-</header></header>
+  </nav>
+</header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-layout-custom page-navbar quarto-dashboard-content bslib-gap-spacing html-fill-container bslib-page-fill">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Core</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Common</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/selectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Selectors</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Steps</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-imputation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Imputation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-encoding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Encoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-standardization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Standardization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-discretization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discretization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-feature-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Feature selection</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-feature-generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Feature generation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-outlier-handling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Outlier handling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-temporal-feature-extraction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temporal feature extraction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/steps-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Other</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Support</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/support-matrix/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformation support matrix</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Utilities</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reference/utils-train-test-split.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Train-test split</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#train-test-split" id="toc-train-test-split" class="nav-link active" data-scroll-target="#train-test-split">Train-test split</a></li>
+  <li><a href="#ibis_ml.train_test_split" id="toc-ibis_ml.train_test_split" class="nav-link" data-scroll-target="#ibis_ml.train_test_split">train_test_split</a>
+  <ul class="collapse">
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
+  <li><a href="#raises" id="toc-raises" class="nav-link" data-scroll-target="#raises">Raises</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/reference/utils-train-test-split.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
+<main class="content" id="quarto-document-content">
 
-<div class="bslib-grid-item html-fill-item bslib-grid" data-layout="fill" style="display: grid; grid-template-rows: minmax(3em, 25fr) minmax(3em, 70fr); grid-auto-columns: minmax(0, 1fr);">
-<div class="bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 50fr) minmax(3em, 25fr) minmax(3em, 25fr);
-grid-auto-rows: minmax(0, 1fr);">
-<div class="card bslib-card html-fill-container" data-title="Welcome to the transformation support matrix!" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-header"><div class="card-title">Welcome to the transformation support matrix!</div></div>
-<div class="card-body html-fill-item html-fill-container">
-<p>This is a Quarto dashboard that shows the IbisML transformations each backend supports.</p>
-<div class="callout callout-style-simple callout-none no-icon">
-<div class="callout-body d-flex html-fill-item html-fill-container">
-<div class="callout-icon-container html-fill-item html-fill-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container html-fill-item html-fill-container">
-<p>Due to differences in SQL dialects and upstream support for different operations in different backends, support for the full breadth of the IbisML transfromations varies:</p>
-<ol type="1">
-<li>✅ Fully supported</li>
-<li>🚫 Not supported</li>
-<li>🟡 Partial support (hover over for more information)</li>
-<li>🔍 Support varies by operation or data type across different backends (check the <a href="https://ibis-project.org/backends/support/matrix">Ibis operation support matrix</a> for details)</li>
-</ol>
-</div>
-</div>
-</div>
-</div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div class="bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
-<div class="card valuebox cell bslib-card html-fill-container bslib-value-box bg-info showcase-left-center" data-bslib-card-init="" data-require-bs-caller="card()">
-<div class="card-body html-fill-item html-fill-container">
-<div data-icon="signpost-split-fill" class="html-fill-item html-fill-container value-box-grid">
-<div class="value-box-showcase html-fill-item html-fill-container">
 
-<i class="bi bi-signpost-split-fill"></i></div>
-<div class="value-box-area">
-<p class="value-box-title">
-Number of backends
-</p>
-<p class="value-box-value">
-20
-</p>
-</div>
-</div>
-</div>
-<script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
-</div><div class="bslib-grid" style="display: grid; grid-template-rows: minmax(3em, 1fr); grid-auto-columns: minmax(0, 1fr);">
-<div class="card valuebox cell bslib-card html-fill-container bslib-value-box bg-green showcase-left-center" data-bslib-card-init="" data-require-bs-caller="card()">
-<div class="card-body html-fill-item html-fill-container">
-<div data-icon="database" class="html-fill-item html-fill-container value-box-grid">
-<div class="value-box-showcase html-fill-item html-fill-container">
 
-<i class="bi bi-database"></i></div>
-<div class="value-box-area">
-<p class="value-box-title">
-Number of SQL backends
-</p>
-<p class="value-box-value">
-17
-</p>
-</div>
-</div>
-</div>
-<script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div>
-</div>
-</div>
-<div class="bslib-grid" style="display: grid; grid-template-columns: minmax(3em, 1fr);
-grid-auto-rows: minmax(0, 1fr);">
-<div class="card cell bslib-card html-fill-container" data-bslib-card-init="" data-require-bs-caller="card()" data-full-screen="false">
-<div class="card-body html-fill-item html-fill-container">
-<div class="cell-output cell-output-display html-fill-item html-fill-container">
-<table id="itables_bb9156c7_e758_486d_894d_7e11450f15d8" class="display nowrap compact" data-quarto-disable-processing="true" style="table-layout:auto;width:auto;margin:auto;caption-side:bottom">
+
+<section id="train-test-split" class="level1">
+<h1>Train-test split</h1>
+<p>Randomly split Ibis table</p>
+</section>
+<section id="ibis_ml.train_test_split" class="level1">
+<h1>train_test_split</h1>
+<p><code>train_test_split(table, unique_key, test_size=0.25, num_buckets=100, random_seed=None)</code></p>
+<p>Randomly split Ibis table data into training and testing tables.</p>
+<p>This function splits an Ibis table into training and testing tables based on a unique key or combination of keys. It uses a hashing function to convert the unique key into an integer, then applies a modulo operation to split the data into buckets. The training table consists of data points from a subset of these buckets, while the remaining data points form the test table.</p>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 87%">
+<col style="width: 3%">
+</colgroup>
 <thead>
-    <tr>
-      <th></th>
-      <th>Backend</th>
-      <th>bigquery</th>
-      <th>clickhouse</th>
-      <th>dask</th>
-      <th>datafusion</th>
-      <th>druid</th>
-      <th>duckdb</th>
-      <th>exasol</th>
-      <th>flink</th>
-      <th>impala</th>
-      <th>mssql</th>
-      <th>mysql</th>
-      <th>oracle</th>
-      <th>pandas</th>
-      <th>polars</th>
-      <th>postgres</th>
-      <th>pyspark</th>
-      <th>risingwave</th>
-      <th>snowflake</th>
-      <th>sqlite</th>
-      <th>trino</th>
-    </tr>
-    <tr>
-      <th></th>
-      <th>Full coverage</th>
-      <th>17 (81%)</th>
-      <th>19 (90%)</th>
-      <th>17 (81%)</th>
-      <th>18 (86%)</th>
-      <th>9 (43%)</th>
-      <th>21 (100%)</th>
-      <th>10 (48%)</th>
-      <th>14 (67%)</th>
-      <th>15 (71%)</th>
-      <th>14 (67%)</th>
-      <th>17 (81%)</th>
-      <th>17 (81%)</th>
-      <th>17 (81%)</th>
-      <th>20 (95%)</th>
-      <th>21 (100%)</th>
-      <th>20 (95%)</th>
-      <th>20 (95%)</th>
-      <th>21 (100%)</th>
-      <th>14 (67%)</th>
-      <th>17 (81%)</th>
-    </tr>
-    <tr>
-      <th></th>
-      <th>Partial coverage</th>
-      <th>2 (10%)</th>
-      <th>1 (5%)</th>
-      <th>2 (10%)</th>
-      <th>1 (5%)</th>
-      <th>5 (24%)</th>
-      <th>0 (0%)</th>
-      <th>5 (24%)</th>
-      <th>3 (14%)</th>
-      <th>4 (19%)</th>
-      <th>3 (14%)</th>
-      <th>2 (10%)</th>
-      <th>3 (14%)</th>
-      <th>2 (10%)</th>
-      <th>0 (0%)</th>
-      <th>0 (0%)</th>
-      <th>0 (0%)</th>
-      <th>0 (0%)</th>
-      <th>0 (0%)</th>
-      <th>4 (19%)</th>
-      <th>2 (10%)</th>
-    </tr>
-    <tr>
-      <th>Category</th>
-      <th>Step</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead><tbody><tr>
-<td style="vertical-align:middle; text-align:left">
-<div style="float:left; margin-right: 10px;" class="html-fill-item html-fill-container">
-<a href="https://mwouts.github.io/itables/"><svg class="main-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" width="64" viewbox="0 0 500 400" style="font-family: 'Droid Sans', sans-serif;">
-    <g style="fill:#d9d7fc">
-        <path d="M100,400H500V357H100Z"></path>
-        <path d="M100,300H400V257H100Z"></path>
-        <path d="M0,200H400V157H0Z"></path>
-        <path d="M100,100H500V57H100Z"></path>
-        <path d="M100,350H500V307H100Z"></path>
-        <path d="M100,250H400V207H100Z"></path>
-        <path d="M0,150H400V107H0Z"></path>
-        <path d="M100,50H500V7H100Z"></path>
-    </g>
-    <g style="fill:#1a1366;stroke:#1a1366;">
-   <rect x="100" y="7" width="400" height="43">
-    <animate attributename="width" values="0;400;0" dur="5s" repeatcount="indefinite"></animate>
-      <animate attributename="x" values="100;100;500" dur="5s" repeatcount="indefinite"></animate>
-  </rect>
-        <rect x="0" y="107" width="400" height="43">
-    <animate attributename="width" values="0;400;0" dur="3.5s" repeatcount="indefinite"></animate>
-    <animate attributename="x" values="0;0;400" dur="3.5s" repeatcount="indefinite"></animate>
-  </rect>
-        <rect x="100" y="207" width="300" height="43">
-    <animate attributename="width" values="0;300;0" dur="3s" repeatcount="indefinite"></animate>
-    <animate attributename="x" values="100;100;400" dur="3s" repeatcount="indefinite"></animate>
-  </rect>
-        <rect x="100" y="307" width="400" height="43">
-    <animate attributename="width" values="0;400;0" dur="4s" repeatcount="indefinite"></animate>
-      <animate attributename="x" values="100;100;500" dur="4s" repeatcount="indefinite"></animate>
-  </rect>
-        <g style="fill:transparent;stroke-width:8; stroke-linejoin:round" rx="5">
-            <g transform="translate(45 50) rotate(-45)">
-                <circle r="33" cx="0" cy="0"></circle>
-                <rect x="-8" y="32" width="16" height="30"></rect>
-            </g>
-
-            <g transform="translate(450 152)">
-                <polyline points="-15,-20 -35,-20 -35,40 25,40 25,20"></polyline>
-                <rect x="-15" y="-40" width="60" height="60"></rect>
-            </g>
-
-            <g transform="translate(50 352)">
-                <polygon points="-35,-5 0,-40 35,-5"></polygon>
-                <polygon points="-35,10 0,45 35,10"></polygon>
-            </g>
-
-            <g transform="translate(75 250)">
-                <polyline points="-30,30 -60,0 -30,-30"></polyline>
-                <polyline points="0,30 -30,0 0,-30"></polyline>
-            </g>
-
-            <g transform="translate(425 250) rotate(180)">
-                <polyline points="-30,30 -60,0 -30,-30"></polyline>
-                <polyline points="0,30 -30,0 0,-30"></polyline>
-            </g>
-        </g>
-    </g>
-</svg>
-</a>
-</div>
-<div class="html-fill-item html-fill-container">
-Loading ITables v2.1.4 from the internet...
-(need <a href="https://mwouts.github.io/itables/troubleshooting.html">help</a>?)</div></td>
-
-</tr></tbody>
-
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>table</code></td>
+<td>ir.Table</td>
+<td>The input Ibis table to be split.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td><code>unique_key</code></td>
+<td>str | list[str]</td>
+<td>The column name(s) that uniquely identify each row in the table. This unique_key is used to create a deterministic split of the dataset through a hashing process.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td><code>test_size</code></td>
+<td>float</td>
+<td>The ratio of the dataset to include in the test split, which should be between 0 and 1. This ratio is approximate because the hashing algorithm may not provide a uniform bucket distribution for small datasets. Larger datasets will result in more uniform bucket assignments, making the split ratio closer to the desired value.</td>
+<td><code>0.25</code></td>
+</tr>
+<tr class="even">
+<td><code>num_buckets</code></td>
+<td>int</td>
+<td>The number of buckets into which the data is divided during the splitting process. It controls how finely the data is divided into buckets during the split process. Adjusting num_buckets can affect the granularity and efficiency of the splitting operation, balancing between accuracy and computational efficiency.</td>
+<td><code>100</code></td>
+</tr>
+<tr class="odd">
+<td><code>random_seed</code></td>
+<td>int | None</td>
+<td>Seed for the random number generator. If provided, ensures reproducibility of the split.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
 </table>
-<link href="https://www.unpkg.com/dt_for_itables@2.0.11/dt_bundle.css" rel="stylesheet">
-<script type="module">
-    import {DataTable, jQuery as $} from 'https://www.unpkg.com/dt_for_itables@2.0.11/dt_bundle.js';
+</section>
+<section id="returns" class="level2">
+<h2 class="anchored" data-anchor-id="returns">Returns</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tuple[ir.Table, ir.Table]</td>
+<td>A tuple containing two Ibis tables: (train_table, test_table).</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises" class="level2">
+<h2 class="anchored" data-anchor-id="raises">Raises</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ValueError</td>
+<td>If test_size is not a float between 0 and 1.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> ibis_ml <span class="im">as</span> ml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Split an Ibis table into training and testing tables.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> table <span class="op">=</span> ibis.memtable({<span class="st">"key1"</span>: <span class="bu">range</span>(<span class="dv">100</span>)})</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> train_table, test_table <span class="op">=</span> ml.train_test_split(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        table,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        unique_key<span class="op">=</span><span class="st">"key1"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        random_seed<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
-    document.querySelectorAll("#itables_bb9156c7_e758_486d_894d_7e11450f15d8:not(.dataTable)").forEach(table => {
-        // Define the table data
-        const data = [["common", "Cast", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["common", "Drop", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["common", "Mutate", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["common", "MutateAt", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>", "<span title='check backend-specific support'>\ud83d\udd0d</span>"], ["discretize", "DiscretizeKBins", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: uniform'>\ud83d\udfe1</span>", "<span title='Support: uniform'>\ud83d\udfe1</span>"], ["encode", "CountEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "OneHotEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "OrdinalEncode", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["encode", "TargetEncode", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705"], ["generate_features", "CreatePolynomialFeatures", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["handle_outliers", "HandleUnivariateOutliers", "<span title='Support: z-score'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: z-score'>\ud83d\udfe1</span>", "<span title='Support: z-score'>\ud83d\udfe1</span>"], ["impute", "FillNA", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\u2705"], ["impute", "ImputeMean", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705"], ["impute", "ImputeMedian", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab"], ["impute", "ImputeMode", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\ud83d\udeab", "\u2705", "<span title='Support: int,str'>\ud83d\udfe1</span>", "\ud83d\udeab"], ["select_features", "DropZeroVariance", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: str'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: str'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["standardize", "ScaleMinMax", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["standardize", "ScaleStandard", "\u2705", "\u2705", "\u2705", "\u2705", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandDate", "\u2705", "\u2705", "<span title='Support: dow'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: y,d,m,doy,w'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: y,d,m,doy,w'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: y,d,m,w,dow'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: d,y,m'>\ud83d\udfe1</span>", "<span title='Support: dow'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandDateTime", "\u2705", "\u2705", "<span title='Support: y,s,d,m,ms,doy,dow,mon'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: week,y,s,d,m,doy,mon'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: week,y,s,d,m,ms,doy,mon'>\ud83d\udfe1</span>", "\u2705", "<span title='Support: week,y,s,d,m,ms,dow,mon'>\ud83d\udfe1</span>", "\u2705", "\u2705", "<span title='Support: y,s,d,m,mon'>\ud83d\udfe1</span>", "<span title='Support: y,s,d,m,ms,doy,dow,mon'>\ud83d\udfe1</span>", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"], ["temporal", "ExpandTime", "\u2705", "<span title='Support: s,h,m'>\ud83d\udfe1</span>", "\ud83d\udeab", "\u2705", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "<span title='Support: s,h,m'>\ud83d\udfe1</span>", "\ud83d\udeab", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705", "\u2705"]];
 
-        // Define the dt_args
-        let dt_args = {"ordering": false, "paging": false, "buttons": ["copy", "excel", "csv"], "autoWidth": false, "dom": "fiBrtlp", "info": true, "keys": true, "language": {"info": "Showing _TOTAL_ entries"}, "lengthChange": false, "order": [], "responsive": true, "searching": true};
-        dt_args["data"] = data;
+</section>
+</section>
 
-        
-        new DataTable(table, dt_args);
-    });
-</script>
-</div>
-</div>
-<bslib-tooltip placement="auto" bsoptions="[]" data-require-bs-version="5" data-require-bs-caller="tooltip()">
-    <template>Expand</template>
-    <span class="bslib-full-screen-enter badge rounded-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" style="height:1em;width:1em;" aria-hidden="true" role="img"><path d="M20 5C20 4.4 19.6 4 19 4H13C12.4 4 12 3.6 12 3C12 2.4 12.4 2 13 2H21C21.6 2 22 2.4 22 3V11C22 11.6 21.6 12 21 12C20.4 12 20 11.6 20 11V5ZM4 19C4 19.6 4.4 20 5 20H11C11.6 20 12 20.4 12 21C12 21.6 11.6 22 11 22H3C2.4 22 2 21.6 2 21V13C2 12.4 2.4 12 3 12C3.6 12 4 12.4 4 13V19Z"></path></svg>
-    </span>
-</bslib-tooltip><script data-bslib-card-init="">bslib.Card.initializeAllCards();</script></div><div id="3ade8a4a-fb1d-4a6c-8409-ac45482d5fc9" class="hidden">
-
-</div>
-</div>
-</div>
-
-
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1106,7 +1117,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/reference/support-matrix/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/reference/utils-train-test-split.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
@@ -1126,14 +1137,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </footer>
 
-<script type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (_event) {
-  if (window.bslib.Card) {
-    window.bslib.Card.initializeAllCards();
-  }
-}); 
-</script>
-  
 
 
 
