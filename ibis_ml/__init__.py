@@ -28,7 +28,7 @@ from ibis_ml.select import (
 )
 from ibis_ml.steps import *
 from ibis_ml.utils._pprint import _pprint_recipe, _pprint_step, _safe_repr
-from ibis_ml.utils._train_test_split import train_test_split
+from ibis_ml.utils._split import train_test_split
 
 # Add support for `Recipe`s and `Step`s to the built-in `PrettyPrinter`.
 pprint.PrettyPrinter._dispatch[Recipe.__repr__] = _pprint_recipe  # noqa: SLF001
