@@ -62,11 +62,11 @@ def train_test_split(
 
     >>> table = ibis.memtable({"key1": range(100)})
     >>> train_table, test_table = ml.train_test_split(
-            table,
-            unique_key="key1",
-            test_size=0.2,
-            random_seed=0,
-        )
+    ...     table,
+    ...     unique_key="key1",
+    ...     test_size=0.2,
+    ...     random_seed=0,
+    ... )
     """
     if not (0 < test_size < 1):
         raise ValueError("test size should be a float between 0 and 1.")

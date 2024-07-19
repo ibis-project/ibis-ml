@@ -86,7 +86,7 @@ website:
 
         - section: Utilities
           contents:
-            - reference/utils-train-test-split.qmd
+            - reference/utils-data-splitting.qmd
 
 format:
   html:
@@ -204,7 +204,7 @@ quartodoc:
           path: steps-outlier-handling
           summary:
             name: Outlier handling
-            desc: Handle outliers
+            desc: Outlier detection and handling
           contents:
             - HandleUnivariateOutliers
 
@@ -234,9 +234,9 @@ quartodoc:
       package: ibis_ml
       contents:
         - kind: page
-          path: utils-train-test-split
+          path: utils-data-splitting
           summary:
-            name: Train-test split
-            desc: Randomly split Ibis table
+            name: Data splitting
+            desc: Segregating data into training, testing, and validation sets
           contents:
             - train_test_split
