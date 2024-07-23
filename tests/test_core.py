@@ -223,9 +223,12 @@ def test_can_use_in_sklearn_pipeline():
 @pytest.mark.parametrize(
     "get_Xy",
     [
-        pytest.param(lambda t: (t[["a", "b", "c"]], None), id="None"),
-        pytest.param(lambda t: (t[["a", "b", "c"]], t["y"]), id="column"),
-        pytest.param(lambda t: (t[["a", "b", "c"]], t[["y"]]), id="table"),
+        pytest.param(lambda t: (t[["a", "b", "c"]], None), id="Project-None"),
+        pytest.param(lambda t: (t[["a", "b", "c"]], t["y"]), id="Project-column"),
+        pytest.param(lambda t: (t[["a", "b", "c"]], t[["y"]]), id="Project-table"),
+        pytest.param(lambda t: (t.drop("y"), None), id="DropColumns-None"),
+        pytest.param(lambda t: (t.drop("y"), t["y"]), id="DropColumns-column"),
+        pytest.param(lambda t: (t.drop("y"), t[["y"]]), id="DropColumns-table"),
         pytest.param(lambda t: (t, "y"), id="col-name"),
         pytest.param(lambda t: (t, ["y"]), id="col-names"),
     ],
