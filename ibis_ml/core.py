@@ -101,7 +101,7 @@ def _(X, y=None, maintain_order=False):
         )
 
     if set(y.columns).intersection(X.columns):
-        raise ValueError("X and y must not share column names")
+        raise ValueError("`X` and `y` must not share column names")
 
     X_op = X.op()
     y_op = y.op()
@@ -110,10 +110,13 @@ def _(X, y=None, maintain_order=False):
     # >>> X = parent[cols]
     # >>> y = parent[single_or_multiple_cols]
     # >>> table = parent[cols + single_or_multiple_cols]
+    supported_ops = tuple(
+        cls for name in ["Project", "DropColumns"] if (cls := getattr(ops, name, None))
+    )
     if (
-        hasattr(ops, "Project")
-        and isinstance(X_op, ops.Project)
-        and isinstance(y_op, ops.Project)
+        supported_ops
+        and isinstance(X_op, supported_ops)
+        and isinstance(y_op, supported_ops)
         and X_op.parent is y_op.parent
     ):
         # ibis 9.0
