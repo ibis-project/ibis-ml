@@ -16,6 +16,8 @@ def test_train_test_split():
     # Check counts and overlaps in train and test dataset
     assert train_table.count().execute() + test_table.count().execute() == N
     assert train_table.intersect(test_table).count().execute() == 0
+    assert set(train_table.columns) == set(table.columns)
+    assert set(test_table.columns) == set(table.columns)
 
     # Check reproducibility
     reproduced_train_table, reproduced_test_table = ml.train_test_split(
