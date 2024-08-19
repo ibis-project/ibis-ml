@@ -23,7 +23,7 @@ and so on. If you are familiar with [scikit-learn's dataset transformations](htt
 To use code in this article, you will need to install the following packages: Ibis, IbisML, and scikit-learn.
 
 ```bash
-pip install 'ibis-framework[duckdb,examples]' ibis-ml scikit-learn
+pip install 'ibis-framework[duckdb,examples]' ibis-ml scikit-learn gcsfs
 ```
 
 ## The New York City flight data
