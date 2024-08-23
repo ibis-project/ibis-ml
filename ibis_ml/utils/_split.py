@@ -90,6 +90,6 @@ def train_test_split(
         < int((1 - test_size) * num_buckets)
     )
 
-    return table[table.train].drop(["combined_key"]), table[~table.train].drop(
-        ["combined_key"]
+    return table[table.train].drop(["combined_key", "train"]), table[~table.train].drop(
+        ["combined_key", "train"]
     )
