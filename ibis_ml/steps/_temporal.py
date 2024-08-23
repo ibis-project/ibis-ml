@@ -46,7 +46,7 @@ class ExpandDateTime(Step):
 
     Expand date and time columns using the default components
 
-    >>> step = ml.ExpandDateTime(ml.datetime())
+    >>> step = ml.ExpandDateTime(ml.timestamp())
 
     Expand specific columns using specific components for date and time
 
