@@ -30,6 +30,8 @@ from ibis_ml.steps import *
 from ibis_ml.utils._pprint import _pprint_recipe, _pprint_step, _safe_repr
 from ibis_ml.utils._split import train_test_split
 
+from ibis_ml.estimators import BaseIbisTransformer, PolynomialFeatures
+
 # Add support for `Recipe`s and `Step`s to the built-in `PrettyPrinter`.
 pprint.PrettyPrinter._dispatch[Recipe.__repr__] = _pprint_recipe  # noqa: SLF001
 pprint.PrettyPrinter._dispatch[Step.__repr__] = _pprint_step  # noqa: SLF001
