@@ -88,12 +88,12 @@ def train_test_split(
     table = table.mutate(
         **{
             combined_key: ibis.literal(",").join(
-                getattr(table, col).cast("str") for col in unique_key
+                table[col].cast("str") for col in unique_key
             )
         }
     ).mutate(
         **{
-            train_flag: (getattr(_, combined_key) + random_str).hash().abs()
+            train_flag: (_[combined_key] + random_str).hash().abs()
             % num_buckets
             < int((1 - test_size) * num_buckets)
         }
