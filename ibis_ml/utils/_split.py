@@ -93,8 +93,7 @@ def train_test_split(
         }
     ).mutate(
         **{
-            train_flag: (_[combined_key] + random_str).hash().abs()
-            % num_buckets
+            train_flag: (_[combined_key] + random_str).hash().abs() % num_buckets
             < int((1 - test_size) * num_buckets)
         }
     )
