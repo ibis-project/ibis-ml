@@ -135,6 +135,11 @@ class MutateAt(Step):
         self.expr = expr
         self.named_exprs = named_exprs
 
+    @classmethod
+    def _get_param_names(cls) -> list[str]:
+        """Get parameter names for the estimator."""
+        return ["expr", "inputs", "named_exprs"]
+
     def _repr(self) -> Iterable[tuple[str, Any]]:
         yield ("", self.inputs)
         if self.expr is not None:
@@ -191,11 +196,15 @@ class Mutate(Step):
         self.exprs = exprs
         self.named_exprs = named_exprs
 
+    @classmethod
+    def _get_param_names(cls) -> list[str]:
+        """Get parameter names for the estimator."""
+        return ["exprs", "named_exprs"]
+
     def _repr(self) -> Iterable[tuple[str, Any]]:
         for expr in self.exprs:
             yield "", expr
-        for name, expr in self.named_exprs.items():
-            yield name, expr
+        yield from self.named_exprs.items()
 
     def is_fitted(self):
         return True
