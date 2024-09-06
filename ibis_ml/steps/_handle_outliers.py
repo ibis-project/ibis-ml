@@ -142,7 +142,11 @@ class HandleUnivariateOutliers(Step):
                     (
                         (table[col_name] >= stat["lower_bound"])
                         & (table[col_name] <= stat["upper_bound"])
-                        | (table[col_name].isnull() | table[col_name].isnan())  # noqa: PD003
+                        | (
+                            (table[col_name].isnull() | table[col_name].isnan())  # noqa: PD003
+                            if table[col_name].type().is_floating()
+                            else table[col_name].isnull()  # noqa: PD003
+                        )
                     )
                     for col_name, stat in self.stats_.items()
                 ]
