@@ -48,6 +48,8 @@ website:
       - text: "Tutorial"
         href: tutorial/index.qmd
       - sidebar:reference
+      - sidebar:FAQ
+
     tools:
       - icon: github
         menu:
@@ -79,6 +81,14 @@ website:
             - reference/steps-outlier-handling.qmd
             - reference/steps-temporal-feature-extraction.qmd
             - reference/steps-other.qmd
+    - id: FAQ
+      title: "FAQ"
+      style: "docked"
+      collapse-level: 2
+      contents:
+        - id: how_to_create_transformer
+          title: "How to create your own transformer"
+          href: tutorial/how_to_create_your_own_transformer.qmd
 
         - section: Support
           contents:

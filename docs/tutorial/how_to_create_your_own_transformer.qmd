@@ -1,0 +1,241 @@
+---
+title: "How to create your own transformer"
+description: |
+  This tutorial provides step-by-step guidance for creating your own IbisML transformer in Python.
+---
+
+Transformers are responsible for converting raw data into a suitable format for training models. IbisML contains built-in data transformers like `OneHotEncode`, `ImputeMean`, `DiscretizeKBins`, and [others](https://ibis-project.github.io/ibis-ml/reference/#steps). However, sometimes, you might need to create custom preprocessing transformers. This guide will walk you through defining a custom transformation step in IbisML.
+
+## Install and import necessary modules
+
+Before starting off, ensure that you have installed all the necessary modules and imported them in your development environment. To manage modules and dependencies effectively, it is recommended to create a virtual environment using either ```venv``` or ```conda```.
+
+```{python}
+# install ibis and ibisML
+# !pip install 'ibis-framework[duckdb]' ibis-ml 
+import ibis
+import ibis.expr.types as ir
+import ibis_ml as ml
+from ibis_ml.core import Metadata, Step
+from ibis_ml.select import SelectionType, selector
+from typing import Iterable, Any
+```
+
+## Implementation outlines
+
+Creating a custom transformer in IbisML involves defining a class that inherits from the `Step` class. This class implements specific methods like `fit_table` and `transform_table` to handle data processing. If you're seeking good examples of existing steps, we recommend examining the code for [impute missing value](https://github.com/ibis-project/ibis-ml/blob/main/ibis_ml/steps/_impute.py) or [ExpandDateTime](https://github.com/ibis-project/ibis-ml/blob/main/ibis_ml/steps/_temporal.py#L14). If you need information about Ibis, you can find it [here](https://ibis-project.org/).
+
+Here’s a general guide to creating a custom transformer:
+
+#### Step 1: Define the Constructor
+In the constructor (`__init__ `method), you initialize any parameters or configurations needed for the transformer.
+
+#### Step 2: Implement `fit_table`
+The `fit_table` method is used to fit the transformer to the data. This could involve calculating statistics or other parameters from the input data that will be used during transformation.
+
+#### Step 3: Implement `transform_table`
+The `transform_table` method is used to apply the transformation to the data based on the parameters or configurations set during `fit_table`.
+
+#### Step 4: Test the Transformer
+Testing ensures that your custom transformer works as expected. You can create sample data to fit and transform, checking the output to verify correctness.
+
+## Example Implementation - `CustomRobustScaler`
+Here’s a step-by-step guide to create a custom transformation step for scaling features using [RobustScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html) from scikit-learn. 
+
+The RobustScaler in scikit-learn scales features using statistics that are robust to outliers. Instead of using the mean and variance, it uses the median and the interquartile range (IQR). The formula for scaling a feature value $x$ is:
+
+$$
+\text{scaled\_x} = \frac{x - \text{median}(X)}{\text{IQR}(X)}
+$$
+
+where:
+
+- $\text{scaled\_x}$ is the scaled feature value.
+- $x$ is the individual feature value.
+- $\text{median}(X)$ is the median of the feature values.
+- $\text{IQR}(X)$ is the interquartile range of the feature values, defined as the difference between the 75th percentile (Q3) and the 25th percentile (Q1).
+
+As a starting point, the following code snippet outlines the structure of the CustomRobustScaler class, including its constructor and methods.
+
+```{python exec:false}  
+class CustomRobustScaler(Step):
+    def __init__(self, inputs: SelectionType):
+        pass  # Initialize the constructor of the class
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        pass  # Implement fitting logic here
+    def transform_table(self, table: ir.Table) -> ir.Table:
+        pass  # Implement transformation logic here
+```
+
+### Step 1: Define the Constructor
+
+To construct our `CustomRobustScaler` transformation, we need to specify which columns will be scaled. IbisML provides a rich set of [Selectors](https://ibis-project.github.io/ibis-ml/reference/selectors.html), allowing you to select columns by data type, names, and other patterns. 
+
+We begin defining the `__init__` method with these considerations: 
+
+```{python}
+def __init__(self, inputs: SelectionType):
+  # Select the columns that will be involved in the transformation
+    self.inputs = selector(inputs)
+```
+
+### Step 2: Implement `fit_table`
+
+The next step is to implement the `fit_table()` method, which will be used to learn from the input data. This method typically fits the transformation to the data, storing any necessary statistics or parameters for later use in the transformation process. It has two parameters:
+
+- `table`: An Ibis table expression containing the data to be used for fitting the transformation.
+- `metadata`: Contains additional information about the data, such as labels, necessary for the transformation process.
+
+In this specific example, the `fit_table` method calculates the median and interquartile range (IQR) for the selected columns. These statistics are necessary for scaling the data using the RobustScaler approach. We will save the statistics for each column in a dictionary. 
+
+Here is the outlines for the fit_table method:
+
+- Get the column names using the `Selector`'s built-in method `select_columns`.
+- For each column, calculate the `median` and `IQR` (`p75` - `p25`) by building an Ibis expression, which can be lazily evaluated on your chosen Ibis-supported backend.
+- Save the statistics in a dictionary, which will be used during the transformation process.
+
+```{python}
+def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+    # Step 1: Get the column names that match the selector
+    columns = self.inputs.select_columns(table, metadata)
+    # Step 2: Initialize a dictionary to store statistics
+    stats = {}
+    # Step 3: If there are columns selected, calculate statistics for each column
+    if columns:
+        # Create a list to hold Ibis aggregation expressions
+        aggs = []
+        # Step 4: Iterate over each selected column
+        for name in columns:
+            # Get the column from the table
+            c = table[name]
+            # Build Ibis expressions for median, 25th percentile, and 75th percentile
+            aggs.append(c.median().name(f"{name}_median"))
+            aggs.append(c.quantile(0.25).name(f"{name}_25"))
+            aggs.append(c.quantile(0.75).name(f"{name}_75"))
+        # Step 5: Evaluate the Ibis expressions in one run
+        results = table.aggregate(aggs).execute().to_dict("records")[0]
+        # Step 6: Save the statistics in the dictionary
+        for name in columns:
+            stats[name] = (
+                results[f"{name}_median"],
+                results[f"{name}_25"],
+                results[f"{name}_75"],
+            )
+    # Step 7: Store the statistics in an instance variable
+    self.stats_ = stats
+```
+
+### Step 3: Implement `transform_table`
+
+The `transform_table` method applies the learned transformation to the input data. This method takes the input table and transforms it based on the previously calculated statistics. Here's how to implement transform_table:
+
+```{python}
+def transform_table(self, table):
+    # Apply the transformation to each column 
+    return table.mutate(
+        [
+            # Apply the transformation formula: (x - median) / (p75 - p25)
+            ((table[c] - median) / (p75 - p25)).name(c)  
+            for c, (median, p25, p75) in self.stats_.items()
+        ]
+    )
+```
+
+### Step 4: Test the Transformer
+Let's put the code together and perform some simple tests to verify the results.
+
+```{python}
+class CustomRobustScaler(Step):
+    def __init__(self, inputs: SelectionType):
+        # Select the columns that will be involved in the transformation
+        self.inputs = selector(inputs)
+    def fit_table(self, table: ir.Table, metadata: Metadata) -> None:
+        # Step 1: Get the column names that match the selector
+        columns = self.inputs.select_columns(table, metadata)
+        # Step 2: Initialize a dictionary to store statistics
+        stats = {}
+        # Step 3: If there are columns selected, calculate statistics for each column
+        if columns:
+            # Create a list to hold Ibis aggregation expressions
+            aggs = []
+            # Step 4: Iterate over each selected column
+            for name in columns:
+                # Get the column from the table
+                c = table[name]
+                # Build Ibis expressions for median, 25th percentile, and 75th percentile
+                aggs.append(c.median().name(f"{name}_median"))
+                aggs.append(c.quantile(0.25).name(f"{name}_25"))
+                aggs.append(c.quantile(0.75).name(f"{name}_75"))
+            # Step 5: Evaluate the Ibis expressions in one run
+            results = table.aggregate(aggs).execute().to_dict("records")[0]
+            # Step 6: Save the statistics in the dictionary
+            for name in columns:
+                stats[name] = (
+                    results[f"{name}_median"],
+                    results[f"{name}_25"],
+                    results[f"{name}_75"],  
+                )
+        # Step 7: Store the statistics in an instance variable
+        self.stats_ = stats
+    def transform_table(self, table):
+        # Apply the transformation to each column 
+        return table.mutate(
+            [
+                # Apply the transformation formula: (x - median) / (p75 - p25)
+                ((table[c] - median) / (p75 - p25)).name(c)  
+                for c, (median, p25, p75) in self.stats_.items()
+            ]
+        )
+```
+
+This code creates sample data for four columns: "string_col", "int_col", "floating_col", and "target_col", each containing 10 rows of data. The train_table variable holds the created Ibis memory table.
+
+```{python}
+import numpy as np
+# Enable interactive mode for Ibis
+ibis.options.interactive = True
+train_size = 10
+data = {
+    "string_col": np.array(["a"] * train_size, dtype="str"),
+    "int_col": np.arange(train_size, dtype="int64"),
+    "floating_col": np.arange(train_size, dtype="float64"),
+    "target_col": np.arange(train_size, dtype="int8"),
+}
+train_table = ibis.memtable(data)
+train_table
+```
+
+This code initializes a transformer instance of `CustomRobustScaler` with the specified columns to scale. Then, it creates a `Metadata` object with target columns. The transformer is fitted to the training data and metadata using the `fit_table` method. Finally, the `transform_table` method is used to transform the training table with the fitted transformer.
+
+```{python}
+# Instantiate CustomRobustScaler transformer with the specified columns to scale
+# # Select only one column: "int_col"
+robust_scaler = CustomRobustScaler(["int_col"])
+# # Select all numeric columns
+# robust_scaler = CustomRobustScaler(ml.numeric())
+# Create Metadata object with target columns
+metadata = Metadata(targets=("target_col",))
+# Fit the transformer to the training data and metadata
+robust_scaler.fit_table(train_table, metadata)
+# Transform the training table using the fitted transformer
+transformed_train_table = robust_scaler.transform_table(train_table)
+transformed_train_table
+```
+
+Access the calculated statistics for each column
+
+```{python}
+robust_scaler.stats_
+```
+
+### Additional Considerations
+
+Here are some considerations to ensure the transformer handles unexpected data types or conditions gracefully:
+
+- Check for numeric columns: Ensure that selected columns are numeric before calculating statistics. This prevents errors when trying to calculate statistics on non-numeric data.
+- Backend compatibility: Validate if [operators](https://ibis-project.org/backends/support/matrix) used by IbisML are supported by your chosen backend. This ensures seamless integration and execution of transformations across different environments.
+
+
+## Contributions are welcome!
+
+Feel free to contribute by implementing your own custom transformers or suggesting ones that you find essential. You can do so by checking our transformation [priorities](https://github.com/ibis-project/ibis-ml/issues/32), discussing ideas through creating [issues](https://github.com/ibis-project/ibis-ml/issues), or submitting pull requests (PRs) with your implementations. We welcome collaboration and value input from all contributors. Thanks for helping to build ```Ibis-ml```.
