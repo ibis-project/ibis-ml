@@ -12,14 +12,14 @@ from typing import TYPE_CHECKING, Any, Literal, cast
 import ibis
 import ibis.expr.operations as ops
 import ibis.expr.types as ir
-import numpy as np
-import pandas as pd
-import pyarrow as pa
 from ibis.common.dispatch import lazy_singledispatch
 
 if TYPE_CHECKING:
     import dask.dataframe as dd
+    import numpy as np
+    import pandas as pd
     import polars as pl
+    import pyarrow as pa
     import xgboost as xgb
     from sklearn.utils._estimator_html_repr import _VisualBlock
 
@@ -45,6 +45,9 @@ def _ibis_table_to_numpy(table: ir.Table) -> np.ndarray:
 
 def _y_as_dataframe(y: Any) -> pd.DataFrame:
     """Coerce `y` to a pandas dataframe"""
+    import numpy as np
+    import pandas as pd
+
     if isinstance(y, pd.DataFrame):
         return y
     elif isinstance(y, pd.Series):
@@ -144,8 +147,11 @@ def _(X, y=None, maintain_order=False):
     return table, tuple(y.columns), None
 
 
-@normalize_table.register(pd.DataFrame)
+@normalize_table.register("pd.DataFrame")
 def _(X, y=None, maintain_order=False):
+    import numpy as np
+    import pandas as pd
+
     if y is not None:
         y = _y_as_dataframe(y)
         table = pd.concat([X, y], axis=1)
@@ -162,8 +168,11 @@ def _(X, y=None, maintain_order=False):
     return ibis.memtable(table), targets, index
 
 
-@normalize_table.register(np.ndarray)
+@normalize_table.register("np.ndarray")
 def _(X, y=None, maintain_order=False):
+    import numpy as np
+    import pandas as pd
+
     X = pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])])
     if y is not None:
         y = _y_as_dataframe(y)
@@ -181,8 +190,10 @@ def _(X, y=None, maintain_order=False):
     return ibis.memtable(table), targets, index
 
 
-@normalize_table.register(pa.Table)
+@normalize_table.register("pa.Table")
 def _(X, y=None, maintain_order=False):
+    import pyarrow as pa
+
     if y is not None:
         if isinstance(y, (pa.ChunkedArray, pa.Array)):
             y = pa.Table.from_pydict({"y": y})
@@ -255,6 +266,8 @@ class Metadata:
 def _categorize_wrap_reader(
     reader: pa.RecordBatchReader, categories: dict[str, pa.Array]
 ) -> Iterable[pa.RecordBatch]:
+    import pyarrow as pa
+
     for batch in reader:
         out = {}
         for name, col in zip(batch.schema.names, batch.columns):
@@ -620,6 +633,8 @@ class Recipe:
         return df
 
     def _categorize_pyarrow(self, table: pa.Table) -> pa.Table:
+        import pyarrow as pa
+
         if not self.metadata_.categories:
             return table
 
@@ -645,6 +660,8 @@ class Recipe:
     def _categorize_pyarrow_batches(
         self, reader: pa.RecordBatchReader
     ) -> pa.RecordBatchReader:
+        import pyarrow as pa
+
         if not self.metadata_.categories:
             return reader
 
