@@ -62,11 +62,34 @@ def test_ordinal_encode(t_train, t_test):
     tm.assert_frame_equal(res.execute(), expected.execute(), check_dtype=False)
 
 
-def test_one_hot_encode(t_train, t_test):
-    step = ml.OneHotEncode("ticker")
+@pytest.mark.parametrize(
+    ("min_frequency", "max_categories", "expected"),
+    [
+        (
+            None,
+            None,
+            {
+                "ticker_AAPL": [0, 0, 0, 0, 0, 0],
+                "ticker_GOOG": [0, 0, 1, 1, 0, 0],
+                "ticker_MSFT": [1, 1, 0, 0, 0, 0],
+                "ticker_None": [0, 0, 0, 0, 0, 1],
+            },
+        ),
+        (
+            2,
+            None,
+            {"ticker_GOOG": [0, 0, 1, 1, 0, 0], "ticker_MSFT": [1, 1, 0, 0, 0, 0]},
+        ),
+        (None, 1, {"ticker_MSFT": [1, 1, 0, 0, 0, 0]}),
+    ],
+)
+def test_onehotencode(t_train, t_test, min_frequency, max_categories, expected):
+    step = ml.OneHotEncode(
+        "ticker", min_frequency=min_frequency, max_categories=max_categories
+    )
     step.fit_table(t_train, ml.core.Metadata())
     result = step.transform_table(t_test)
-    expected = pd.DataFrame(
+    expected_df = pd.DataFrame(
         {
             "time": [
                 pd.Timestamp("2016-05-25 13:30:00.023"),
@@ -76,13 +99,10 @@ def test_one_hot_encode(t_train, t_test):
                 pd.Timestamp("2016-05-25 13:30:00.050"),
                 pd.Timestamp("2016-05-25 13:30:00.051"),
             ],
-            "ticker_AAPL": [0, 0, 0, 0, 0, 0],
-            "ticker_GOOG": [0, 0, 1, 1, 0, 0],
-            "ticker_MSFT": [1, 1, 0, 0, 0, 0],
-            "ticker_None": [0, 0, 0, 0, 0, 1],
+            **expected,
         }
     )
-    tm.assert_frame_equal(result.execute(), expected, check_dtype=False)
+    tm.assert_frame_equal(result.execute(), expected_df, check_dtype=False)
 
 
 @pytest.mark.parametrize("smooth", [5000.0, 1.0, 0.0])
