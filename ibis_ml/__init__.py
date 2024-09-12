@@ -44,11 +44,12 @@ def _auto_patch_skorch() -> None:
         return
 
     import ibis.expr.types as ir
-    import numpy as np
 
     old_fit = skorch.net.NeuralNet.fit
 
     def fit(self, X, y=None, **fit_params):
+        import numpy as np
+
         if isinstance(y, ir.Column):
             y = np.asarray(y)
 

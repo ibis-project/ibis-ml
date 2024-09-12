@@ -1,4 +1,3 @@
-import importlib
 import sys
 from importlib import import_module, reload
 from unittest import mock
@@ -20,7 +19,7 @@ def test_optional_dependencies(optional_dep, caplog):
 
 def test_import():
     try:
-        importlib.import_module("ibis_ml")
+        import_module("ibis_ml")
     except AttributeError:
         raise ImportError("cannot import IbisML") from None
     assert "ibis_ml" in sys.modules
