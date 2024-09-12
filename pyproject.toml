@@ -86,7 +86,6 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "docs/**/*.py" = ["INP001"]
-"ibis_ml/core.py" = ["TCH004"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false

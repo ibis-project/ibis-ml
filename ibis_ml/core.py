@@ -192,6 +192,7 @@ def _(X, y=None, maintain_order=False):
 
 @normalize_table.register("pa.Table")
 def _(X, y=None, maintain_order=False):
+    import numpy as np
     import pyarrow as pa
 
     if y is not None:
@@ -257,6 +258,8 @@ class Metadata:
         return self.categories.get(column)
 
     def set_categories(self, column: str, values: pa.Array | list[Any]) -> None:
+        import pyarrow as pa
+
         self.categories[column] = pa.array(values)
 
     def drop_categories(self, column: str) -> None:
