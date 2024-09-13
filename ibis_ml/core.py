@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Any, Literal, cast
 import ibis
 import ibis.expr.operations as ops
 import ibis.expr.types as ir
-from ibis.common.deferred import Deferred
 from ibis.common.dispatch import lazy_singledispatch
 
 if TYPE_CHECKING:
@@ -354,8 +353,7 @@ class Step:
         Parameters
         ----------
         deep : bool, default=True
-            If True, will return the parameters for this estimator and
-            contained subobjects that are estimators.
+            Has no effect, because steps cannot contain nested substeps.
 
         Returns
         -------
@@ -370,19 +368,7 @@ class Step:
         ----------
         .. [1] https://github.com/scikit-learn/scikit-learn/blob/626b460/sklearn/base.py#L145-L167
         """
-        out = {}
-        for key in self._get_param_names():
-            value = getattr(self, key)
-            if (
-                deep
-                and hasattr(value, "get_params")
-                # `hasattr()` always returns `True` for deferred objects
-                and not isinstance(value, (type, Deferred))
-            ):
-                deep_items = value.get_params().items()
-                out.update((key + "__" + k, val) for k, val in deep_items)
-            out[key] = value
-        return out
+        return {key: getattr(self, key) for key in self._get_param_names()}
 
     def __repr__(self) -> str:
         return pprint.pformat(self)
@@ -526,8 +512,6 @@ class Recipe:
         transform: Literal["default", "pandas", "pyarrow", "polars", None] = None,
     ) -> Recipe:
         """Set output type returned by `transform`.
-
-        This is part of the standard Scikit-Learn API.
 
         Parameters
         ----------
