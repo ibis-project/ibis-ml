@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Any
 
 import ibis.expr.types as ir
@@ -14,6 +15,8 @@ _DOCS_PAGE_NAME = "imputation"
 
 
 def _fillna(col, val):
+    if val is None or col.type().is_floating() and math.isnan(val):
+        raise ValueError(f"Cannot fill column {col.get_name()!r} with `None` or `NaN`")
     if col.type().is_floating():
         return (col.isnull() | col.isnan()).ifelse(val, col)  # noqa: PD003
     else:
