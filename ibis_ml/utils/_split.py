@@ -82,7 +82,7 @@ def train_test_split(
         unique_key = [unique_key]
 
     # Append random string to the name to avoid collision
-    combined_key = f"comebined_key_{random_str}"
+    combined_key = f"combined_key_{random_str}"
     train_flag = f"train_{random_str}"
 
     table = table.mutate(
