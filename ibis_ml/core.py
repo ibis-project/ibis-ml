@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Literal, cast
 import ibis
 import ibis.expr.operations as ops
 import ibis.expr.types as ir
+from ibis.common.deferred import Deferred
 from ibis.common.dispatch import lazy_singledispatch
 
 if TYPE_CHECKING:
@@ -363,7 +364,7 @@ class Step:
 
         Notes
         -----
-        Copied from [1]_.
+        Derived from [1]_.
 
         References
         ----------
@@ -372,7 +373,12 @@ class Step:
         out = {}
         for key in self._get_param_names():
             value = getattr(self, key)
-            if deep and hasattr(value, "get_params") and not isinstance(value, type):
+            if (
+                deep
+                and hasattr(value, "get_params")
+                # `hasattr()` always returns `True` for deferred objects
+                and not isinstance(value, (type, Deferred))
+            ):
                 deep_items = value.get_params().items()
                 out.update((key + "__" + k, val) for k, val in deep_items)
             out[key] = value
