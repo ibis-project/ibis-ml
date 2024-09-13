@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <section id="the-new-york-city-flight-data" class="level2">
 <h2 class="anchored" data-anchor-id="the-new-york-city-flight-data">The New York City flight data</h2>
 <p>Let’s use the <a href="https://github.com/hadley/nycflights13">nycflights13 data</a> to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:</p>
-<div id="b52697e4" class="cell" data-execution_count="1">
+<div id="ddb7e513" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(<span class="st">"duckdb://nycflights13.ddb"</span>)</span>
@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can now see the example dataset copied over to the database:</p>
-<div id="cfc92c43" class="cell" data-execution_count="2">
+<div id="088e1bac" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.<span class="ex">connect</span>(<span class="st">"duckdb://nycflights13.ddb"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>con.list_tables()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
@@ -351,10 +351,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 </div>
 <p>We’ll turn on interactive mode, which partially executes queries to give users a preview of the results.</p>
-<div id="0fda62be" class="cell" data-execution_count="3">
+<div id="36412240" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ibis.options.interactive <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="6b244f21" class="cell" data-execution_count="4">
+<div id="308d40a1" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> con.table(<span class="st">"flights"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> flights.mutate(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    dep_time<span class="op">=</span>(</span>
@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="9b203550" class="cell" data-execution_count="5">
+<div id="366404f6" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>weather <span class="op">=</span> con.table(<span class="st">"weather"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>weather</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -412,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="bab4b1fc" class="cell" data-execution_count="6">
+<div id="987becea" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>flight_data <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    flights.mutate(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert the arrival delay to a factor</span></span>
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>flight_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_2320/1355661947.py:24: FutureWarning: `Table.dropna` is deprecated as of v9.1; use drop_null instead
+<pre><code>/tmp/ipykernel_2332/1355661947.py:24: FutureWarning: `Table.dropna` is deprecated as of v9.1; use drop_null instead
   .dropna()</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -465,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 </div>
 <p>We can see that about 16% of the flights in this dataset arrived more than 30 minutes late.</p>
-<div id="ca233641" class="cell" data-execution_count="7">
+<div id="cb670aa4" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>flight_data.arr_delay.value_counts().rename(n<span class="op">=</span><span class="st">"arr_delay_count"</span>).mutate(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    prop<span class="op">=</span>ibis._.n <span class="op">/</span> ibis._.n.<span class="bu">sum</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -486,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 class="anchored" data-anchor-id="data-splitting">Data splitting</h2>
 <p>To get started, let’s split this single dataset into two: a <em>training</em> set and a <em>testing</em> set. We’ll keep most of the rows in the original dataset (subset chosen randomly) in the <em>training</em> set. The training data will be used to <em>fit</em> the model, and the <em>testing</em> set will be used to measure model performance.</p>
 <p>Because the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. <a href="https://www.euclaim.com/blog/flight-numbers-explained#:~:text=Can%20flight%20numbers%20be%20reused,of%20travel%20is%20always%20unique.">It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.</a></p>
-<div id="36bc36ec" class="cell" data-execution_count="8">
+<div id="73367973" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key <span class="op">=</span> flight_data.mutate(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    unique_key<span class="op">=</span>ibis.literal(<span class="st">","</span>).join(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        [flight_data.carrier, flight_data.flight.cast(<span class="bu">str</span>), flight_data.date.cast(<span class="bu">str</span>)]</span>
@@ -514,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </pre>
 </div>
 </div>
-<div id="70547ec2" class="cell" data-execution_count="9">
+<div id="b1ee1d9c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">FIXME</span><span class="co">(deepyaman): Proposed key isn't unique for actual departure date.</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>flight_data_with_unique_key.group_by(<span class="st">"unique_key"</span>).mutate(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    cnt<span class="op">=</span>flight_data_with_unique_key.count()</span>
@@ -531,20 +531,20 @@ document.addEventListener("DOMContentLoaded", function() {
 ├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┼────────────────────┼───────┤
 │ <span style="color: #800080; text-decoration-color: #800080">19:59:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1022</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">167</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14 23:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1022,2013-09-14</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">20:00:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1022</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">186</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-09-14 00:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1022,2013-09-14</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
-│ <span style="color: #800080; text-decoration-color: #800080">21:16:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1023</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">175</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1023,2013-05-29</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">19:12:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1023</span> │ <span style="color: #008000; text-decoration-color: #008000">LGA   </span> │ <span style="color: #008000; text-decoration-color: #008000">ORD   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">112</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">733</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29 23:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1023,2013-05-29</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">21:16:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1023</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">175</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-05-29 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1023,2013-05-29</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">15:18:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1052</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">174</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27 19:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1052,2013-08-27</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">21:22:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1052</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">IAH   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">173</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1400</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-08-27 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1052,2013-08-27</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">19:27:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1053</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">CLE   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">69</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">404</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20 00:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1053,2013-12-20</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">18:39:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1053</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">CLE   </span> │       <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">72</span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">404</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-12-20 23:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1053,2013-12-20</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
-│ <span style="color: #800080; text-decoration-color: #800080">20:16:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1071</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">BQN   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">196</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1585</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1071,2013-02-26</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #800080; text-decoration-color: #800080">17:20:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1071</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">PHX   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">281</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2133</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26 22:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1071,2013-02-26</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
+│ <span style="color: #800080; text-decoration-color: #800080">20:16:00</span> │   <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1071</span> │ <span style="color: #008000; text-decoration-color: #008000">EWR   </span> │ <span style="color: #008000; text-decoration-color: #008000">BQN   </span> │      <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">196</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1585</span> │ <span style="color: #008000; text-decoration-color: #008000">UA     </span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26</span> │         <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span> │ <span style="color: #800080; text-decoration-color: #800080">2013-02-26 01:00:00</span> │ <span style="color: #008000; text-decoration-color: #008000">UA,1071,2013-02-26</span> │     <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span> │
 │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>        │      <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>      │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │        <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>       │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>          │         <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                   │ <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span>                  │     <span style="color: #7f7f7f; text-decoration-color: #7f7f7f">…</span> │
 └──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┴────────────────────┴───────┘
 </pre>
 </div>
 </div>
-<div id="5c6d6fbf" class="cell" data-execution_count="10">
+<div id="53a94b38" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix the random numbers by setting the seed</span></span>
@@ -564,7 +564,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </section>
 <section id="create-features" class="level2">
 <h2 class="anchored" data-anchor-id="create-features">Create features</h2>
-<div id="f883537a" class="cell" data-execution_count="11">
+<div id="5fbc9c57" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis_ml <span class="im">as</span> ml</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>flights_rec <span class="op">=</span> ml.Recipe(</span>
@@ -587,14 +587,14 @@ document.addEventListener("DOMContentLoaded", function() {
 <li><p><strong>Apply the recipe to the test set</strong>: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.</p></li>
 </ol>
 <p>To simplify this process, we can use a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">scikit-learn <code>Pipeline</code></a>.</p>
-<div id="f49b3266" class="cell" data-execution_count="12">
+<div id="a7397c5a" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xgboost <span class="im">as</span> xgb</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> Pipeline([(<span class="st">"flights_rec"</span>, flights_rec), (<span class="st">"clf"</span>, xgb.XGBClassifier())])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, there is a single function that can be used to prepare the recipe and train the model from the resulting predictors:</p>
-<div id="1d8cbe3c" class="cell" data-execution_count="13">
+<div id="2540f728" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_data.drop(<span class="st">"arr_delay"</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data.arr_delay</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>pipe.fit(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1065,12 +1065,12 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <section id="use-a-trained-workflow-to-predict" class="level2">
 <h2 class="anchored" data-anchor-id="use-a-trained-workflow-to-predict">Use a trained workflow to predict</h2>
 <p>…</p>
-<div id="57175a76" class="cell" data-execution_count="14">
+<div id="72be20b6" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test_data.drop(<span class="st">"arr_delay"</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test_data.arr_delay</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>pipe.score(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>0.8296519493297257</code></pre>
+<pre><code>0.834227032345345</code></pre>
 </div>
 </div>
 </section>
