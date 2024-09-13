@@ -61,7 +61,14 @@ class ScaleMinMax(Step):
             self._fit_expr = [expr]
             results = expr.execute().to_dict("records")[0]
             for name in columns:
-                stats[name] = (results[f"{name}_max"], results[f"{name}_min"])
+                col_max = results[f"{name}_max"]
+                col_min = results[f"{name}_min"]
+                if col_max == col_min:
+                    raise ValueError(
+                        f"Cannot standardize {name!r} - "
+                        "the maximum and minimum values are equal"
+                    )
+                stats[name] = (col_max, col_min)
 
         self.stats_ = stats
 
@@ -121,7 +128,12 @@ class ScaleStandard(Step):
             self._fit_expr = [table.aggregate(aggs)]
             results = self._fit_expr[-1].execute().to_dict("records")[0]
             for name in columns:
-                stats[name] = (results[f"{name}_mean"], results[f"{name}_std"])
+                col_std = results[f"{name}_std"]
+                if col_std == 0:
+                    raise ValueError(
+                        f"Cannot standardize {name!r} - the standard deviation is zero"
+                    )
+                stats[name] = (results[f"{name}_mean"], col_std)
 
         self.stats_ = stats
 
