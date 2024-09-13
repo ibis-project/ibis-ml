@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 import ibis
 import ibis.expr.types as ir
+from ibis import _
 
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
@@ -41,10 +42,14 @@ def _compute_categories(
             query = (
                 table.select(value=col)
                 .group_by("value")
-                .count("count")
+                .aggregate(count=_.count())
                 .mutate(column=ibis.literal(col))
             )
-            return query if max_categories is None else query.limit(max_categories)
+            return (
+                query
+                if max_categories is None
+                else query.order_by(ibis.desc("count")).limit(max_categories)
+            )
 
         def process(df: pd.DataFrame) -> list[Any]:
             if isinstance(min_frequency, int):
