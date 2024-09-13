@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Any
 
 import ibis
 import ibis.expr.types as ir
-import numpy as np
 
 from ibis_ml.core import Metadata, Step
 from ibis_ml.select import SelectionType, selector
@@ -94,6 +93,8 @@ class DiscretizeKBins(Step):
     def _fit_uniform_strategy(
         self, table: ir.Table, columns: list[str]
     ) -> dict[str, list[float]]:
+        import numpy as np
+
         aggs = []
         for col_name in columns:
             col = table[col_name]
@@ -117,6 +118,8 @@ class DiscretizeKBins(Step):
     def _fit_quantile_strategy(
         self, table: ir.Table, columns: list[str]
     ) -> dict[str, list[float]]:
+        import numpy as np
+
         aggs = []
         percentiles = np.linspace(0, 1, self.n_bins + 1)
         for col_name in columns:
