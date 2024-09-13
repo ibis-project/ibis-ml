@@ -92,7 +92,7 @@ def test_handle_univariate_outliers(
         {
             # use same value for easier calculation statistics
             "int_col": [0] * 10,  # mean = 0, std = 0 Q1 = 0, Q3 = 0
-            "floating_col": [0.0] * 10,  # mean = 0, std = 0 Q1 = 0, Q3 = 0
+            "floating_col": [0.0] * 10,  # mean = 0, std = 0, Q1 = 0, Q3 = 0
         }
     )
 
