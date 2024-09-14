@@ -90,7 +90,30 @@ ExpandDate:
         components:
           - doy
 
-ExpandDateTime:
+ExpandTime:
+  configurations:
+    - name: h
+      config:
+        inputs: time
+        components:
+          - hour
+    - name: m
+      config:
+        inputs: time
+        components:
+          - minute
+    - name: s
+      config:
+        inputs: time
+        components:
+          - second
+    - name: ms
+      config:
+        inputs: time
+        components:
+          - millisecond
+
+ExpandTimestamp:
   configurations:
     - name: ms
       config:
@@ -137,26 +160,3 @@ ExpandDateTime:
         inputs: timestamp
         components:
           - doy
-
-ExpandTime:
-  configurations:
-    - name: h
-      config:
-        inputs: time
-        components:
-          - hour
-    - name: m
-      config:
-        inputs: time
-        components:
-          - minute
-    - name: s
-      config:
-        inputs: time
-        components:
-          - second
-    - name: ms
-      config:
-        inputs: time
-        components:
-          - millisecond
