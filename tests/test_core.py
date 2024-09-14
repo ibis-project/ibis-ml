@@ -366,10 +366,10 @@ def test_errors_nicely_if_not_fitted(table, method):
 
 
 def test_get_params():
-    rec = ml.Recipe(ml.ExpandDateTime(ml.timestamp()))
+    rec = ml.Recipe(ml.ExpandTimestamp(ml.timestamp()))
 
-    assert "expanddatetime__components" in rec.get_params(deep=True)
-    assert "expanddatetime__components" not in rec.get_params(deep=False)
+    assert "expandtimestamp__components" in rec.get_params(deep=True)
+    assert "expandtimestamp__components" not in rec.get_params(deep=False)
 
 
 @pytest.mark.parametrize(
