@@ -370,6 +370,44 @@ class Step:
         """
         return {key: getattr(self, key) for key in self._get_param_names()}
 
+    def set_params(self, **params):
+        """Set the parameters of this estimator.
+
+        Parameters
+        ----------
+        **params : dict
+            Step parameters.
+
+        Returns
+        -------
+        self : object
+            Step class instance.
+
+        Notes
+        -----
+        Derived from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256
+        """
+        if not params:
+            # Simple optimization to gain speed (inspect is slow)
+            return self
+
+        valid_params = self._get_param_names()
+
+        for key, value in params.items():
+            if key not in valid_params:
+                raise ValueError(
+                    f"Invalid parameter {key!r} for estimator {self}. "
+                    f"Valid parameters are: {valid_params!r}."
+                )
+
+            setattr(self, key, value)
+
+        return self
+
     def __repr__(self) -> str:
         return pprint.pformat(self)
 
@@ -453,7 +491,7 @@ def _name_estimators(estimators):
 
 class Recipe:
     def __init__(self, *steps: Step):
-        self.steps = steps
+        self.steps = list(steps)
         self._output_format = "default"
 
     def __repr__(self):
@@ -502,9 +540,69 @@ class Recipe:
                     out[f"{name}__{key}"] = value
         return out
 
-    def set_params(self, **kwargs):
-        if "steps" in kwargs:
-            self.steps = kwargs.get("steps")
+    def set_params(self, **params):
+        """Set the parameters of this estimator.
+
+        Valid parameter keys can be listed with ``get_params()``. Note that
+        you can directly set the parameters of the estimators contained in
+        `steps`.
+
+        Parameters
+        ----------
+        **params : dict
+            Parameters of this estimator or parameters of estimators contained
+            in `steps`. Parameters of the steps may be set using its name and
+            the parameter name separated by a '__'.
+
+        Returns
+        -------
+        self : object
+            Recipe class instance.
+
+        Notes
+        -----
+        Derived from [1]_ and [2]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/ff1c6f3/sklearn/utils/metaestimators.py#L51-L70
+        .. [2] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256
+        """
+        if not params:
+            # Simple optimization to gain speed (inspect is slow)
+            return self
+
+        # Ensure strict ordering of parameter setting:
+        # 1. All steps
+        if "steps" in params:
+            self.steps = params.pop("steps")
+
+        # 2. Replace items with estimators in params
+        estimator_name_indexes = {
+            x: i for i, x in enumerate(name for name, _ in _name_estimators(self.steps))
+        }
+        for name in list(params):
+            if "__" not in name and name in estimator_name_indexes:
+                self.steps[estimator_name_indexes[name]] = params.pop(name)
+
+        # 3. Step parameters and other initialisation arguments
+        valid_params = self.get_params(deep=True)
+
+        nested_params = defaultdict(dict)  # grouped by prefix
+        for key, value in params.items():
+            key, sub_key = key.split("__", maxsplit=1)
+            if key not in valid_params:
+                raise ValueError(
+                    f"Invalid parameter {key!r} for estimator {self}. "
+                    f"Valid parameters are: ['steps']."
+                )
+
+            nested_params[key][sub_key] = value
+
+        for key, sub_params in nested_params.items():
+            valid_params[key].set_params(**sub_params)
+
+        return self
 
     def set_output(
         self,

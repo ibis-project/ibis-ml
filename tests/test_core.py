@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import ibis
 import ibis.expr.types as ir
 import numpy as np
@@ -370,6 +372,55 @@ def test_get_params():
 
     assert "expandtimestamp__components" in rec.get_params(deep=True)
     assert "expandtimestamp__components" not in rec.get_params(deep=False)
+
+
+def test_set_params():
+    rec = ml.Recipe(ml.ExpandTimestamp(ml.timestamp()))
+
+    # Nonexistent parameter in step
+    with pytest.raises(
+        ValueError,
+        match="Invalid parameter 'nonexistent_param' for estimator ExpandTimestamp",
+    ):
+        rec.set_params(expandtimestamp__nonexistent_param=True)
+
+    # Nonexistent parameter of pipeline
+    with pytest.raises(
+        ValueError, match="Invalid parameter 'expanddatetime' for estimator Recipe"
+    ):
+        rec.set_params(expanddatetime__nonexistent_param=True)
+
+
+def test_set_params_passes_all_parameters():
+    # Make sure all parameters are passed together to set_params
+    # of nested estimator.
+    rec = ml.Recipe(ml.ExpandTimestamp(ml.timestamp()))
+    with patch.object(ml.ExpandTimestamp, "set_params") as mock_set_params:
+        rec.set_params(
+            expandtimestamp__inputs=["x", "y"],
+            expandtimestamp__components=["day", "year", "hour"],
+        )
+
+    mock_set_params.assert_called_once_with(
+        inputs=["x", "y"], components=["day", "year", "hour"]
+    )
+
+
+def test_set_params_updates_valid_params():
+    # Check that set_params tries to set `replacement_mutateat.inputs`, not
+    # `original_mutateat.inputs`.
+    original_mutateat = ml.MutateAt("dep_time", ibis._.hour() * 60 + ibis._.minute())  # noqa: SLF001
+    rec = ml.Recipe(
+        original_mutateat,
+        ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),  # noqa: SLF001
+    )
+    replacement_mutateat = ml.MutateAt("arr_time", ibis._.hour() * 60 + ibis._.minute())  # noqa: SLF001
+    rec.set_params(
+        **{"mutateat-1": replacement_mutateat, "mutateat-1__inputs": ml.cols("arrival")}
+    )
+    assert original_mutateat.inputs == ml.cols("dep_time")
+    assert replacement_mutateat.inputs == ml.cols("arrival")
+    assert rec.steps[0] is replacement_mutateat
 
 
 @pytest.mark.parametrize(
