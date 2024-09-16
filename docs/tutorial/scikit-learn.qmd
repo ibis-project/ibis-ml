@@ -101,7 +101,7 @@ flight_data = (
         "time_hour",
     )
     # Exclude missing data
-    .dropna()
+    .drop_null()
 )
 flight_data
 ```
@@ -130,10 +130,9 @@ flight_data_with_unique_key
 ```
 
 ```{python}
-# FIXME(deepyaman): Proposed key isn't unique for actual departure date.
 flight_data_with_unique_key.group_by("unique_key").mutate(
-    cnt=flight_data_with_unique_key.count()
-)[ibis._.cnt > 1]
+    count=flight_data_with_unique_key.count()
+).filter(ibis._["count"] > 1)
 ```
 
 ```{python}
