@@ -121,43 +121,24 @@ To get started, let's split this single dataset into two: a _training_ set and a
 Because the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. [It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.](https://www.euclaim.com/blog/flight-numbers-explained#:~:text=Can%20flight%20numbers%20be%20reused,of%20travel%20is%20always%20unique.)
 
 ```{python}
-flight_data_with_unique_key = flight_data.mutate(
-    unique_key=ibis.literal(",").join(
-        [flight_data.carrier, flight_data.flight.cast(str), flight_data.date.cast(str)]
-    )
-)
-flight_data_with_unique_key
-```
-
-```{python}
-flight_data_with_unique_key.group_by("unique_key").mutate(
-    count=flight_data_with_unique_key.count()
-).filter(ibis._["count"] > 1)
-```
-
-```{python}
-import random
-
-# Fix the random numbers by setting the seed
-# This enables the analysis to be reproducible when random numbers are used
-random.seed(222)
-
-# Put 3/4 of the data into the training set
-random_key = str(random.getrandbits(256))
-data_split = flight_data_with_unique_key.mutate(
-    train=(flight_data_with_unique_key.unique_key + random_key).hash().abs() % 4 < 3
-)
+import ibis_ml as ml
 
 # Create data frames for the two sets:
-train_data = data_split[data_split.train].drop("unique_key", "train")
-test_data = data_split[~data_split.train].drop("unique_key", "train")
+train_data, test_data = ml.train_test_split(
+    flight_data,
+    unique_key=["carrier", "flight", "date"],
+    # Put 3/4 of the data into the training set
+    test_size=0.25,
+    num_buckets=4,
+    # Fix the random numbers by setting the seed
+    # This enables the analysis to be reproducible when random numbers are used
+    random_seed=222,
+)
 ```
 
 ## Create features
 
 ```{python}
-import ibis_ml as ml
-
 flights_rec = ml.Recipe(
     ml.ExpandDate("date", components=["dow", "month"]),
     ml.Drop("date"),
