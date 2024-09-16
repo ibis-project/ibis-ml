@@ -209,7 +209,8 @@ def test_can_use_in_sklearn_pipeline():
 
     # get/set params works
     params = p.get_params()
-    p.set_params(**params)
+    p.set_params(**params | {"recipe__scalestandard__inputs": ml.numeric()})
+    assert p["recipe"].steps[1].inputs == ml.numeric()
 
     # fit and predict work
     p.fit(X, y)
