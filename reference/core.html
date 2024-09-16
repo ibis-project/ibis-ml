@@ -351,6 +351,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#ibis_ml.Recipe.get_params" id="toc-ibis_ml.Recipe.get_params" class="nav-link" data-scroll-target="#ibis_ml.Recipe.get_params">get_params</a></li>
   <li><a href="#ibis_ml.Recipe.is_fitted" id="toc-ibis_ml.Recipe.is_fitted" class="nav-link" data-scroll-target="#ibis_ml.Recipe.is_fitted">is_fitted</a></li>
   <li><a href="#ibis_ml.Recipe.set_output" id="toc-ibis_ml.Recipe.set_output" class="nav-link" data-scroll-target="#ibis_ml.Recipe.set_output">set_output</a></li>
+  <li><a href="#ibis_ml.Recipe.set_params" id="toc-ibis_ml.Recipe.set_params" class="nav-link" data-scroll-target="#ibis_ml.Recipe.set_params">set_params</a></li>
   <li><a href="#ibis_ml.Recipe.to_dask_dataframe" id="toc-ibis_ml.Recipe.to_dask_dataframe" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</a></li>
   <li><a href="#ibis_ml.Recipe.to_dask_dmatrix" id="toc-ibis_ml.Recipe.to_dask_dmatrix" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</a></li>
   <li><a href="#ibis_ml.Recipe.to_dmatrix" id="toc-ibis_ml.Recipe.to_dmatrix" class="nav-link" data-scroll-target="#ibis_ml.Recipe.to_dmatrix">to_dmatrix</a></li>
@@ -416,7 +417,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><a href="#ibis_ml.Recipe.get_params">get_params</a></td>
-<td>Get parameters for this estimator.</td>
+<td>Get parameters for this recipe.</td>
 </tr>
 <tr class="even">
 <td><a href="#ibis_ml.Recipe.is_fitted">is_fitted</a></td>
@@ -427,42 +428,46 @@ ul.task-list li input[type="checkbox"] {
 <td>Set output type returned by <code>transform</code>.</td>
 </tr>
 <tr class="even">
+<td><a href="#ibis_ml.Recipe.set_params">set_params</a></td>
+<td>Set the parameters of this recipe.</td>
+</tr>
+<tr class="odd">
 <td><a href="#ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</a></td>
 <td>Transform X and return a <code>dask.dataframe.DataFrame</code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</a></td>
 <td>Transform X and return a <code>xgboost.dask.DMatrix</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#ibis_ml.Recipe.to_dmatrix">to_dmatrix</a></td>
 <td>Transform X and return a <code>xgboost.DMatrix</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#ibis_ml.Recipe.to_ibis">to_ibis</a></td>
 <td>Transform X and return an ibis table.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#ibis_ml.Recipe.to_numpy">to_numpy</a></td>
 <td>Transform X and return a <code>numpy.ndarray</code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#ibis_ml.Recipe.to_pandas">to_pandas</a></td>
 <td>Transform X and return a <code>pandas.DataFrame</code>.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#ibis_ml.Recipe.to_polars">to_polars</a></td>
 <td>Transform X and return a <code>polars.DataFrame</code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#ibis_ml.Recipe.to_pyarrow">to_pyarrow</a></td>
 <td>Transform X and return a <code>pyarrow.Table</code>.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#ibis_ml.Recipe.to_pyarrow_batches">to_pyarrow_batches</a></td>
 <td>Transform X and return a <code>pyarrow.RecordBatchReader</code>.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#ibis_ml.Recipe.transform">transform</a></td>
 <td>Transform the data.</td>
 </tr>
@@ -569,16 +574,16 @@ ul.task-list li input[type="checkbox"] {
 <section id="ibis_ml.Recipe.get_params" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.get_params">get_params</h3>
 <p><code>get_params(deep=True)</code></p>
-<p>Get parameters for this estimator.</p>
-<p>Returns the parameters given in the constructor as well as the estimators contained within the <code>steps</code> of the <code>Recipe</code>.</p>
+<p>Get parameters for this recipe.</p>
+<p>Returns the parameters given in the constructor as well as the steps contained within the <code>steps</code> of the <code>Recipe</code>.</p>
 <section id="parameters-2" class="level4">
 <h4 class="anchored" data-anchor-id="parameters-2">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 6%">
-<col style="width: 6%">
-<col style="width: 79%">
-<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 73%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -592,7 +597,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>deep</code></td>
 <td>bool</td>
-<td>If True, will return the parameters for this estimator and contained subobjects that are estimators.</td>
+<td>If True, will return the parameters for this recipe and contained steps.</td>
 <td><code>True</code></td>
 </tr>
 </tbody>
@@ -661,12 +666,70 @@ ul.task-list li input[type="checkbox"] {
 </table>
 </section>
 </section>
+<section id="ibis_ml.Recipe.set_params" class="level3">
+<h3 class="anchored" data-anchor-id="ibis_ml.Recipe.set_params">set_params</h3>
+<p><code>set_params(**params)</code></p>
+<p>Set the parameters of this recipe.</p>
+<p>Valid parameter keys can be listed with <code>get_params()</code>. Note that you can directly set the parameters of the steps contained in <code>steps</code>.</p>
+<section id="parameters-4" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-4">Parameters</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 4%">
+<col style="width: 84%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>**params</code></td>
+<td>dict</td>
+<td>Parameters of this recipe or parameters of steps contained in <code>steps</code>. Parameters of the steps may be set using its name and the parameter name separated by a ’__’.</td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-3" class="level4">
+<h4 class="anchored" data-anchor-id="returns-3">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>object</td>
+<td>Recipe class instance.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes-1" class="level4">
+<h4 class="anchored" data-anchor-id="notes-1">Notes</h4>
+<p>Derived from [1]_ and [2]_.</p>
+</section>
+<section id="references-1" class="level4">
+<h4 class="anchored" data-anchor-id="references-1">References</h4>
+<p>.. [1] https://github.com/scikit-learn/scikit-learn/blob/ff1c6f3/sklearn/utils/metaestimators.py#L51-L70 .. [2] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256</p>
+</section>
+</section>
 <section id="ibis_ml.Recipe.to_dask_dataframe" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</h3>
 <p><code>to_dask_dataframe(X, categories=False)</code></p>
 <p>Transform X and return a <code>dask.dataframe.DataFrame</code>.</p>
-<section id="parameters-4" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-4">Parameters</h4>
+<section id="parameters-5" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-5">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -703,8 +766,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</h3>
 <p><code>to_dask_dmatrix(X)</code></p>
 <p>Transform X and return a <code>xgboost.dask.DMatrix</code></p>
-<section id="parameters-5" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-5">Parameters</h4>
+<section id="parameters-6" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-6">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -729,8 +792,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dmatrix">to_dmatrix</h3>
 <p><code>to_dmatrix(X)</code></p>
 <p>Transform X and return a <code>xgboost.DMatrix</code></p>
-<section id="parameters-6" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-6">Parameters</h4>
+<section id="parameters-7" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-7">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -755,8 +818,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_ibis">to_ibis</h3>
 <p><code>to_ibis(X)</code></p>
 <p>Transform X and return an ibis table.</p>
-<section id="parameters-7" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-7">Parameters</h4>
+<section id="parameters-8" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-8">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -781,8 +844,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_numpy">to_numpy</h3>
 <p><code>to_numpy(X)</code></p>
 <p>Transform X and return a <code>numpy.ndarray</code>.</p>
-<section id="parameters-8" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-8">Parameters</h4>
+<section id="parameters-9" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-9">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -807,8 +870,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pandas">to_pandas</h3>
 <p><code>to_pandas(X, categories=False)</code></p>
 <p>Transform X and return a <code>pandas.DataFrame</code>.</p>
-<section id="parameters-9" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-9">Parameters</h4>
+<section id="parameters-10" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-10">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -845,8 +908,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_polars">to_polars</h3>
 <p><code>to_polars(X)</code></p>
 <p>Transform X and return a <code>polars.DataFrame</code>.</p>
-<section id="parameters-10" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-10">Parameters</h4>
+<section id="parameters-11" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-11">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -871,8 +934,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pyarrow">to_pyarrow</h3>
 <p><code>to_pyarrow(X, categories=False)</code></p>
 <p>Transform X and return a <code>pyarrow.Table</code>.</p>
-<section id="parameters-11" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-11">Parameters</h4>
+<section id="parameters-12" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-12">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -909,8 +972,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pyarrow_batches">to_pyarrow_batches</h3>
 <p><code>to_pyarrow_batches(X, categories=False)</code></p>
 <p>Transform X and return a <code>pyarrow.RecordBatchReader</code>.</p>
-<section id="parameters-12" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-12">Parameters</h4>
+<section id="parameters-13" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-13">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -947,8 +1010,8 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.transform">transform</h3>
 <p><code>transform(X)</code></p>
 <p>Transform the data.</p>
-<section id="parameters-13" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-13">Parameters</h4>
+<section id="parameters-14" class="level4">
+<h4 class="anchored" data-anchor-id="parameters-14">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -968,8 +1031,8 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns-3" class="level4">
-<h4 class="anchored" data-anchor-id="returns-3">Returns</h4>
+<section id="returns-4" class="level4">
+<h4 class="anchored" data-anchor-id="returns-4">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
