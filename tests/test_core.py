@@ -380,13 +380,13 @@ def test_set_params():
     # Nonexistent parameter in step
     with pytest.raises(
         ValueError,
-        match="Invalid parameter 'nonexistent_param' for estimator ExpandTimestamp",
+        match="Invalid parameter 'nonexistent_param' for step ExpandTimestamp",
     ):
         rec.set_params(expandtimestamp__nonexistent_param=True)
 
     # Nonexistent parameter of pipeline
     with pytest.raises(
-        ValueError, match="Invalid parameter 'expanddatetime' for estimator Recipe"
+        ValueError, match="Invalid parameter 'expanddatetime' for recipe Recipe"
     ):
         rec.set_params(expanddatetime__nonexistent_param=True)
 
@@ -395,7 +395,7 @@ def test_set_params_passes_all_parameters():
     # Make sure all parameters are passed together to set_params
     # of nested estimator.
     rec = ml.Recipe(ml.ExpandTimestamp(ml.timestamp()))
-    with patch.object(ml.ExpandTimestamp, "set_params") as mock_set_params:
+    with patch.object(ml.ExpandTimestamp, "_set_params") as mock_set_params:
         rec.set_params(
             expandtimestamp__inputs=["x", "y"],
             expandtimestamp__components=["day", "year", "hour"],
