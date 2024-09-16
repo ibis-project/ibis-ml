@@ -347,13 +347,8 @@ class Step:
         # Extract and sort argument names excluding 'self'
         return sorted([p.name for p in parameters])
 
-    def get_params(self, deep=True) -> dict[str, Any]:
-        """Get parameters for this estimator.
-
-        Parameters
-        ----------
-        deep : bool, default=True
-            Has no effect, because steps cannot contain nested substeps.
+    def _get_params(self) -> dict[str, Any]:
+        """Get parameters for this step.
 
         Returns
         -------
@@ -370,8 +365,8 @@ class Step:
         """
         return {key: getattr(self, key) for key in self._get_param_names()}
 
-    def set_params(self, **params):
-        """Set the parameters of this estimator.
+    def _set_params(self, **params):
+        """Set the parameters of this step.
 
         Parameters
         ----------
@@ -400,7 +395,7 @@ class Step:
         for key, value in params.items():
             if key not in valid_params:
                 raise ValueError(
-                    f"Invalid parameter {key!r} for estimator {self}. "
+                    f"Invalid parameter {key!r} for step {self}. "
                     f"Valid parameters are: {valid_params!r}."
                 )
 
@@ -503,16 +498,16 @@ class Recipe:
         return self._output_format
 
     def get_params(self, deep=True) -> dict[str, Any]:
-        """Get parameters for this estimator.
+        """Get parameters for this recipe.
 
         Returns the parameters given in the constructor as well as the
-        estimators contained within the `steps` of the `Recipe`.
+        steps contained within the `steps` of the `Recipe`.
 
         Parameters
         ----------
         deep : bool, default=True
-            If True, will return the parameters for this estimator and
-            contained subobjects that are estimators.
+            If True, will return the parameters for this recipe and
+            contained steps.
 
         Returns
         -------
@@ -531,26 +526,25 @@ class Recipe:
         if not deep:
             return out
 
-        estimators = _name_estimators(self.steps)
-        out.update(estimators)
+        steps = _name_estimators(self.steps)
+        out.update(steps)
 
-        for name, estimator in estimators:
-            if hasattr(estimator, "get_params"):
-                for key, value in estimator.get_params(deep=True).items():
-                    out[f"{name}__{key}"] = value
+        for name, step in steps:
+            for key, value in step._get_params().items():  # noqa: SLF001
+                out[f"{name}__{key}"] = value
         return out
 
     def set_params(self, **params):
-        """Set the parameters of this estimator.
+        """Set the parameters of this recipe.
 
         Valid parameter keys can be listed with ``get_params()``. Note that
-        you can directly set the parameters of the estimators contained in
+        you can directly set the parameters of the steps contained in
         `steps`.
 
         Parameters
         ----------
         **params : dict
-            Parameters of this estimator or parameters of estimators contained
+            Parameters of this recipe or parameters of steps contained
             in `steps`. Parameters of the steps may be set using its name and
             the parameter name separated by a '__'.
 
@@ -577,7 +571,7 @@ class Recipe:
         if "steps" in params:
             self.steps = params.pop("steps")
 
-        # 2. Replace items with estimators in params
+        # 2. Replace steps with steps in params
         estimator_name_indexes = {
             x: i for i, x in enumerate(name for name, _ in _name_estimators(self.steps))
         }
@@ -593,14 +587,14 @@ class Recipe:
             key, sub_key = key.split("__", maxsplit=1)
             if key not in valid_params:
                 raise ValueError(
-                    f"Invalid parameter {key!r} for estimator {self}. "
+                    f"Invalid parameter {key!r} for recipe {self}. "
                     f"Valid parameters are: ['steps']."
                 )
 
             nested_params[key][sub_key] = value
 
         for key, sub_params in nested_params.items():
-            valid_params[key].set_params(**sub_params)
+            valid_params[key]._set_params(**sub_params)  # noqa: SLF001
 
         return self
 
