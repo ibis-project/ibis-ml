@@ -98,6 +98,7 @@ def train_test_split(
         }
     )
 
-    return table[table[train_flag]].drop([combined_key, train_flag]), table[
-        ~table[train_flag]
-    ].drop([combined_key, train_flag])
+    return (
+        table.filter(table[train_flag]).drop([combined_key, train_flag]),
+        table.filter(~table[train_flag]).drop([combined_key, train_flag]),
+    )
