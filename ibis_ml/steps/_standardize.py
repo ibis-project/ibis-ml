@@ -11,6 +11,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
 _DOCS_PAGE_NAME = "standardization"
+# a small epsilon value to handle near-constant columns during normalization
+_APPROX_EPS = 10e-7
 
 
 class ScaleMinMax(Step):
@@ -61,21 +63,18 @@ class ScaleMinMax(Step):
             self._fit_expr = [expr]
             results = expr.execute().to_dict("records")[0]
             for name in columns:
-                col_max = results[f"{name}_max"]
-                col_min = results[f"{name}_min"]
-                if col_max == col_min:
-                    raise ValueError(
-                        f"Cannot standardize {name!r} - "
-                        "the maximum and minimum values are equal"
-                    )
-                stats[name] = (col_max, col_min)
+                stats[name] = (results[f"{name}_max"], results[f"{name}_min"])
 
         self.stats_ = stats
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
             [
-                ((table[c] - min) / (max - min)).name(c)  # type: ignore
+                # for near-constant column, set the scale to 1.0
+                (
+                    (table[c] - min)
+                    / (1.0 if abs(max - min) < _APPROX_EPS else max - min)
+                ).name(c)
                 for c, (max, min) in self.stats_.items()
             ]
         )
@@ -128,19 +127,17 @@ class ScaleStandard(Step):
             self._fit_expr = [table.aggregate(aggs)]
             results = self._fit_expr[-1].execute().to_dict("records")[0]
             for name in columns:
-                col_std = results[f"{name}_std"]
-                if col_std == 0:
-                    raise ValueError(
-                        f"Cannot standardize {name!r} - the standard deviation is zero"
-                    )
-                stats[name] = (results[f"{name}_mean"], col_std)
+                stats[name] = (results[f"{name}_mean"], results[f"{name}_std"])
 
         self.stats_ = stats
 
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
             [
-                ((table[c] - center) / scale).name(c)  # type: ignore
+                # for near-constant column, set the scale to 1.0
+                (
+                    (table[c] - center) / (1.0 if abs(scale) < _APPROX_EPS else scale)
+                ).name(c)
                 for c, (center, scale) in self.stats_.items()
             ]
         )

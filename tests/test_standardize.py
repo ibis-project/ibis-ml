@@ -31,19 +31,12 @@ def test_scaleminmax():
     tm.assert_frame_equal(result.execute(), expected, check_exact=False)
 
 
-@pytest.mark.parametrize(
-    ("model", "msg"),
-    [
-        ("ScaleStandard", "Cannot standardize 'col' - the standard deviation is zero"),
-        (
-            "ScaleMinMax",
-            "Cannot standardize 'col' - the maximum and minimum values are equal",
-        ),
-    ],
-)
-def test_scale_unique_col(model, msg):
-    table = ibis.memtable({"col": [1]})
-    scale_class = getattr(ml, model)
-    step = scale_class("col")
-    with pytest.raises(ValueError, match=msg):
-        step.fit_table(table, ml.core.Metadata())
+@pytest.mark.parametrize("scaler", ["ScaleStandard", "ScaleMinMax"])
+def test_constant_columns(scaler):
+    table = ibis.memtable({"int_col": [100], "float_col": [100.0]})
+    scaler_class = getattr(ml, scaler)
+    scale_step = scaler_class(ml.numeric())
+    scale_step.fit_table(table, ml.core.Metadata())
+    result = scale_step.transform_table(table)
+    expected = pd.DataFrame({"int_col": [0.0], "float_col": [0.0]})
+    tm.assert_frame_equal(result.execute(), expected)
