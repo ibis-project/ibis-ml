@@ -36,9 +36,9 @@ def test_expand_time():
     assert res.equals(sol)
 
 
-def test_expand_datetime():
+def test_expand_timestamp():
     t = ibis.table({"y": "timestamp", "z": "int"})
-    step = ml.ExpandDateTime(
+    step = ml.ExpandTimestamp(
         ml.timestamp(),
         components=[
             "dow",

@@ -214,9 +214,9 @@ quartodoc:
             name: Temporal feature extraction
             desc: Feature extraction for temporal columns
           contents:
-            - ExpandDateTime
             - ExpandDate
             - ExpandTime
+            - ExpandTimestamp
 
         - kind: page
           path: steps-other

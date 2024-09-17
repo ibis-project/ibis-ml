@@ -34,6 +34,7 @@ def test_mutate_at_expr():
     res = step.transform_table(t)
     sol = t.mutate(x=_.x.abs(), y=_.y.abs())
     assert res.equals(sol)
+    assert list(step._get_params()) == ["expr", "inputs", "named_exprs"]  # noqa: SLF001
 
 
 def test_mutate_at_named_exprs():
@@ -44,6 +45,7 @@ def test_mutate_at_named_exprs():
     res = step.transform_table(t)
     sol = t.mutate(x=_.x.abs(), y=_.y.abs(), x_log=_.x.log(), y_log=_.y.log())
     assert res.equals(sol)
+    assert list(step._get_params()) == ["expr", "inputs", "named_exprs"]  # noqa: SLF001
 
 
 def test_mutate():
@@ -54,3 +56,4 @@ def test_mutate():
     res = step.transform_table(t)
     sol = t.mutate(_.x.abs().name("x_abs"), y_log=lambda t: t.y.log())
     assert res.equals(sol)
+    assert list(step._get_params()) == ["exprs", "named_exprs"]  # noqa: SLF001

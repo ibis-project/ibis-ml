@@ -1,66 +1,109 @@
 import ibis
+import numpy as np
+import pandas as pd
+import pandas.testing as tm
 import pytest
 
 import ibis_ml as ml
 
 
 @pytest.mark.parametrize(
-    ("deviation_factor", "method", "treatment"),
+    ("deviation_factor", "method", "treatment", "cols", "test_table", "expected"),
     [
-        (2, "z-score", "capping"),
-        (2, "IQR", "capping"),
-        (3.0, "z-score", "trimming"),
-        (3.0, "IQR", "trimming"),
+        (
+            2,
+            "z-score",
+            "capping",
+            "int_col",
+            {"int_col": [None, 0, -1, 1]},
+            {"int_col": [None, 0, 0, 0]},
+        ),
+        (
+            2,
+            "IQR",
+            "capping",
+            "int_col",
+            {"int_col": [None, 0, -1, 1]},
+            {"int_col": [None, 0, 0, 0]},
+        ),
+        (
+            3.0,
+            "z-score",
+            "trimming",
+            "int_col",
+            {"int_col": [None, 0, -1, 1]},
+            {"int_col": [None, 0]},
+        ),
+        (
+            3.0,
+            "IQR",
+            "trimming",
+            "int_col",
+            {"int_col": [None, 0, -1, 1]},
+            {"int_col": [None, 0]},
+        ),
+        (
+            2,
+            "z-score",
+            "capping",
+            "floating_col",
+            {"floating_col": [None, 0, -1, 1, np.nan]},
+            {"floating_col": [None, 0.0, 0.0, 0.0, np.nan]},
+        ),
+        (
+            2,
+            "z-score",
+            "trimming",
+            "floating_col",
+            {"floating_col": [None, 0, -1, 1, np.nan]},
+            {"floating_col": [None, np.nan, 0.0]},
+        ),
+        (
+            2,
+            "z-score",
+            "trimming",
+            ["floating_col", "int_col"],
+            {
+                "floating_col": [None, 0, -1, 1, np.nan],
+                "int_col": [None, 0, 0, None, None],
+            },
+            {"floating_col": [None, np.nan, 0.0], "int_col": [None, None, 0]},
+        ),
+        (
+            2,
+            "z-score",
+            "capping",
+            ["floating_col", "int_col"],
+            {
+                "floating_col": [None, 0, -1, 1, np.nan],
+                "int_col": [None, 0, 0, None, None],
+            },
+            {
+                "floating_col": [None, 0, 0, 0, np.nan],
+                "int_col": [None, 0, 0, None, None],
+            },
+        ),
     ],
 )
-def test_handle_univariate_outliers(deviation_factor, method, treatment):
-    cols = {"col1": 0, "col2": 1}
+def test_handle_univariate_outliers(
+    deviation_factor, method, treatment, cols, test_table, expected
+):
     train_table = ibis.memtable(
         {
             # use same value for easier calculation statistics
-            "col1": [cols["col1"]] * 10,  # mean = 0, std = 0
-            "col2": [cols["col2"]] * 10,  # Q1 = 1, Q3 = 1
+            "int_col": [0] * 10,  # mean = 0, std = 0 Q1 = 0, Q3 = 0
+            "floating_col": [0.0] * 10,  # mean = 0, std = 0, Q1 = 0, Q3 = 0
         }
     )
 
-    test_table = ibis.memtable(
-        {
-            "col1": [
-                None,  # keep
-                cols["col1"],  # keep
-                cols["col1"] - 1,  # outlier
-                cols["col1"] + 1,  # outlier
-                cols["col1"] + 1,  # outlier
-            ],
-            "col2": [
-                cols["col2"],  # keep
-                cols["col2"],  # keep
-                cols["col2"] - 1,  # outlier
-                cols["col2"] + 1,  # outlier
-                None,  # keep
-            ],
-        }
-    )
+    test_table = ibis.memtable(test_table)
     step = ml.HandleUnivariateOutliers(
-        ml.numeric(),
-        method=method,
-        deviation_factor=deviation_factor,
-        treatment=treatment,
+        cols, method=method, deviation_factor=deviation_factor, treatment=treatment
     )
     step.fit_table(train_table, ml.core.Metadata())
     assert step.is_fitted()
-    stats = step.stats_
-    res = step.transform_table(test_table)
 
-    if treatment == "trimming":
-        assert res.count().execute() == 2
-    elif treatment == "capping":
-        assert res.count().execute() == 5
+    result = step.transform_table(test_table)
+    expected = pd.DataFrame(expected)
 
-    for col_name, val in cols.items():
-        # check the boundary
-        assert stats[col_name]["lower_bound"] == val
-        assert stats[col_name]["upper_bound"] == val
-        # make sure there is no value beyond the boundary
-        assert res[col_name].max().execute() <= val
-        assert res[col_name].min().execute() >= val
+    tm.assert_frame_equal(result.execute(), expected, check_dtype=False)

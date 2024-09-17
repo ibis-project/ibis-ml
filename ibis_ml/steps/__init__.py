@@ -6,7 +6,7 @@ from ibis_ml.steps._handle_outliers import HandleUnivariateOutliers
 from ibis_ml.steps._impute import FillNA, ImputeMean, ImputeMedian, ImputeMode
 from ibis_ml.steps._select_features import DropZeroVariance
 from ibis_ml.steps._standardize import ScaleMinMax, ScaleStandard
-from ibis_ml.steps._temporal import ExpandDate, ExpandDateTime, ExpandTime
+from ibis_ml.steps._temporal import ExpandDate, ExpandTime, ExpandTimestamp
 
 __all__ = (
     "Cast",
@@ -16,8 +16,8 @@ __all__ = (
     "Drop",
     "DropZeroVariance",
     "ExpandDate",
-    "ExpandDateTime",
     "ExpandTime",
+    "ExpandTimestamp",
     "FillNA",
     "HandleUnivariateOutliers",
     "ImputeMean",

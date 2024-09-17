@@ -1,6 +1,6 @@
 """IbisML is a library for building scalable ML pipelines using Ibis."""
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 import pprint
 
@@ -44,11 +44,12 @@ def _auto_patch_skorch() -> None:
         return
 
     import ibis.expr.types as ir
-    import numpy as np
 
     old_fit = skorch.net.NeuralNet.fit
 
     def fit(self, X, y=None, **fit_params):
+        import numpy as np
+
         if isinstance(y, ir.Column):
             y = np.asarray(y)
 

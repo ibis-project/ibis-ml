@@ -11,8 +11,9 @@ hide-description: true
 
 - Preprocess your data at scale on any [Ibis](https://ibis-project.org/)-supported
   backend.
-- Compose [`Recipe`](/reference/core.html#ibis_ml.Recipe)s with other scikit-learn
-  estimators using
+- Compose
+  [`Recipe`](https://ibis-project.github.io/ibis-ml/reference/core.html#ibis_ml.Recipe)s
+  with other scikit-learn estimators using
   [`Pipeline`](https://scikit-learn.org/stable/modules/compose.html#pipeline-chaining-estimators)s.
 - Seamlessly integrate with [scikit-learn](https://scikit-learn.org/stable/),
   [XGBoost](https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html), and

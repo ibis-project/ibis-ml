@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 import os
 import pprint
 from collections import defaultdict
@@ -12,14 +13,14 @@ from typing import TYPE_CHECKING, Any, Literal, cast
 import ibis
 import ibis.expr.operations as ops
 import ibis.expr.types as ir
-import numpy as np
-import pandas as pd
-import pyarrow as pa
 from ibis.common.dispatch import lazy_singledispatch
 
 if TYPE_CHECKING:
     import dask.dataframe as dd
+    import numpy as np
+    import pandas as pd
     import polars as pl
+    import pyarrow as pa
     import xgboost as xgb
     from sklearn.utils._estimator_html_repr import _VisualBlock
 
@@ -45,6 +46,9 @@ def _ibis_table_to_numpy(table: ir.Table) -> np.ndarray:
 
 def _y_as_dataframe(y: Any) -> pd.DataFrame:
     """Coerce `y` to a pandas dataframe"""
+    import numpy as np
+    import pandas as pd
+
     if isinstance(y, pd.DataFrame):
         return y
     elif isinstance(y, pd.Series):
@@ -144,8 +148,11 @@ def _(X, y=None, maintain_order=False):
     return table, tuple(y.columns), None
 
 
-@normalize_table.register(pd.DataFrame)
+@normalize_table.register("pd.DataFrame")
 def _(X, y=None, maintain_order=False):
+    import numpy as np
+    import pandas as pd
+
     if y is not None:
         y = _y_as_dataframe(y)
         table = pd.concat([X, y], axis=1)
@@ -162,8 +169,11 @@ def _(X, y=None, maintain_order=False):
     return ibis.memtable(table), targets, index
 
 
-@normalize_table.register(np.ndarray)
+@normalize_table.register("np.ndarray")
 def _(X, y=None, maintain_order=False):
+    import numpy as np
+    import pandas as pd
+
     X = pd.DataFrame(X, columns=[f"x{i}" for i in range(X.shape[-1])])
     if y is not None:
         y = _y_as_dataframe(y)
@@ -181,8 +191,11 @@ def _(X, y=None, maintain_order=False):
     return ibis.memtable(table), targets, index
 
 
-@normalize_table.register(pa.Table)
+@normalize_table.register("pa.Table")
 def _(X, y=None, maintain_order=False):
+    import numpy as np
+    import pyarrow as pa
+
     if y is not None:
         if isinstance(y, (pa.ChunkedArray, pa.Array)):
             y = pa.Table.from_pydict({"y": y})
@@ -246,6 +259,8 @@ class Metadata:
         return self.categories.get(column)
 
     def set_categories(self, column: str, values: pa.Array | list[Any]) -> None:
+        import pyarrow as pa
+
         self.categories[column] = pa.array(values)
 
     def drop_categories(self, column: str) -> None:
@@ -255,6 +270,8 @@ class Metadata:
 def _categorize_wrap_reader(
     reader: pa.RecordBatchReader, categories: dict[str, pa.Array]
 ) -> Iterable[pa.RecordBatch]:
+    import pyarrow as pa
+
     for batch in reader:
         out = {}
         for name, col in zip(batch.schema.names, batch.columns):
@@ -290,6 +307,102 @@ def _get_categorize_chunk() -> Callable[[str, list[str], Any], pd.DataFrame]:
 
 
 class Step:
+    @classmethod
+    def _get_param_names(cls) -> list[str]:
+        """Get parameter names for the estimator.
+
+        Notes
+        -----
+        Copied from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/ab2f539/sklearn/base.py#L148-L173
+        """
+        # fetch the constructor or the original constructor before
+        # deprecation wrapping if any
+        init = getattr(cls.__init__, "deprecated_original", cls.__init__)
+        if init is object.__init__:
+            # No explicit constructor to introspect
+            return []
+
+        # introspect the constructor arguments to find the model parameters
+        # to represent
+        init_signature = inspect.signature(init)
+        # Consider the constructor parameters excluding 'self'
+        parameters = [
+            p
+            for p in init_signature.parameters.values()
+            if p.name != "self" and p.kind != p.VAR_KEYWORD
+        ]
+        for p in parameters:
+            if p.kind == p.VAR_POSITIONAL:
+                raise RuntimeError(
+                    "scikit-learn estimators should always "
+                    "specify their parameters in the signature"
+                    " of their __init__ (no varargs)."
+                    f" {cls} with constructor {init_signature} doesn't "
+                    " follow this convention."
+                )
+        # Extract and sort argument names excluding 'self'
+        return sorted([p.name for p in parameters])
+
+    def _get_params(self) -> dict[str, Any]:
+        """Get parameters for this step.
+
+        Returns
+        -------
+        params : dict
+            Parameter names mapped to their values.
+
+        Notes
+        -----
+        Derived from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/626b460/sklearn/base.py#L145-L167
+        """
+        return {key: getattr(self, key) for key in self._get_param_names()}
+
+    def _set_params(self, **params):
+        """Set the parameters of this step.
+
+        Parameters
+        ----------
+        **params : dict
+            Step parameters.
+
+        Returns
+        -------
+        self : object
+            Step class instance.
+
+        Notes
+        -----
+        Derived from [1]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256
+        """
+        if not params:
+            # Simple optimization to gain speed (inspect is slow)
+            return self
+
+        valid_params = self._get_param_names()
+
+        for key, value in params.items():
+            if key not in valid_params:
+                raise ValueError(
+                    f"Invalid parameter {key!r} for step {self}. "
+                    f"Valid parameters are: {valid_params!r}."
+                )
+
+            setattr(self, key, value)
+
+        return self
+
     def __repr__(self) -> str:
         return pprint.pformat(self)
 
@@ -373,7 +486,7 @@ def _name_estimators(estimators):
 
 class Recipe:
     def __init__(self, *steps: Step):
-        self.steps = steps
+        self.steps = list(steps)
         self._output_format = "default"
 
     def __repr__(self):
@@ -385,16 +498,16 @@ class Recipe:
         return self._output_format
 
     def get_params(self, deep=True) -> dict[str, Any]:
-        """Get parameters for this estimator.
+        """Get parameters for this recipe.
 
         Returns the parameters given in the constructor as well as the
-        estimators contained within the `steps` of the `Recipe`.
+        steps contained within the `steps` of the `Recipe`.
 
         Parameters
         ----------
         deep : bool, default=True
-            If True, will return the parameters for this estimator and
-            contained subobjects that are estimators.
+            If True, will return the parameters for this recipe and
+            contained steps.
 
         Returns
         -------
@@ -413,18 +526,77 @@ class Recipe:
         if not deep:
             return out
 
-        estimators = _name_estimators(self.steps)
-        out.update(estimators)
+        steps = _name_estimators(self.steps)
+        out.update(steps)
 
-        for name, estimator in estimators:
-            if hasattr(estimator, "get_params"):
-                for key, value in estimator.get_params(deep=True).items():
-                    out[f"{name}__{key}"] = value
+        for name, step in steps:
+            for key, value in step._get_params().items():  # noqa: SLF001
+                out[f"{name}__{key}"] = value
         return out
 
-    def set_params(self, **kwargs):
-        if "steps" in kwargs:
-            self.steps = kwargs.get("steps")
+    def set_params(self, **params):
+        """Set the parameters of this recipe.
+
+        Valid parameter keys can be listed with ``get_params()``. Note that
+        you can directly set the parameters of the steps contained in
+        `steps`.
+
+        Parameters
+        ----------
+        **params : dict
+            Parameters of this recipe or parameters of steps contained
+            in `steps`. Parameters of the steps may be set using its name and
+            the parameter name separated by a '__'.
+
+        Returns
+        -------
+        self : object
+            Recipe class instance.
+
+        Notes
+        -----
+        Derived from [1]_ and [2]_.
+
+        References
+        ----------
+        .. [1] https://github.com/scikit-learn/scikit-learn/blob/ff1c6f3/sklearn/utils/metaestimators.py#L51-L70
+        .. [2] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256
+        """
+        if not params:
+            # Simple optimization to gain speed (inspect is slow)
+            return self
+
+        # Ensure strict ordering of parameter setting:
+        # 1. All steps
+        if "steps" in params:
+            self.steps = params.pop("steps")
+
+        # 2. Replace steps with steps in params
+        estimator_name_indexes = {
+            x: i for i, x in enumerate(name for name, _ in _name_estimators(self.steps))
+        }
+        for name in list(params):
+            if "__" not in name and name in estimator_name_indexes:
+                self.steps[estimator_name_indexes[name]] = params.pop(name)
+
+        # 3. Step parameters and other initialisation arguments
+        valid_params = self.get_params(deep=True)
+
+        nested_params = defaultdict(dict)  # grouped by prefix
+        for key, value in params.items():
+            key, sub_key = key.split("__", maxsplit=1)
+            if key not in valid_params:
+                raise ValueError(
+                    f"Invalid parameter {key!r} for recipe {self}. "
+                    f"Valid parameters are: ['steps']."
+                )
+
+            nested_params[key][sub_key] = value
+
+        for key, sub_params in nested_params.items():
+            valid_params[key]._set_params(**sub_params)  # noqa: SLF001
+
+        return self
 
     def set_output(
         self,
@@ -432,8 +604,6 @@ class Recipe:
         transform: Literal["default", "pandas", "pyarrow", "polars", None] = None,
     ) -> Recipe:
         """Set output type returned by `transform`.
-
-        This is part of the standard Scikit-Learn API.
 
         Parameters
         ----------
@@ -620,6 +790,8 @@ class Recipe:
         return df
 
     def _categorize_pyarrow(self, table: pa.Table) -> pa.Table:
+        import pyarrow as pa
+
         if not self.metadata_.categories:
             return table
 
@@ -645,6 +817,8 @@ class Recipe:
     def _categorize_pyarrow_batches(
         self, reader: pa.RecordBatchReader
     ) -> pa.RecordBatchReader:
+        import pyarrow as pa
+
         if not self.metadata_.categories:
             return reader
 
