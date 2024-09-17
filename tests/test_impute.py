@@ -1,3 +1,5 @@
+import math
+
 import ibis
 import numpy as np
 import pandas as pd
@@ -50,10 +52,15 @@ def test_fillna(train_table):
     expected = pd.DataFrame({"floating_col": [0]})
     tm.assert_frame_equal(result.execute(), expected, check_dtype=False)
 
-    # test _fillna with None
-    step = ml.FillNA("floating_col", None)
+
+@pytest.mark.parametrize("val", [None, math.nan])
+def test_fillna_with_none(train_table, val):
+    step = ml.FillNA("floating_col", val)
     step.fit_table(train_table, ml.core.Metadata())
-    with pytest.raises(
-        ValueError, match="Cannot fill column 'floating_col' with `None` or `NaN`"
+    test_table = ibis.memtable({"floating_col": [1.0, None]})
+    with pytest.warns(
+        UserWarning,
+        match="Imputation requires at least one non-missing value in "
+        "column 'floating_col'",
     ):
         step.transform_table(test_table)

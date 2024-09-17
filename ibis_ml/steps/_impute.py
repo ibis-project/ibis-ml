@@ -10,13 +10,19 @@ from ibis_ml.select import SelectionType, selector
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+import warnings
 
 _DOCS_PAGE_NAME = "imputation"
 
 
 def _fillna(col, val):
-    if val is None or col.type().is_floating() and math.isnan(val):
-        raise ValueError(f"Cannot fill column {col.get_name()!r} with `None` or `NaN`")
+    if val is None or (col.type().is_numeric() and math.isnan(val)):
+        warnings.warn(
+            "Imputation requires at least one non-missing value in "
+            f"column {col.get_name()!r}",
+            UserWarning,
+            stacklevel=2,
+        )
     if col.type().is_floating():
         return (col.isnull() | col.isnan()).ifelse(val, col)  # noqa: PD003
     else:
