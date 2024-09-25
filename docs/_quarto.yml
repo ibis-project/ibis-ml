@@ -48,15 +48,22 @@ website:
       - text: "Tutorial"
         href: tutorial/index.qmd
       - sidebar:reference
-      - sidebar:FAQ
+      - text: "Help"
+        menu:
+          - text: "Report a bug"
+            icon: bug
+            href: https://github.com/ibis-project/ibis-ml/issues
+          - text: "Ask a question"
+            icon: chat-right-text
+            href: https://ibis-project.zulipchat.com/#narrow/stream/426262-ibis-ml
+          - text: "FAQ"
+            icon: question-circle
+            href: faq/index.qmd
 
     tools:
       - icon: github
-        menu:
-          - text: Source code
-            url: https://github.com/ibis-project/ibis-ml
-          - text: Open an issue
-            url: https://github.com/ibis-project/ibis-ml/issues
+        href: https://github.com/ibis-project/ibis-ml
+        text: IbisML repository
 
   sidebar:
     - id: ""
@@ -81,14 +88,6 @@ website:
             - reference/steps-outlier-handling.qmd
             - reference/steps-temporal-feature-extraction.qmd
             - reference/steps-other.qmd
-    - id: FAQ
-      title: "FAQ"
-      style: "docked"
-      collapse-level: 2
-      contents:
-        - id: how_to_create_transformer
-          title: "How to create your own transformer"
-          href: tutorial/how_to_create_your_own_transformer.qmd
 
         - section: Support
           contents:
@@ -97,6 +96,14 @@ website:
         - section: Utilities
           contents:
             - reference/utils-data-splitting.qmd
+
+    - id: faq
+      title: "Frequently asked questions"
+      style: "docked"
+      contents:
+        - section: faq/index.qmd
+          contents:
+            - faq/custom-step.qmd
 
 format:
   html:

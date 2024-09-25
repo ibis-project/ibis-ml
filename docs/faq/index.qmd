@@ -1,0 +1,7 @@
+---
+title: "Frequently asked questions"
+---
+
+### Can I define my own IbisML step?
+
+If IbisML does not support the step you need out of the box, you can [create a custom step](custom-step.qmd).
