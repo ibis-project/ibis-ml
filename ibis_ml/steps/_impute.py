@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Any
 
 import ibis.expr.types as ir
@@ -9,11 +10,19 @@ from ibis_ml.select import SelectionType, selector
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+import warnings
 
 _DOCS_PAGE_NAME = "imputation"
 
 
 def _fillna(col, val):
+    if val is None or (col.type().is_numeric() and math.isnan(val)):
+        warnings.warn(
+            "Imputation requires at least one non-missing value in "
+            f"column {col.get_name()!r}",
+            UserWarning,
+            stacklevel=2,
+        )
     if col.type().is_floating():
         return (col.isnull() | col.isnan()).ifelse(val, col)  # noqa: PD003
     else:
