@@ -1,10 +1,58 @@
 [
   {
-    "objectID": "tutorial/index.html",
-    "href": "tutorial/index.html",
-    "title": "Preprocess your data with recipes",
+    "objectID": "faq/custom-step.html",
+    "href": "faq/custom-step.html",
+    "title": "How to create your own transformer",
     "section": "",
-    "text": "Back to top"
+    "text": "Transformers are responsible for converting raw data into a suitable format for training models. IbisML contains built-in data transformers like OneHotEncode, ImputeMean, DiscretizeKBins, and others. However, sometimes, you might need to create custom preprocessing transformers. This guide will walk you through defining a custom transformation step in IbisML.",
+    "crumbs": [
+      "Frequently asked questions",
+      "How to create your own transformer"
+    ]
+  },
+  {
+    "objectID": "faq/custom-step.html#install-and-import-necessary-modules",
+    "href": "faq/custom-step.html#install-and-import-necessary-modules",
+    "title": "How to create your own transformer",
+    "section": "Install and import necessary modules",
+    "text": "Install and import necessary modules\nBefore starting off, ensure that you have installed all the necessary modules and imported them in your development environment. To manage modules and dependencies effectively, it is recommended to create a virtual environment using either venv or conda.\n\n# install ibis and ibisML\n# !pip install 'ibis-framework[duckdb]' ibis-ml \nimport ibis\nimport ibis.expr.types as ir\nimport ibis_ml as ml\nfrom ibis_ml.core import Metadata, Step\nfrom ibis_ml.select import SelectionType, selector\nfrom typing import Iterable, Any",
+    "crumbs": [
+      "Frequently asked questions",
+      "How to create your own transformer"
+    ]
+  },
+  {
+    "objectID": "faq/custom-step.html#implementation-outlines",
+    "href": "faq/custom-step.html#implementation-outlines",
+    "title": "How to create your own transformer",
+    "section": "Implementation outlines",
+    "text": "Implementation outlines\nCreating a custom transformer in IbisML involves defining a class that inherits from the Step class. This class implements specific methods like fit_table and transform_table to handle data processing. If you’re seeking good examples of existing steps, we recommend examining the code for impute missing value or ExpandDateTime. If you need information about Ibis, you can find it here.\nHere’s a general guide to creating a custom transformer:\n\nStep 1: Define the Constructor\nIn the constructor (__init__method), you initialize any parameters or configurations needed for the transformer.\n\n\nStep 2: Implement fit_table\nThe fit_table method is used to fit the transformer to the data. This could involve calculating statistics or other parameters from the input data that will be used during transformation.\n\n\nStep 3: Implement transform_table\nThe transform_table method is used to apply the transformation to the data based on the parameters or configurations set during fit_table.\n\n\nStep 4: Test the Transformer\nTesting ensures that your custom transformer works as expected. You can create sample data to fit and transform, checking the output to verify correctness.",
+    "crumbs": [
+      "Frequently asked questions",
+      "How to create your own transformer"
+    ]
+  },
+  {
+    "objectID": "faq/custom-step.html#example-implementation---customrobustscaler",
+    "href": "faq/custom-step.html#example-implementation---customrobustscaler",
+    "title": "How to create your own transformer",
+    "section": "Example Implementation - CustomRobustScaler",
+    "text": "Example Implementation - CustomRobustScaler\nHere’s a step-by-step guide to create a custom transformation step for scaling features using RobustScaler from scikit-learn.\nThe RobustScaler in scikit-learn scales features using statistics that are robust to outliers. Instead of using the mean and variance, it uses the median and the interquartile range (IQR). The formula for scaling a feature value \\(x\\) is:\n\\[\n\\text{scaled\\_x} = \\frac{x - \\text{median}(X)}{\\text{IQR}(X)}\n\\]\nwhere:\n\n\\(\\text{scaled\\_x}\\) is the scaled feature value.\n\\(x\\) is the individual feature value.\n\\(\\text{median}(X)\\) is the median of the feature values.\n\\(\\text{IQR}(X)\\) is the interquartile range of the feature values, defined as the difference between the 75th percentile (Q3) and the 25th percentile (Q1).\n\nAs a starting point, the following code snippet outlines the structure of the CustomRobustScaler class, including its constructor and methods.\n\nclass CustomRobustScaler(Step):\n    def __init__(self, inputs: SelectionType):\n        pass  # Initialize the constructor of the class\n    def fit_table(self, table: ir.Table, metadata: Metadata) -&gt; None:\n        pass  # Implement fitting logic here\n    def transform_table(self, table: ir.Table) -&gt; ir.Table:\n        pass  # Implement transformation logic here\n\n\nStep 1: Define the Constructor\nTo construct our CustomRobustScaler transformation, we need to specify which columns will be scaled. IbisML provides a rich set of Selectors, allowing you to select columns by data type, names, and other patterns.\nWe begin defining the __init__ method with these considerations:\n\ndef __init__(self, inputs: SelectionType):\n  # Select the columns that will be involved in the transformation\n    self.inputs = selector(inputs)\n\n\n\nStep 2: Implement fit_table\nThe next step is to implement the fit_table() method, which will be used to learn from the input data. This method typically fits the transformation to the data, storing any necessary statistics or parameters for later use in the transformation process. It has two parameters:\n\ntable: An Ibis table expression containing the data to be used for fitting the transformation.\nmetadata: Contains additional information about the data, such as labels, necessary for the transformation process.\n\nIn this specific example, the fit_table method calculates the median and interquartile range (IQR) for the selected columns. These statistics are necessary for scaling the data using the RobustScaler approach. We will save the statistics for each column in a dictionary.\nHere is the outlines for the fit_table method:\n\nGet the column names using the Selector’s built-in method select_columns.\nFor each column, calculate the median and IQR (p75 - p25) by building an Ibis expression, which can be lazily evaluated on your chosen Ibis-supported backend.\nSave the statistics in a dictionary, which will be used during the transformation process.\n\n\ndef fit_table(self, table: ir.Table, metadata: Metadata) -&gt; None:\n    # Step 1: Get the column names that match the selector\n    columns = self.inputs.select_columns(table, metadata)\n    # Step 2: Initialize a dictionary to store statistics\n    stats = {}\n    # Step 3: If there are columns selected, calculate statistics for each column\n    if columns:\n        # Create a list to hold Ibis aggregation expressions\n        aggs = []\n        # Step 4: Iterate over each selected column\n        for name in columns:\n            # Get the column from the table\n            c = table[name]\n            # Build Ibis expressions for median, 25th percentile, and 75th percentile\n            aggs.append(c.median().name(f\"{name}_median\"))\n            aggs.append(c.quantile(0.25).name(f\"{name}_25\"))\n            aggs.append(c.quantile(0.75).name(f\"{name}_75\"))\n        # Step 5: Evaluate the Ibis expressions in one run\n        results = table.aggregate(aggs).execute().to_dict(\"records\")[0]\n        # Step 6: Save the statistics in the dictionary\n        for name in columns:\n            stats[name] = (\n                results[f\"{name}_median\"],\n                results[f\"{name}_25\"],\n                results[f\"{name}_75\"],\n            )\n    # Step 7: Store the statistics in an instance variable\n    self.stats_ = stats\n\n\n\nStep 3: Implement transform_table\nThe transform_table method applies the learned transformation to the input data. This method takes the input table and transforms it based on the previously calculated statistics. Here’s how to implement transform_table:\n\ndef transform_table(self, table):\n    # Apply the transformation to each column \n    return table.mutate(\n        [\n            # Apply the transformation formula: (x - median) / (p75 - p25)\n            ((table[c] - median) / (p75 - p25)).name(c)  \n            for c, (median, p25, p75) in self.stats_.items()\n        ]\n    )\n\n\n\nStep 4: Test the Transformer\nLet’s put the code together and perform some simple tests to verify the results.\n\nclass CustomRobustScaler(Step):\n    def __init__(self, inputs: SelectionType):\n        # Select the columns that will be involved in the transformation\n        self.inputs = selector(inputs)\n    def fit_table(self, table: ir.Table, metadata: Metadata) -&gt; None:\n        # Step 1: Get the column names that match the selector\n        columns = self.inputs.select_columns(table, metadata)\n        # Step 2: Initialize a dictionary to store statistics\n        stats = {}\n        # Step 3: If there are columns selected, calculate statistics for each column\n        if columns:\n            # Create a list to hold Ibis aggregation expressions\n            aggs = []\n            # Step 4: Iterate over each selected column\n            for name in columns:\n                # Get the column from the table\n                c = table[name]\n                # Build Ibis expressions for median, 25th percentile, and 75th percentile\n                aggs.append(c.median().name(f\"{name}_median\"))\n                aggs.append(c.quantile(0.25).name(f\"{name}_25\"))\n                aggs.append(c.quantile(0.75).name(f\"{name}_75\"))\n            # Step 5: Evaluate the Ibis expressions in one run\n            results = table.aggregate(aggs).execute().to_dict(\"records\")[0]\n            # Step 6: Save the statistics in the dictionary\n            for name in columns:\n                stats[name] = (\n                    results[f\"{name}_median\"],\n                    results[f\"{name}_25\"],\n                    results[f\"{name}_75\"],  \n                )\n        # Step 7: Store the statistics in an instance variable\n        self.stats_ = stats\n    def transform_table(self, table):\n        # Apply the transformation to each column \n        return table.mutate(\n            [\n                # Apply the transformation formula: (x - median) / (p75 - p25)\n                ((table[c] - median) / (p75 - p25)).name(c)  \n                for c, (median, p25, p75) in self.stats_.items()\n            ]\n        )\n\nThis code creates sample data for four columns: “string_col”, “int_col”, “floating_col”, and “target_col”, each containing 10 rows of data. The train_table variable holds the created Ibis memory table.\n\nimport numpy as np\n# Enable interactive mode for Ibis\nibis.options.interactive = True\ntrain_size = 10\ndata = {\n    \"string_col\": np.array([\"a\"] * train_size, dtype=\"str\"),\n    \"int_col\": np.arange(train_size, dtype=\"int64\"),\n    \"floating_col\": np.arange(train_size, dtype=\"float64\"),\n    \"target_col\": np.arange(train_size, dtype=\"int8\"),\n}\ntrain_table = ibis.memtable(data)\ntrain_table\n\n┏━━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓\n┃ string_col ┃ int_col ┃ floating_col ┃ target_col ┃\n┡━━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩\n│ string     │ int64   │ float64      │ int8       │\n├────────────┼─────────┼──────────────┼────────────┤\n│ a          │       0 │          0.0 │          0 │\n│ a          │       1 │          1.0 │          1 │\n│ a          │       2 │          2.0 │          2 │\n│ a          │       3 │          3.0 │          3 │\n│ a          │       4 │          4.0 │          4 │\n│ a          │       5 │          5.0 │          5 │\n│ a          │       6 │          6.0 │          6 │\n│ a          │       7 │          7.0 │          7 │\n│ a          │       8 │          8.0 │          8 │\n│ a          │       9 │          9.0 │          9 │\n└────────────┴─────────┴──────────────┴────────────┘\n\n\n\nThis code initializes a transformer instance of CustomRobustScaler with the specified columns to scale. Then, it creates a Metadata object with target columns. The transformer is fitted to the training data and metadata using the fit_table method. Finally, the transform_table method is used to transform the training table with the fitted transformer.\n\n# Instantiate CustomRobustScaler transformer with the specified columns to scale\n# # Select only one column: \"int_col\"\nrobust_scaler = CustomRobustScaler([\"int_col\"])\n# # Select all numeric columns\n# robust_scaler = CustomRobustScaler(ml.numeric())\n# Create Metadata object with target columns\nmetadata = Metadata(targets=(\"target_col\",))\n# Fit the transformer to the training data and metadata\nrobust_scaler.fit_table(train_table, metadata)\n# Transform the training table using the fitted transformer\ntransformed_train_table = robust_scaler.transform_table(train_table)\ntransformed_train_table\n\n┏━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓\n┃ string_col ┃ int_col   ┃ floating_col ┃ target_col ┃\n┡━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩\n│ string     │ float64   │ float64      │ int8       │\n├────────────┼───────────┼──────────────┼────────────┤\n│ a          │ -1.000000 │          0.0 │          0 │\n│ a          │ -0.777778 │          1.0 │          1 │\n│ a          │ -0.555556 │          2.0 │          2 │\n│ a          │ -0.333333 │          3.0 │          3 │\n│ a          │ -0.111111 │          4.0 │          4 │\n│ a          │  0.111111 │          5.0 │          5 │\n│ a          │  0.333333 │          6.0 │          6 │\n│ a          │  0.555556 │          7.0 │          7 │\n│ a          │  0.777778 │          8.0 │          8 │\n│ a          │  1.000000 │          9.0 │          9 │\n└────────────┴───────────┴──────────────┴────────────┘\n\n\n\nAccess the calculated statistics for each column\n\nrobust_scaler.stats_\n\n{'int_col': (4.5, 2.25, 6.75)}\n\n\n\n\nAdditional Considerations\nHere are some considerations to ensure the transformer handles unexpected data types or conditions gracefully:\n\nCheck for numeric columns: Ensure that selected columns are numeric before calculating statistics. This prevents errors when trying to calculate statistics on non-numeric data.\nBackend compatibility: Validate if operators used by IbisML are supported by your chosen backend. This ensures seamless integration and execution of transformations across different environments.",
+    "crumbs": [
+      "Frequently asked questions",
+      "How to create your own transformer"
+    ]
+  },
+  {
+    "objectID": "faq/custom-step.html#contributions-are-welcome",
+    "href": "faq/custom-step.html#contributions-are-welcome",
+    "title": "How to create your own transformer",
+    "section": "Contributions are welcome!",
+    "text": "Contributions are welcome!\nFeel free to contribute by implementing your own custom transformers or suggesting ones that you find essential. You can do so by checking our transformation priorities, discussing ideas through creating issues, or submitting pull requests (PRs) with your implementations. We welcome collaboration and value input from all contributors. Thanks for helping to build Ibis-ml.",
+    "crumbs": [
+      "Frequently asked questions",
+      "How to create your own transformer"
+    ]
   },
   {
     "objectID": "tutorial/xgboost.html",
@@ -25,7 +73,7 @@
     "href": "tutorial/xgboost.html#the-new-york-city-flight-data",
     "title": "Preprocess your data with recipes",
     "section": "The New York City flight data",
-    "text": "The New York City flight data\nLet’s use the nycflights13 data to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:\n\nimport ibis\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.create_table(\n    \"flights\", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True\n)\ncon.create_table(\n    \"weather\", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True\n)\n\nYou can now see the example dataset copied over to the database:\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.list_tables()\n\n['flights', 'weather']\n\n\nWe’ll turn on interactive mode, which partially executes queries to give users a preview of the results.\n\nibis.options.interactive = True\n\n\nflights = con.table(\"flights\")\nflights = flights.mutate(\n    dep_time=(\n        flights.dep_time.lpad(4, \"0\").substr(0, 2)\n        + \":\"\n        + flights.dep_time.substr(-2, 2)\n        + \":00\"\n    ).try_cast(\"time\"),\n    arr_delay=flights.arr_delay.try_cast(int),\n    air_time=flights.air_time.try_cast(int),\n)\nflights\n\n┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ year  ┃ month ┃ day   ┃ dep_time ┃ sched_dep_time ┃ dep_delay ┃ arr_time ┃ sched_arr_time ┃ arr_delay ┃ carrier ┃ flight ┃ tailnum ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ hour  ┃ minute ┃ time_hour           ┃\n┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ int64 │ int64 │ int64 │ time     │ int64          │ string    │ string   │ int64          │ int64     │ string  │ int64  │ string  │ string │ string │ int64    │ int64    │ int64 │ int64  │ timestamp(6)        │\n├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤\n│  2013 │     1 │     1 │ 05:17:00 │            515 │ 2         │ 830      │            819 │        11 │ UA      │   1545 │ N14228  │ EWR    │ IAH    │      227 │     1400 │     5 │     15 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:33:00 │            529 │ 4         │ 850      │            830 │        20 │ UA      │   1714 │ N24211  │ LGA    │ IAH    │      227 │     1416 │     5 │     29 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:42:00 │            540 │ 2         │ 923      │            850 │        33 │ AA      │   1141 │ N619AA  │ JFK    │ MIA    │      160 │     1089 │     5 │     40 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:44:00 │            545 │ -1        │ 1004     │           1022 │       -18 │ B6      │    725 │ N804JB  │ JFK    │ BQN    │      183 │     1576 │     5 │     45 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            600 │ -6        │ 812      │            837 │       -25 │ DL      │    461 │ N668DN  │ LGA    │ ATL    │      116 │      762 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            558 │ -4        │ 740      │            728 │        12 │ UA      │   1696 │ N39463  │ EWR    │ ORD    │      150 │      719 │     5 │     58 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:55:00 │            600 │ -5        │ 913      │            854 │        19 │ B6      │    507 │ N516JB  │ EWR    │ FLL    │      158 │     1065 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 709      │            723 │       -14 │ EV      │   5708 │ N829AS  │ LGA    │ IAD    │       53 │      229 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 838      │            846 │        -8 │ B6      │     79 │ N593JB  │ JFK    │ MCO    │      140 │      944 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:58:00 │            600 │ -2        │ 753      │            745 │         8 │ AA      │    301 │ N3ALAA  │ LGA    │ ORD    │      138 │      733 │     6 │      0 │ 2013-01-01 11:00:00 │\n│     … │     … │     … │ …        │              … │ …         │ …        │              … │         … │ …       │      … │ …       │ …      │ …      │        … │        … │     … │      … │ …                   │\n└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘\n\n\n\n\nweather = con.table(\"weather\")\nweather\n\n┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ origin ┃ year  ┃ month ┃ day   ┃ hour  ┃ temp   ┃ dewp   ┃ humid  ┃ wind_dir ┃ wind_speed         ┃ wind_gust ┃ precip  ┃ pressure ┃ visib   ┃ time_hour           ┃\n┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ string │ int64 │ int64 │ int64 │ int64 │ string │ string │ string │ string   │ string             │ string    │ float64 │ string   │ float64 │ timestamp(6)        │\n├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤\n│ EWR    │  2013 │     1 │     1 │     1 │ 39.02  │ 26.06  │ 59.37  │ 270      │ 10.357019999999999 │ NA        │     0.0 │ 1012     │    10.0 │ 2013-01-01 06:00:00 │\n│ EWR    │  2013 │     1 │     1 │     2 │ 39.02  │ 26.96  │ 61.63  │ 250      │ 8.05546            │ NA        │     0.0 │ 1012.3   │    10.0 │ 2013-01-01 07:00:00 │\n│ EWR    │  2013 │     1 │     1 │     3 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.5   │    10.0 │ 2013-01-01 08:00:00 │\n│ EWR    │  2013 │     1 │     1 │     4 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 12.658579999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 09:00:00 │\n│ EWR    │  2013 │     1 │     1 │     5 │ 39.02  │ 28.04  │ 64.43  │ 260      │ 12.658579999999999 │ NA        │     0.0 │ 1011.9   │    10.0 │ 2013-01-01 10:00:00 │\n│ EWR    │  2013 │     1 │     1 │     6 │ 37.94  │ 28.04  │ 67.21  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 11:00:00 │\n│ EWR    │  2013 │     1 │     1 │     7 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 14.960139999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 12:00:00 │\n│ EWR    │  2013 │     1 │     1 │     8 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 10.357019999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 13:00:00 │\n│ EWR    │  2013 │     1 │     1 │     9 │ 39.92  │ 28.04  │ 62.21  │ 260      │ 14.960139999999999 │ NA        │     0.0 │ 1012.7   │    10.0 │ 2013-01-01 14:00:00 │\n│ EWR    │  2013 │     1 │     1 │    10 │ 41     │ 28.04  │ 59.65  │ 260      │ 13.809359999999998 │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 15:00:00 │\n│ …      │     … │     … │     … │     … │ …      │ …      │ …      │ …        │ …                  │ …         │       … │ …        │       … │ …                   │\n└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘\n\n\n\n\nflight_data = (\n    flights.mutate(\n        # Convert the arrival delay to a factor\n        arr_delay=ibis.ifelse(flights.arr_delay &gt;= 30, 1, 0),\n        # We will use the date (not date-time) in the recipe below\n        date=flights.time_hour.date(),\n    )\n    # Include the weather data\n    .inner_join(weather, [\"origin\", \"time_hour\"])\n    # Only retain the specific columns we will use\n    .select(\n        \"dep_time\",\n        \"flight\",\n        \"origin\",\n        \"dest\",\n        \"air_time\",\n        \"distance\",\n        \"carrier\",\n        \"date\",\n        \"arr_delay\",\n        \"time_hour\",\n    )\n    # Exclude missing data\n    .drop_null()\n)\nflight_data\n\n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ dep_time ┃ flight ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ carrier ┃ date       ┃ arr_delay ┃ time_hour           ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ time     │ int64  │ string │ string │ int64    │ int64    │ string  │ date       │ int8      │ timestamp(6)        │\n├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤\n│ 05:17:00 │   1545 │ EWR    │ IAH    │      227 │     1400 │ UA      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:33:00 │   1714 │ LGA    │ IAH    │      227 │     1416 │ UA      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:42:00 │   1141 │ JFK    │ MIA    │      160 │     1089 │ AA      │ 2013-01-01 │         1 │ 2013-01-01 10:00:00 │\n│ 05:44:00 │    725 │ JFK    │ BQN    │      183 │     1576 │ B6      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:54:00 │    461 │ LGA    │ ATL    │      116 │      762 │ DL      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:54:00 │   1696 │ EWR    │ ORD    │      150 │      719 │ UA      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:55:00 │    507 │ EWR    │ FLL    │      158 │     1065 │ B6      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:57:00 │   5708 │ LGA    │ IAD    │       53 │      229 │ EV      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:57:00 │     79 │ JFK    │ MCO    │      140 │      944 │ B6      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:58:00 │    301 │ LGA    │ ORD    │      138 │      733 │ AA      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ …        │      … │ …      │ …      │        … │        … │ …       │ …          │         … │ …                   │\n└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘\n\n\n\nWe can see that about 16% of the flights in this dataset arrived more than 30 minutes late.\n\nflight_data.arr_delay.value_counts().rename(n=\"arr_delay_count\").mutate(\n    prop=ibis._.n / ibis._.n.sum()\n)\n\n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓\n┃ arr_delay ┃ n      ┃ prop     ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩\n│ int8      │ int64  │ float64  │\n├───────────┼────────┼──────────┤\n│         0 │ 273279 │ 0.838745 │\n│         1 │  52540 │ 0.161255 │\n└───────────┴────────┴──────────┘"
+    "text": "The New York City flight data\nLet’s use the nycflights13 data to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:\n\nimport ibis\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.create_table(\n    \"flights\", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True\n)\ncon.create_table(\n    \"weather\", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True\n)\n\nYou can now see the example dataset copied over to the database:\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.list_tables()\n\n['flights', 'weather']\n\n\nWe’ll turn on interactive mode, which partially executes queries to give users a preview of the results.\n\nibis.options.interactive = True\n\n\nflights = con.table(\"flights\")\nflights = flights.mutate(\n    dep_time=(\n        flights.dep_time.lpad(4, \"0\").substr(0, 2)\n        + \":\"\n        + flights.dep_time.substr(-2, 2)\n        + \":00\"\n    ).try_cast(\"time\"),\n    arr_delay=flights.arr_delay.try_cast(int),\n    air_time=flights.air_time.try_cast(int),\n)\nflights\n\n┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ year  ┃ month ┃ day   ┃ dep_time ┃ sched_dep_time ┃ dep_delay ┃ arr_time ┃ sched_arr_time ┃ arr_delay ┃ carrier ┃ flight ┃ tailnum ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ hour  ┃ minute ┃ time_hour           ┃\n┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ int64 │ int64 │ int64 │ time     │ int64          │ string    │ string   │ int64          │ int64     │ string  │ int64  │ string  │ string │ string │ int64    │ int64    │ int64 │ int64  │ timestamp(6)        │\n├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤\n│  2013 │     1 │     1 │ 05:17:00 │            515 │ 2         │ 830      │            819 │        11 │ UA      │   1545 │ N14228  │ EWR    │ IAH    │      227 │     1400 │     5 │     15 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:33:00 │            529 │ 4         │ 850      │            830 │        20 │ UA      │   1714 │ N24211  │ LGA    │ IAH    │      227 │     1416 │     5 │     29 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:42:00 │            540 │ 2         │ 923      │            850 │        33 │ AA      │   1141 │ N619AA  │ JFK    │ MIA    │      160 │     1089 │     5 │     40 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:44:00 │            545 │ -1        │ 1004     │           1022 │       -18 │ B6      │    725 │ N804JB  │ JFK    │ BQN    │      183 │     1576 │     5 │     45 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            600 │ -6        │ 812      │            837 │       -25 │ DL      │    461 │ N668DN  │ LGA    │ ATL    │      116 │      762 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            558 │ -4        │ 740      │            728 │        12 │ UA      │   1696 │ N39463  │ EWR    │ ORD    │      150 │      719 │     5 │     58 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:55:00 │            600 │ -5        │ 913      │            854 │        19 │ B6      │    507 │ N516JB  │ EWR    │ FLL    │      158 │     1065 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 709      │            723 │       -14 │ EV      │   5708 │ N829AS  │ LGA    │ IAD    │       53 │      229 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 838      │            846 │        -8 │ B6      │     79 │ N593JB  │ JFK    │ MCO    │      140 │      944 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:58:00 │            600 │ -2        │ 753      │            745 │         8 │ AA      │    301 │ N3ALAA  │ LGA    │ ORD    │      138 │      733 │     6 │      0 │ 2013-01-01 11:00:00 │\n│     … │     … │     … │ …        │              … │ …         │ …        │              … │         … │ …       │      … │ …       │ …      │ …      │        … │        … │     … │      … │ …                   │\n└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘\n\n\n\n\nweather = con.table(\"weather\")\nweather\n\n┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ origin ┃ year  ┃ month ┃ day   ┃ hour  ┃ temp   ┃ dewp   ┃ humid  ┃ wind_dir ┃ wind_speed         ┃ wind_gust ┃ precip  ┃ pressure ┃ visib   ┃ time_hour           ┃\n┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ string │ int64 │ int64 │ int64 │ int64 │ string │ string │ string │ string   │ string             │ string    │ float64 │ string   │ float64 │ timestamp(6)        │\n├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤\n│ EWR    │  2013 │     1 │     1 │     1 │ 39.02  │ 26.06  │ 59.37  │ 270      │ 10.357019999999999 │ NA        │     0.0 │ 1012     │    10.0 │ 2013-01-01 06:00:00 │\n│ EWR    │  2013 │     1 │     1 │     2 │ 39.02  │ 26.96  │ 61.63  │ 250      │ 8.05546            │ NA        │     0.0 │ 1012.3   │    10.0 │ 2013-01-01 07:00:00 │\n│ EWR    │  2013 │     1 │     1 │     3 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.5   │    10.0 │ 2013-01-01 08:00:00 │\n│ EWR    │  2013 │     1 │     1 │     4 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 12.658579999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 09:00:00 │\n│ EWR    │  2013 │     1 │     1 │     5 │ 39.02  │ 28.04  │ 64.43  │ 260      │ 12.658579999999999 │ NA        │     0.0 │ 1011.9   │    10.0 │ 2013-01-01 10:00:00 │\n│ EWR    │  2013 │     1 │     1 │     6 │ 37.94  │ 28.04  │ 67.21  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 11:00:00 │\n│ EWR    │  2013 │     1 │     1 │     7 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 14.960139999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 12:00:00 │\n│ EWR    │  2013 │     1 │     1 │     8 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 10.357019999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 13:00:00 │\n│ EWR    │  2013 │     1 │     1 │     9 │ 39.92  │ 28.04  │ 62.21  │ 260      │ 14.960139999999999 │ NA        │     0.0 │ 1012.7   │    10.0 │ 2013-01-01 14:00:00 │\n│ EWR    │  2013 │     1 │     1 │    10 │ 41     │ 28.04  │ 59.65  │ 260      │ 13.809359999999998 │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 15:00:00 │\n│ …      │     … │     … │     … │     … │ …      │ …      │ …      │ …        │ …                  │ …         │       … │ …        │       … │ …                   │\n└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘\n\n\n\n\nflight_data = (\n    flights.mutate(\n        # Convert the arrival delay to a factor\n        arr_delay=ibis.ifelse(flights.arr_delay &gt;= 30, 1, 0),\n        # We will use the date (not date-time) in the recipe below\n        date=flights.time_hour.date(),\n    )\n    # Include the weather data\n    .inner_join(weather, [\"origin\", \"time_hour\"])\n    # Only retain the specific columns we will use\n    .select(\n        \"dep_time\",\n        \"flight\",\n        \"origin\",\n        \"dest\",\n        \"air_time\",\n        \"distance\",\n        \"carrier\",\n        \"date\",\n        \"arr_delay\",\n        \"time_hour\",\n    )\n    # Exclude missing data\n    .drop_null()\n)\nflight_data\n\n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ dep_time ┃ flight ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ carrier ┃ date       ┃ arr_delay ┃ time_hour           ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ time     │ int64  │ string │ string │ int64    │ int64    │ string  │ date       │ int8      │ timestamp(6)        │\n├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤\n│ 05:57:00 │    461 │ LGA    │ ATL    │      100 │      762 │ DL      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 05:58:00 │   4424 │ EWR    │ RDU    │       63 │      416 │ EV      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 05:58:00 │   6177 │ EWR    │ IAD    │       45 │      212 │ EV      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:00:00 │    731 │ LGA    │ DTW    │       78 │      502 │ DL      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │    684 │ EWR    │ LAX    │      316 │     2454 │ UA      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │    301 │ LGA    │ ORD    │      164 │      733 │ AA      │ 2013-06-26 │         1 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │   1837 │ LGA    │ MIA    │      148 │     1096 │ AA      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │   1279 │ LGA    │ MEM    │      128 │      963 │ DL      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:02:00 │   1691 │ JFK    │ LAX    │      309 │     2475 │ UA      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:04:00 │   1447 │ JFK    │ CLT    │       75 │      541 │ US      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ …        │      … │ …      │ …      │        … │        … │ …       │ …          │         … │ …                   │\n└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘\n\n\n\nWe can see that about 16% of the flights in this dataset arrived more than 30 minutes late.\n\nflight_data.arr_delay.value_counts().rename(n=\"arr_delay_count\").mutate(\n    prop=ibis._.n / ibis._.n.sum()\n)\n\n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓\n┃ arr_delay ┃ n      ┃ prop     ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩\n│ int8      │ int64  │ float64  │\n├───────────┼────────┼──────────┤\n│         0 │ 273279 │ 0.838745 │\n│         1 │  52540 │ 0.161255 │\n└───────────┴────────┴──────────┘"
   },
   {
     "objectID": "tutorial/xgboost.html#data-splitting",
@@ -53,7 +101,7 @@
     "href": "tutorial/xgboost.html#use-a-trained-workflow-to-predict",
     "title": "Preprocess your data with recipes",
     "section": "Use a trained workflow to predict",
-    "text": "Use a trained workflow to predict\n…\n\nX_test = test_data.drop(\"arr_delay\")\ny_test = test_data.arr_delay\npipe.score(X_test, y_test)\n\n0.8302545812323208"
+    "text": "Use a trained workflow to predict\n…\n\nX_test = test_data.drop(\"arr_delay\")\ny_test = test_data.arr_delay\npipe.score(X_test, y_test)\n\n0.8320870741606199"
   },
   {
     "objectID": "tutorial/xgboost.html#acknowledgments",
@@ -63,72 +111,18 @@
     "text": "Acknowledgments\nThis tutorial is derived from the tidymodels article of the same name. The transformation logic is very similar, and much of the text is copied verbatim."
   },
   {
+    "objectID": "tutorial/index.html",
+    "href": "tutorial/index.html",
+    "title": "Preprocess your data with recipes",
+    "section": "",
+    "text": "Back to top"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Welcome to IbisML",
     "section": "",
     "text": "Welcome to IbisML\n\nA library for building scalable ML pipelines\n\nPreprocess your data at scale on any Ibis-supported backend.\nCompose Recipes with other scikit-learn estimators using Pipelines.\nSeamlessly integrate with scikit-learn, XGBoost, and PyTorch models.\n\n\n\n\nGet started\n\nInstall IbisML\npip install ibis-ml\n\n\nCreate your first recipe\nWith recipes, you can define sequences of feature engineering steps to get your data ready for modeling. For example, create a recipe to replace missing values using the mean of each numeric column and then normalize numeric data to have a standard deviation of one and a mean of zero.\n\nimport ibis_ml as ml\n\nimputer = ml.ImputeMean(ml.numeric())\nscaler = ml.ScaleStandard(ml.numeric())\nrec = ml.Recipe(imputer, scaler)\n\nA recipe can be chained in a Pipeline like any other transformer.\n\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\npipe = Pipeline([(\"rec\", rec), (\"svc\", SVC())])\n\nThe pipeline can be used as any other estimator and avoids leaking the test set into the train set.\n\nfrom sklearn.datasets import make_classification\nfrom sklearn.model_selection import train_test_split\n\nX, y = make_classification(random_state=0)\nX_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)\npipe.fit(X_train, y_train).score(X_test, y_test)\n\n0.88\n\n\n\n\n\n\n\n Back to top"
-  },
-  {
-    "objectID": "reference/steps-feature-generation.html",
-    "href": "reference/steps-feature-generation.html",
-    "title": "Feature generation",
-    "section": "",
-    "text": "Construction of new features from existing ones",
-    "crumbs": [
-      "Steps",
-      "Feature generation"
-    ]
-  },
-  {
-    "objectID": "reference/steps-feature-generation.html#parameters",
-    "href": "reference/steps-feature-generation.html#parameters",
-    "title": "Feature generation",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to generate polynomial features. All columns must be numeric.\nrequired\n\n\ndegree\nint\nThe maximum degree of polynomial features to generate.\n2",
-    "crumbs": [
-      "Steps",
-      "Feature generation"
-    ]
-  },
-  {
-    "objectID": "reference/steps-feature-generation.html#examples",
-    "href": "reference/steps-feature-generation.html#examples",
-    "title": "Feature generation",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nGenerate polynomial features for all numeric columns with a degree is 2.\n&gt;&gt;&gt; step = ml.CreatePolynomialFeatures(ml.numeric(), degree=2)\nGenerate polynomial features a specific set of columns.\n&gt;&gt;&gt; step = ml.CreatePolynomialFeatures([\"x\", \"y\"], degree=2)",
-    "crumbs": [
-      "Steps",
-      "Feature generation"
-    ]
-  },
-  {
-    "objectID": "reference/index.html",
-    "href": "reference/index.html",
-    "title": "Reference",
-    "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nDiscretization\nDiscretization of numeric columns\n\n\nFeature selection\nSelection of features for modeling\n\n\nFeature generation\nConstruction of new features from existing ones\n\n\nOutlier handling\nOutlier detection and handling\n\n\nTemporal feature extraction\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations\n\n\n\n\n\n\nUtility functions\n\n\n\nData splitting\nSegregating data into training, testing, and validation sets"
-  },
-  {
-    "objectID": "reference/index.html#core",
-    "href": "reference/index.html#core",
-    "title": "Reference",
-    "section": "",
-    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties"
-  },
-  {
-    "objectID": "reference/index.html#steps",
-    "href": "reference/index.html#steps",
-    "title": "Reference",
-    "section": "",
-    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nDiscretization\nDiscretization of numeric columns\n\n\nFeature selection\nSelection of features for modeling\n\n\nFeature generation\nConstruction of new features from existing ones\n\n\nOutlier handling\nOutlier detection and handling\n\n\nTemporal feature extraction\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
-  },
-  {
-    "objectID": "reference/index.html#utilities",
-    "href": "reference/index.html#utilities",
-    "title": "Reference",
-    "section": "",
-    "text": "Utility functions\n\n\n\nData splitting\nSegregating data into training, testing, and validation sets"
   },
   {
     "objectID": "reference/steps-encoding.html",
@@ -230,223 +224,36 @@
     ]
   },
   {
-    "objectID": "reference/steps-outlier-handling.html",
-    "href": "reference/steps-outlier-handling.html",
-    "title": "Outlier handling",
+    "objectID": "reference/steps-feature-generation.html",
+    "href": "reference/steps-feature-generation.html",
+    "title": "Feature generation",
     "section": "",
-    "text": "Outlier detection and handling",
+    "text": "Construction of new features from existing ones",
     "crumbs": [
       "Steps",
-      "Outlier handling"
+      "Feature generation"
     ]
   },
   {
-    "objectID": "reference/steps-outlier-handling.html#parameters",
-    "href": "reference/steps-outlier-handling.html#parameters",
-    "title": "Outlier handling",
+    "objectID": "reference/steps-feature-generation.html#parameters",
+    "href": "reference/steps-feature-generation.html#parameters",
+    "title": "Feature generation",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to analyze for outliers. All columns must be numeric.\nrequired\n\n\nmethod\nstr\nThe method to use for detecting outliers. “z-score” detects outliers based on the standard deviation from the mean for normally distributed data. “IQR” detects outliers using the interquartile range for skewed data.\n'z-score'\n\n\ntreatment\nstr\nThe treatment to apply to the outliers. capping replaces outlier values with the upper or lower bound, while trimming removes outlier rows from the dataset.\n'capping'\n\n\ndeviation_factor\nint | float\nThe magnitude of deviation from the center is used to calculate the upper and lower bound for outlier detection. For “z-score”, Upper Bound = mean + deviation_factor * standard deviation. Lower Bound =  mean - deviation_factor * standard deviation. 68% of the data lies within 1 standard deviation. 95% of the data lies within 2 standard deviations. 99.7% of the data lies within 3 standard deviations. For “IQR”, IQR = Q3 - Q1. Upper Bound = Q3 + deviation_factor * IQR. Lower Bound = Q1 - deviation_factor * IQR.\n3",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to generate polynomial features. All columns must be numeric.\nrequired\n\n\ndegree\nint\nThe maximum degree of polynomial features to generate.\n2",
     "crumbs": [
       "Steps",
-      "Outlier handling"
+      "Feature generation"
     ]
   },
   {
-    "objectID": "reference/steps-outlier-handling.html#examples",
-    "href": "reference/steps-outlier-handling.html#examples",
-    "title": "Outlier handling",
+    "objectID": "reference/steps-feature-generation.html#examples",
+    "href": "reference/steps-feature-generation.html#examples",
+    "title": "Feature generation",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nCapping outliers in all numeric columns using z-score method.\n&gt;&gt;&gt; step = ml.HandleUnivariateOutliers(ml.numeric())\nTrimming outliers in a specific set of columns using IQR method.\n&gt;&gt;&gt; step = ml.HandleUnivariateOutliers(\n    [\"x\", \"y\"],\n    method=\"IQR\",\n    deviation_factor=2.0,\n    treatment=\"trimming\",\n   )",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nGenerate polynomial features for all numeric columns with a degree is 2.\n&gt;&gt;&gt; step = ml.CreatePolynomialFeatures(ml.numeric(), degree=2)\nGenerate polynomial features a specific set of columns.\n&gt;&gt;&gt; step = ml.CreatePolynomialFeatures([\"x\", \"y\"], degree=2)",
     "crumbs": [
       "Steps",
-      "Outlier handling"
-    ]
-  },
-  {
-    "objectID": "reference/utils-data-splitting.html",
-    "href": "reference/utils-data-splitting.html",
-    "title": "Data splitting",
-    "section": "",
-    "text": "Segregating data into training, testing, and validation sets",
-    "crumbs": [
-      "Utilities",
-      "Data splitting"
-    ]
-  },
-  {
-    "objectID": "reference/utils-data-splitting.html#parameters",
-    "href": "reference/utils-data-splitting.html#parameters",
-    "title": "Data splitting",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntable\nir.Table\nThe input Ibis table to be split.\nrequired\n\n\nunique_key\nstr | list[str]\nThe column name(s) that uniquely identify each row in the table. This unique_key is used to create a deterministic split of the dataset through a hashing process.\nrequired\n\n\ntest_size\nfloat\nThe ratio of the dataset to include in the test split, which should be between 0 and 1. This ratio is approximate because the hashing algorithm may not provide a uniform bucket distribution for small datasets. Larger datasets will result in more uniform bucket assignments, making the split ratio closer to the desired value.\n0.25\n\n\nnum_buckets\nint\nThe number of buckets into which the data is divided during the splitting process. It controls how finely the data is divided into buckets during the split process. Adjusting num_buckets can affect the granularity and efficiency of the splitting operation, balancing between accuracy and computational efficiency.\n100\n\n\nrandom_seed\nint | None\nSeed for the random number generator. If provided, ensures reproducibility of the split.\nNone",
-    "crumbs": [
-      "Utilities",
-      "Data splitting"
-    ]
-  },
-  {
-    "objectID": "reference/utils-data-splitting.html#returns",
-    "href": "reference/utils-data-splitting.html#returns",
-    "title": "Data splitting",
-    "section": "Returns",
-    "text": "Returns\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ntuple[ir.Table, ir.Table]\nA tuple containing two Ibis tables: (train_table, test_table).",
-    "crumbs": [
-      "Utilities",
-      "Data splitting"
-    ]
-  },
-  {
-    "objectID": "reference/utils-data-splitting.html#raises",
-    "href": "reference/utils-data-splitting.html#raises",
-    "title": "Data splitting",
-    "section": "Raises",
-    "text": "Raises\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf test_size is not a float between 0 and 1.",
-    "crumbs": [
-      "Utilities",
-      "Data splitting"
-    ]
-  },
-  {
-    "objectID": "reference/utils-data-splitting.html#examples",
-    "href": "reference/utils-data-splitting.html#examples",
-    "title": "Data splitting",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nSplit an Ibis table into training and testing tables.\n&gt;&gt;&gt; table = ibis.memtable({\"key1\": range(100)})\n&gt;&gt;&gt; train_table, test_table = ml.train_test_split(\n...     table,\n...     unique_key=\"key1\",\n...     test_size=0.2,\n...     random_seed=0,\n... )",
-    "crumbs": [
-      "Utilities",
-      "Data splitting"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html",
-    "href": "reference/steps-other.html",
-    "title": "Other",
-    "section": "",
-    "text": "Other common tabular operations",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters",
-    "href": "reference/steps-other.html#parameters",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to cast.\nrequired\n\n\ndtype\ndt.DataType | type[dt.DataType] | str\nThe dtype to cast to. May be a dtype instance, class, or a string representation of one.\nrequired",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#examples",
-    "href": "reference/steps-other.html#examples",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nCast all numeric columns to float64\n&gt;&gt;&gt; step = ml.Cast(ml.numeric(), \"float64\")\nCast specific columns to int64 by name\n&gt;&gt;&gt; step = ml.Cast([\"x\", \"y\"], \"int64\")",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters-1",
-    "href": "reference/steps-other.html#parameters-1",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to drop.\nrequired",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#examples-1",
-    "href": "reference/steps-other.html#examples-1",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nDrop all non-numeric columns\n&gt;&gt;&gt; step = ml.Drop(~ml.numeric())\nDrop specific columns by name\n&gt;&gt;&gt; step = ml.Drop([\"x\", \"y\"])",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters-2",
-    "href": "reference/steps-other.html#parameters-2",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to use as inputs to expr/named_exprs.\nrequired\n\n\nexpr\nCallable[[ir.Column], ir.Column] | Deferred | None\nAn optional callable (Column -&gt; Column) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).\nNone\n\n\nnamed_exprs\nCallable[[ir.Column], ir.Column] | Deferred\nNamed callables (Column -&gt; Column) or deferred expressions to apply to all columns in inputs. Output columns will be named {column}_{name} where column is the input column name and name is the expression/callable name.\n{}",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#examples-2",
-    "href": "reference/steps-other.html#examples-2",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\n&gt;&gt;&gt; from ibis import _\nReplace all numeric columns with their absolute values.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), _.abs())\nSame as the above, but instead create new columns with _abs suffixes.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), abs=_.abs())",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#parameters-3",
-    "href": "reference/steps-other.html#parameters-3",
-    "title": "Other",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nexprs\nCallable[[ir.Table], ir.Column] | Deferred\nCallables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n()\n\n\nnamed_exprs\nCallable[[ir.Table], ir.Column] | Deferred\nNamed callables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n{}",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-other.html#examples-3",
-    "href": "reference/steps-other.html#examples-3",
-    "title": "Other",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\n&gt;&gt;&gt; from ibis import _\nDefine a new column c as a**2 + b**2\n&gt;&gt;&gt; step = ml.Mutate(c=_.a**2 + _.b**2)",
-    "crumbs": [
-      "Steps",
-      "Other"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html",
-    "href": "reference/steps-standardization.html",
-    "title": "Standardization",
-    "section": "",
-    "text": "Standardization and normalization of numeric columns",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html#parameters",
-    "href": "reference/steps-standardization.html#parameters",
-    "title": "Standardization",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired",
-    "crumbs": [
-      "Steps",
-      "Standardization"
-    ]
-  },
-  {
-    "objectID": "reference/steps-standardization.html#examples",
-    "href": "reference/steps-standardization.html#examples",
-    "title": "Standardization",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])",
-    "crumbs": [
-      "Steps",
-      "Standardization"
+      "Feature generation"
     ]
   },
   {
@@ -480,6 +287,144 @@
     "crumbs": [
       "Steps",
       "Feature selection"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html",
+    "href": "reference/steps-temporal-feature-extraction.html",
+    "title": "Temporal feature extraction",
+    "section": "",
+    "text": "Feature extraction for temporal columns",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html#parameters",
+    "href": "reference/steps-temporal-feature-extraction.html#parameters",
+    "title": "Temporal feature extraction",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of date columns to expand into new features.\nrequired\n\n\ncomponents\nSequence[Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]\nA sequence of components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\n('dow', 'month', 'year')",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html#examples",
+    "href": "reference/steps-temporal-feature-extraction.html#examples",
+    "title": "Temporal feature extraction",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nExpand date columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDate(ml.date())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandDate([\"x\", \"y\"], [\"day\", \"year\"])",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html#parameters-1",
+    "href": "reference/steps-temporal-feature-extraction.html#parameters-1",
+    "title": "Temporal feature extraction",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of time columns to expand into new features.\nrequired\n\n\ncomponents\nSequence[Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\n('hour', 'minute', 'second')",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html#examples-1",
+    "href": "reference/steps-temporal-feature-extraction.html#examples-1",
+    "title": "Temporal feature extraction",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html#parameters-2",
+    "href": "reference/steps-temporal-feature-extraction.html#parameters-2",
+    "title": "Temporal feature extraction",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of timestamp columns to expand into new features.\nrequired\n\n\ncomponents\nlist[Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’, ‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of date or time components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value - hour: the hour as a numeric value - minute: the minute as a numeric value - second: the second as a numeric value - millisecond: the millisecond as a numeric value Defaults to [\"dow\", \"month\", \"year\", \"hour\", \"minute\", \"second\"].\n('dow', 'month', 'year', 'hour', 'minute', 'second')",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/steps-temporal-feature-extraction.html#examples-2",
+    "href": "reference/steps-temporal-feature-extraction.html#examples-2",
+    "title": "Temporal feature extraction",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nExpand timestamp columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTimestamp(ml.timestamp())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTimestamp([\"x\", \"y\"], [\"day\", \"year\", \"hour\"])",
+    "crumbs": [
+      "Steps",
+      "Temporal feature extraction"
+    ]
+  },
+  {
+    "objectID": "reference/index.html",
+    "href": "reference/index.html",
+    "title": "Reference",
+    "section": "",
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties\n\n\n\n\n\n\nDefine steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nDiscretization\nDiscretization of numeric columns\n\n\nFeature selection\nSelection of features for modeling\n\n\nFeature generation\nConstruction of new features from existing ones\n\n\nOutlier handling\nOutlier detection and handling\n\n\nTemporal feature extraction\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations\n\n\n\n\n\n\nUtility functions\n\n\n\nData splitting\nSegregating data into training, testing, and validation sets"
+  },
+  {
+    "objectID": "reference/index.html#core",
+    "href": "reference/index.html#core",
+    "title": "Reference",
+    "section": "",
+    "text": "Common\nCore APIs\n\n\nSelectors\nSelect sets of columns by name, type, or other properties"
+  },
+  {
+    "objectID": "reference/index.html#steps",
+    "href": "reference/index.html#steps",
+    "title": "Reference",
+    "section": "",
+    "text": "Define steps in a recipe\n\n\n\nImputation\nImputation and handling of missing values\n\n\nEncoding\nEncoding of categorical and string columns\n\n\nStandardization\nStandardization and normalization of numeric columns\n\n\nDiscretization\nDiscretization of numeric columns\n\n\nFeature selection\nSelection of features for modeling\n\n\nFeature generation\nConstruction of new features from existing ones\n\n\nOutlier handling\nOutlier detection and handling\n\n\nTemporal feature extraction\nFeature extraction for temporal columns\n\n\nOther\nOther common tabular operations"
+  },
+  {
+    "objectID": "reference/index.html#utilities",
+    "href": "reference/index.html#utilities",
+    "title": "Reference",
+    "section": "",
+    "text": "Utility functions\n\n\n\nData splitting\nSegregating data into training, testing, and validation sets"
+  },
+  {
+    "objectID": "reference/steps-standardization.html",
+    "href": "reference/steps-standardization.html",
+    "title": "Standardization",
+    "section": "",
+    "text": "Standardization and normalization of numeric columns",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html#parameters",
+    "href": "reference/steps-standardization.html#parameters",
+    "title": "Standardization",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to normalize. All columns must be numeric.\nrequired",
+    "crumbs": [
+      "Steps",
+      "Standardization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-standardization.html#examples",
+    "href": "reference/steps-standardization.html#examples",
+    "title": "Standardization",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nNormalize all numeric columns.\n&gt;&gt;&gt; step = ml.ScaleStandard(ml.numeric())\nNormalize a specific set of columns.\n&gt;&gt;&gt; step = ml.ScaleStandard([\"x\", \"y\"])",
+    "crumbs": [
+      "Steps",
+      "Standardization"
     ]
   },
   {
@@ -582,113 +527,47 @@
     ]
   },
   {
-    "objectID": "reference/steps-temporal-feature-extraction.html",
-    "href": "reference/steps-temporal-feature-extraction.html",
-    "title": "Temporal feature extraction",
+    "objectID": "reference/steps-discretization.html",
+    "href": "reference/steps-discretization.html",
+    "title": "Discretization",
     "section": "",
-    "text": "Feature extraction for temporal columns",
+    "text": "Discretization of numeric columns",
     "crumbs": [
       "Steps",
-      "Temporal feature extraction"
+      "Discretization"
     ]
   },
   {
-    "objectID": "reference/steps-temporal-feature-extraction.html#parameters",
-    "href": "reference/steps-temporal-feature-extraction.html#parameters",
-    "title": "Temporal feature extraction",
+    "objectID": "reference/steps-discretization.html#parameters",
+    "href": "reference/steps-discretization.html#parameters",
+    "title": "Discretization",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of date columns to expand into new features.\nrequired\n\n\ncomponents\nSequence[Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’]]\nA sequence of components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value Defaults to [\"dow\", \"month\", \"year\"].\n('dow', 'month', 'year')",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to bin.\nrequired\n\n\nn_bins\nint\nNumber of bins to create.\n5\n\n\nstrategy\n(str, {‘uniform’, ‘quantile’})\nStrategy used to define the bin edges. - ‘uniform’: Evenly spaced bins between the minimum and maximum values. - ‘quantile’: Bins are created based on data quantiles.\n'uniform'",
     "crumbs": [
       "Steps",
-      "Temporal feature extraction"
+      "Discretization"
     ]
   },
   {
-    "objectID": "reference/steps-temporal-feature-extraction.html#examples",
-    "href": "reference/steps-temporal-feature-extraction.html#examples",
-    "title": "Temporal feature extraction",
+    "objectID": "reference/steps-discretization.html#raises",
+    "href": "reference/steps-discretization.html#raises",
+    "title": "Discretization",
+    "section": "Raises",
+    "text": "Raises\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf n_bins is less than or equal to 1 or if an unsupported strategy is provided.",
+    "crumbs": [
+      "Steps",
+      "Discretization"
+    ]
+  },
+  {
+    "objectID": "reference/steps-discretization.html#examples",
+    "href": "reference/steps-discretization.html#examples",
+    "title": "Discretization",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nExpand date columns using the default components\n&gt;&gt;&gt; step = ml.ExpandDate(ml.date())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandDate([\"x\", \"y\"], [\"day\", \"year\"])",
+    "text": "Examples\n&gt;&gt;&gt; import ibis\n&gt;&gt;&gt; import ibis_ml as ml\n&gt;&gt;&gt; from ibis_ml.core import Metadata\n&gt;&gt;&gt; ibis.options.interactive = True\nLoad penguins dataset\n&gt;&gt;&gt; p = ibis.examples.penguins.fetch()\nBin all numeric columns.\n&gt;&gt;&gt; step = ml.DiscretizeKBins(ml.numeric(), n_bins=10)\n&gt;&gt;&gt; step.fit_table(p, Metadata())\n&gt;&gt;&gt; step.transform_table(p)\nBin specific numeric columns.\n&gt;&gt;&gt; step = ml.DiscretizeKBins([\"bill_length_mm\"], strategy=\"quantile\")\n&gt;&gt;&gt; step.fit_table(p, Metadata())\n&gt;&gt;&gt; step.transform_table(p)",
     "crumbs": [
       "Steps",
-      "Temporal feature extraction"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal-feature-extraction.html#parameters-1",
-    "href": "reference/steps-temporal-feature-extraction.html#parameters-1",
-    "title": "Temporal feature extraction",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of time columns to expand into new features.\nrequired\n\n\ncomponents\nSequence[Literal[‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of components to expand. Options include hour, minute, second, and millisecond. Defaults to [\"hour\", \"minute\", \"second\"].\n('hour', 'minute', 'second')",
-    "crumbs": [
-      "Steps",
-      "Temporal feature extraction"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal-feature-extraction.html#examples-1",
-    "href": "reference/steps-temporal-feature-extraction.html#examples-1",
-    "title": "Temporal feature extraction",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nExpand time columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTime(ml.time())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTime([\"x\", \"y\"], [\"hour\", \"minute\"])",
-    "crumbs": [
-      "Steps",
-      "Temporal feature extraction"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal-feature-extraction.html#parameters-2",
-    "href": "reference/steps-temporal-feature-extraction.html#parameters-2",
-    "title": "Temporal feature extraction",
-    "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of timestamp columns to expand into new features.\nrequired\n\n\ncomponents\nlist[Literal[‘day’, ‘week’, ‘month’, ‘year’, ‘dow’, ‘doy’, ‘hour’, ‘minute’, ‘second’, ‘millisecond’]]\nA sequence of date or time components to expand. Options include - day: the day of the month as a numeric value - week: the week of the year as a numeric value - month: the month of the year as a categorical value - year: the year as a numeric value - dow: the day of the week as a categorical value - doy: the day of the year as a numeric value - hour: the hour as a numeric value - minute: the minute as a numeric value - second: the second as a numeric value - millisecond: the millisecond as a numeric value Defaults to [\"dow\", \"month\", \"year\", \"hour\", \"minute\", \"second\"].\n('dow', 'month', 'year', 'hour', 'minute', 'second')",
-    "crumbs": [
-      "Steps",
-      "Temporal feature extraction"
-    ]
-  },
-  {
-    "objectID": "reference/steps-temporal-feature-extraction.html#examples-2",
-    "href": "reference/steps-temporal-feature-extraction.html#examples-2",
-    "title": "Temporal feature extraction",
-    "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nExpand timestamp columns using the default components\n&gt;&gt;&gt; step = ml.ExpandTimestamp(ml.timestamp())\nExpand specific columns using specific components\n&gt;&gt;&gt; step = ml.ExpandTimestamp([\"x\", \"y\"], [\"day\", \"year\", \"hour\"])",
-    "crumbs": [
-      "Steps",
-      "Temporal feature extraction"
-    ]
-  },
-  {
-    "objectID": "reference/core.html",
-    "href": "reference/core.html",
-    "title": "Common",
-    "section": "",
-    "text": "Core APIs",
-    "crumbs": [
-      "Core",
-      "Common"
-    ]
-  },
-  {
-    "objectID": "reference/core.html#attributes",
-    "href": "reference/core.html#attributes",
-    "title": "Common",
-    "section": "Attributes",
-    "text": "Attributes\n\n\n\nName\nDescription\n\n\n\n\noutput_format\nThe output format to use for transform",
-    "crumbs": [
-      "Core",
-      "Common"
-    ]
-  },
-  {
-    "objectID": "reference/core.html#methods",
-    "href": "reference/core.html#methods",
-    "title": "Common",
-    "section": "Methods",
-    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\nfit\nFit a recipe.\n\n\nfit_transform\nFit and transform in one step.\n\n\nget_params\nGet parameters for this recipe.\n\n\nis_fitted\nCheck if this recipe has already been fit.\n\n\nset_output\nSet output type returned by transform.\n\n\nset_params\nSet the parameters of this recipe.\n\n\nto_dask_dataframe\nTransform X and return a dask.dataframe.DataFrame.\n\n\nto_dask_dmatrix\nTransform X and return a xgboost.dask.DMatrix\n\n\nto_dmatrix\nTransform X and return a xgboost.DMatrix\n\n\nto_ibis\nTransform X and return an ibis table.\n\n\nto_numpy\nTransform X and return a numpy.ndarray.\n\n\nto_pandas\nTransform X and return a pandas.DataFrame.\n\n\nto_polars\nTransform X and return a polars.DataFrame.\n\n\nto_pyarrow\nTransform X and return a pyarrow.Table.\n\n\nto_pyarrow_batches\nTransform X and return a pyarrow.RecordBatchReader.\n\n\ntransform\nTransform the data.\n\n\n\n\nfit\nfit(X, y=None)\nFit a recipe.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nTraining data.\nrequired\n\n\ny\ncolumn - like\nTraining targets.\nNone\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nself\nReturns the same instance.\n\n\n\n\n\n\nfit_transform\nfit_transform(X, y=None)\nFit and transform in one step.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nTraining data.\nrequired\n\n\ny\ncolumn - like\nTraining targets.\nNone\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nXt\nTransformed training data.\n\n\n\n\n\n\nget_params\nget_params(deep=True)\nGet parameters for this recipe.\nReturns the parameters given in the constructor as well as the steps contained within the steps of the Recipe.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndeep\nbool\nIf True, will return the parameters for this recipe and contained steps.\nTrue\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nmapping of string to any\nParameter names mapped to their values.\n\n\n\n\n\nNotes\nDerived from [1]_.\n\n\nReferences\n.. [1] https://github.com/scikit-learn/scikit-learn/blob/ee5a1b6/sklearn/utils/metaestimators.py#L30-L50\n\n\n\nis_fitted\nis_fitted()\nCheck if this recipe has already been fit.\n\n\nset_output\nset_output(transform=None)\nSet output type returned by transform.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntransform\n(‘default’, ‘pandas’)\nConfigure output of transform and fit_transform. - \"default\": Default output format of a transformer - \"pandas\": Pandas dataframe - \"polars\": Polars dataframe - \"pyarrow\": PyArrow table - None: Transform configuration is unchanged\n\"default\"\n\n\n\n\n\n\nset_params\nset_params(**params)\nSet the parameters of this recipe.\nValid parameter keys can be listed with get_params(). Note that you can directly set the parameters of the steps contained in steps.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n**params\ndict\nParameters of this recipe or parameters of steps contained in steps. Parameters of the steps may be set using its name and the parameter name separated by a ’__’.\n{}\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nobject\nRecipe class instance.\n\n\n\n\n\nNotes\nDerived from [1]_ and [2]_.\n\n\nReferences\n.. [1] https://github.com/scikit-learn/scikit-learn/blob/ff1c6f3/sklearn/utils/metaestimators.py#L51-L70 .. [2] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256\n\n\n\nto_dask_dataframe\nto_dask_dataframe(X, categories=False)\nTransform X and return a dask.dataframe.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_dask_dmatrix\nto_dask_dmatrix(X)\nTransform X and return a xgboost.dask.DMatrix\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_dmatrix\nto_dmatrix(X)\nTransform X and return a xgboost.DMatrix\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_ibis\nto_ibis(X)\nTransform X and return an ibis table.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_numpy\nto_numpy(X)\nTransform X and return a numpy.ndarray.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_pandas\nto_pandas(X, categories=False)\nTransform X and return a pandas.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_polars\nto_polars(X)\nTransform X and return a polars.DataFrame.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_pyarrow\nto_pyarrow(X, categories=False)\nTransform X and return a pyarrow.Table.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_pyarrow_batches\nto_pyarrow_batches(X, categories=False)\nTransform X and return a pyarrow.RecordBatchReader.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\ntransform\ntransform(X)\nTransform the data.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nData to transform.\nrequired\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nXt\nTransformed data.",
-    "crumbs": [
-      "Core",
-      "Common"
+      "Discretization"
     ]
   },
   {
@@ -780,48 +659,280 @@
     ]
   },
   {
-    "objectID": "reference/steps-discretization.html",
-    "href": "reference/steps-discretization.html",
-    "title": "Discretization",
+    "objectID": "reference/steps-other.html",
+    "href": "reference/steps-other.html",
+    "title": "Other",
     "section": "",
-    "text": "Discretization of numeric columns",
+    "text": "Other common tabular operations",
     "crumbs": [
       "Steps",
-      "Discretization"
+      "Other"
     ]
   },
   {
-    "objectID": "reference/steps-discretization.html#parameters",
-    "href": "reference/steps-discretization.html#parameters",
-    "title": "Discretization",
+    "objectID": "reference/steps-other.html#parameters",
+    "href": "reference/steps-other.html#parameters",
+    "title": "Other",
     "section": "Parameters",
-    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to bin.\nrequired\n\n\nn_bins\nint\nNumber of bins to create.\n5\n\n\nstrategy\n(str, {‘uniform’, ‘quantile’})\nStrategy used to define the bin edges. - ‘uniform’: Evenly spaced bins between the minimum and maximum values. - ‘quantile’: Bins are created based on data quantiles.\n'uniform'",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to cast.\nrequired\n\n\ndtype\ndt.DataType | type[dt.DataType] | str\nThe dtype to cast to. May be a dtype instance, class, or a string representation of one.\nrequired",
     "crumbs": [
       "Steps",
-      "Discretization"
+      "Other"
     ]
   },
   {
-    "objectID": "reference/steps-discretization.html#raises",
-    "href": "reference/steps-discretization.html#raises",
-    "title": "Discretization",
-    "section": "Raises",
-    "text": "Raises\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf n_bins is less than or equal to 1 or if an unsupported strategy is provided.",
-    "crumbs": [
-      "Steps",
-      "Discretization"
-    ]
-  },
-  {
-    "objectID": "reference/steps-discretization.html#examples",
-    "href": "reference/steps-discretization.html#examples",
-    "title": "Discretization",
+    "objectID": "reference/steps-other.html#examples",
+    "href": "reference/steps-other.html#examples",
+    "title": "Other",
     "section": "Examples",
-    "text": "Examples\n&gt;&gt;&gt; import ibis\n&gt;&gt;&gt; import ibis_ml as ml\n&gt;&gt;&gt; from ibis_ml.core import Metadata\n&gt;&gt;&gt; ibis.options.interactive = True\nLoad penguins dataset\n&gt;&gt;&gt; p = ibis.examples.penguins.fetch()\nBin all numeric columns.\n&gt;&gt;&gt; step = ml.DiscretizeKBins(ml.numeric(), n_bins=10)\n&gt;&gt;&gt; step.fit_table(p, Metadata())\n&gt;&gt;&gt; step.transform_table(p)\nBin specific numeric columns.\n&gt;&gt;&gt; step = ml.DiscretizeKBins([\"bill_length_mm\"], strategy=\"quantile\")\n&gt;&gt;&gt; step.fit_table(p, Metadata())\n&gt;&gt;&gt; step.transform_table(p)",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nCast all numeric columns to float64\n&gt;&gt;&gt; step = ml.Cast(ml.numeric(), \"float64\")\nCast specific columns to int64 by name\n&gt;&gt;&gt; step = ml.Cast([\"x\", \"y\"], \"int64\")",
     "crumbs": [
       "Steps",
-      "Discretization"
+      "Other"
     ]
+  },
+  {
+    "objectID": "reference/steps-other.html#parameters-1",
+    "href": "reference/steps-other.html#parameters-1",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to drop.\nrequired",
+    "crumbs": [
+      "Steps",
+      "Other"
+    ]
+  },
+  {
+    "objectID": "reference/steps-other.html#examples-1",
+    "href": "reference/steps-other.html#examples-1",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nDrop all non-numeric columns\n&gt;&gt;&gt; step = ml.Drop(~ml.numeric())\nDrop specific columns by name\n&gt;&gt;&gt; step = ml.Drop([\"x\", \"y\"])",
+    "crumbs": [
+      "Steps",
+      "Other"
+    ]
+  },
+  {
+    "objectID": "reference/steps-other.html#parameters-2",
+    "href": "reference/steps-other.html#parameters-2",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to use as inputs to expr/named_exprs.\nrequired\n\n\nexpr\nCallable[[ir.Column], ir.Column] | Deferred | None\nAn optional callable (Column -&gt; Column) or deferred expression to apply to all columns in inputs. Output columns will have the same name as their respective inputs (effectively replacing them in the output table).\nNone\n\n\nnamed_exprs\nCallable[[ir.Column], ir.Column] | Deferred\nNamed callables (Column -&gt; Column) or deferred expressions to apply to all columns in inputs. Output columns will be named {column}_{name} where column is the input column name and name is the expression/callable name.\n{}",
+    "crumbs": [
+      "Steps",
+      "Other"
+    ]
+  },
+  {
+    "objectID": "reference/steps-other.html#examples-2",
+    "href": "reference/steps-other.html#examples-2",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\n&gt;&gt;&gt; from ibis import _\nReplace all numeric columns with their absolute values.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), _.abs())\nSame as the above, but instead create new columns with _abs suffixes.\n&gt;&gt;&gt; step = ml.MutateAt(ml.numeric(), abs=_.abs())",
+    "crumbs": [
+      "Steps",
+      "Other"
+    ]
+  },
+  {
+    "objectID": "reference/steps-other.html#parameters-3",
+    "href": "reference/steps-other.html#parameters-3",
+    "title": "Other",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nexprs\nCallable[[ir.Table], ir.Column] | Deferred\nCallables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n()\n\n\nnamed_exprs\nCallable[[ir.Table], ir.Column] | Deferred\nNamed callables (Table -&gt; Column) or deferred expressions to use to define new columns in the output table.\n{}",
+    "crumbs": [
+      "Steps",
+      "Other"
+    ]
+  },
+  {
+    "objectID": "reference/steps-other.html#examples-3",
+    "href": "reference/steps-other.html#examples-3",
+    "title": "Other",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\n&gt;&gt;&gt; from ibis import _\nDefine a new column c as a**2 + b**2\n&gt;&gt;&gt; step = ml.Mutate(c=_.a**2 + _.b**2)",
+    "crumbs": [
+      "Steps",
+      "Other"
+    ]
+  },
+  {
+    "objectID": "reference/utils-data-splitting.html",
+    "href": "reference/utils-data-splitting.html",
+    "title": "Data splitting",
+    "section": "",
+    "text": "Segregating data into training, testing, and validation sets",
+    "crumbs": [
+      "Utilities",
+      "Data splitting"
+    ]
+  },
+  {
+    "objectID": "reference/utils-data-splitting.html#parameters",
+    "href": "reference/utils-data-splitting.html#parameters",
+    "title": "Data splitting",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntable\nir.Table\nThe input Ibis table to be split.\nrequired\n\n\nunique_key\nstr | list[str]\nThe column name(s) that uniquely identify each row in the table. This unique_key is used to create a deterministic split of the dataset through a hashing process.\nrequired\n\n\ntest_size\nfloat\nThe ratio of the dataset to include in the test split, which should be between 0 and 1. This ratio is approximate because the hashing algorithm may not provide a uniform bucket distribution for small datasets. Larger datasets will result in more uniform bucket assignments, making the split ratio closer to the desired value.\n0.25\n\n\nnum_buckets\nint\nThe number of buckets into which the data is divided during the splitting process. It controls how finely the data is divided into buckets during the split process. Adjusting num_buckets can affect the granularity and efficiency of the splitting operation, balancing between accuracy and computational efficiency.\n100\n\n\nrandom_seed\nint | None\nSeed for the random number generator. If provided, ensures reproducibility of the split.\nNone",
+    "crumbs": [
+      "Utilities",
+      "Data splitting"
+    ]
+  },
+  {
+    "objectID": "reference/utils-data-splitting.html#returns",
+    "href": "reference/utils-data-splitting.html#returns",
+    "title": "Data splitting",
+    "section": "Returns",
+    "text": "Returns\n\n\n\n\n\n\n\nType\nDescription\n\n\n\n\ntuple[ir.Table, ir.Table]\nA tuple containing two Ibis tables: (train_table, test_table).",
+    "crumbs": [
+      "Utilities",
+      "Data splitting"
+    ]
+  },
+  {
+    "objectID": "reference/utils-data-splitting.html#raises",
+    "href": "reference/utils-data-splitting.html#raises",
+    "title": "Data splitting",
+    "section": "Raises",
+    "text": "Raises\n\n\n\nType\nDescription\n\n\n\n\nValueError\nIf test_size is not a float between 0 and 1.",
+    "crumbs": [
+      "Utilities",
+      "Data splitting"
+    ]
+  },
+  {
+    "objectID": "reference/utils-data-splitting.html#examples",
+    "href": "reference/utils-data-splitting.html#examples",
+    "title": "Data splitting",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nSplit an Ibis table into training and testing tables.\n&gt;&gt;&gt; table = ibis.memtable({\"key1\": range(100)})\n&gt;&gt;&gt; train_table, test_table = ml.train_test_split(\n...     table,\n...     unique_key=\"key1\",\n...     test_size=0.2,\n...     random_seed=0,\n... )",
+    "crumbs": [
+      "Utilities",
+      "Data splitting"
+    ]
+  },
+  {
+    "objectID": "reference/core.html",
+    "href": "reference/core.html",
+    "title": "Common",
+    "section": "",
+    "text": "Core APIs",
+    "crumbs": [
+      "Core",
+      "Common"
+    ]
+  },
+  {
+    "objectID": "reference/core.html#attributes",
+    "href": "reference/core.html#attributes",
+    "title": "Common",
+    "section": "Attributes",
+    "text": "Attributes\n\n\n\nName\nDescription\n\n\n\n\noutput_format\nThe output format to use for transform",
+    "crumbs": [
+      "Core",
+      "Common"
+    ]
+  },
+  {
+    "objectID": "reference/core.html#methods",
+    "href": "reference/core.html#methods",
+    "title": "Common",
+    "section": "Methods",
+    "text": "Methods\n\n\n\nName\nDescription\n\n\n\n\nfit\nFit a recipe.\n\n\nfit_transform\nFit and transform in one step.\n\n\nget_params\nGet parameters for this recipe.\n\n\nis_fitted\nCheck if this recipe has already been fit.\n\n\nset_output\nSet output type returned by transform.\n\n\nset_params\nSet the parameters of this recipe.\n\n\nto_dask_dataframe\nTransform X and return a dask.dataframe.DataFrame.\n\n\nto_dask_dmatrix\nTransform X and return a xgboost.dask.DMatrix\n\n\nto_dmatrix\nTransform X and return a xgboost.DMatrix\n\n\nto_ibis\nTransform X and return an ibis table.\n\n\nto_numpy\nTransform X and return a numpy.ndarray.\n\n\nto_pandas\nTransform X and return a pandas.DataFrame.\n\n\nto_polars\nTransform X and return a polars.DataFrame.\n\n\nto_pyarrow\nTransform X and return a pyarrow.Table.\n\n\nto_pyarrow_batches\nTransform X and return a pyarrow.RecordBatchReader.\n\n\ntransform\nTransform the data.\n\n\n\n\nfit\nfit(X, y=None)\nFit a recipe.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nTraining data.\nrequired\n\n\ny\ncolumn - like\nTraining targets.\nNone\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nself\nReturns the same instance.\n\n\n\n\n\n\nfit_transform\nfit_transform(X, y=None)\nFit and transform in one step.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nTraining data.\nrequired\n\n\ny\ncolumn - like\nTraining targets.\nNone\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nXt\nTransformed training data.\n\n\n\n\n\n\nget_params\nget_params(deep=True)\nGet parameters for this recipe.\nReturns the parameters given in the constructor as well as the steps contained within the steps of the Recipe.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ndeep\nbool\nIf True, will return the parameters for this recipe and contained steps.\nTrue\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nmapping of string to any\nParameter names mapped to their values.\n\n\n\n\n\nNotes\nDerived from [1]_.\n\n\nReferences\n.. [1] https://github.com/scikit-learn/scikit-learn/blob/ee5a1b6/sklearn/utils/metaestimators.py#L30-L50\n\n\n\nis_fitted\nis_fitted()\nCheck if this recipe has already been fit.\n\n\nset_output\nset_output(transform=None)\nSet output type returned by transform.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ntransform\n(‘default’, ‘pandas’)\nConfigure output of transform and fit_transform. - \"default\": Default output format of a transformer - \"pandas\": Pandas dataframe - \"polars\": Polars dataframe - \"pyarrow\": PyArrow table - None: Transform configuration is unchanged\n\"default\"\n\n\n\n\n\n\nset_params\nset_params(**params)\nSet the parameters of this recipe.\nValid parameter keys can be listed with get_params(). Note that you can directly set the parameters of the steps contained in steps.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\n**params\ndict\nParameters of this recipe or parameters of steps contained in steps. Parameters of the steps may be set using its name and the parameter name separated by a ’__’.\n{}\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nobject\nRecipe class instance.\n\n\n\n\n\nNotes\nDerived from [1]_ and [2]_.\n\n\nReferences\n.. [1] https://github.com/scikit-learn/scikit-learn/blob/ff1c6f3/sklearn/utils/metaestimators.py#L51-L70 .. [2] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256\n\n\n\nto_dask_dataframe\nto_dask_dataframe(X, categories=False)\nTransform X and return a dask.dataframe.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_dask_dmatrix\nto_dask_dmatrix(X)\nTransform X and return a xgboost.dask.DMatrix\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_dmatrix\nto_dmatrix(X)\nTransform X and return a xgboost.DMatrix\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_ibis\nto_ibis(X)\nTransform X and return an ibis table.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_numpy\nto_numpy(X)\nTransform X and return a numpy.ndarray.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_pandas\nto_pandas(X, categories=False)\nTransform X and return a pandas.DataFrame.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_polars\nto_polars(X)\nTransform X and return a polars.DataFrame.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\n\n\n\n\nto_pyarrow\nto_pyarrow(X, categories=False)\nTransform X and return a pyarrow.Table.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\nto_pyarrow_batches\nto_pyarrow_batches(X, categories=False)\nTransform X and return a pyarrow.RecordBatchReader.\n\nParameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nThe input data to transform.\nrequired\n\n\ncategories\nbool\nWhether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.\nFalse\n\n\n\n\n\n\ntransform\ntransform(X)\nTransform the data.\n\nParameters\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nX\ntable - like\nData to transform.\nrequired\n\n\n\n\n\nReturns\n\n\n\nType\nDescription\n\n\n\n\nXt\nTransformed data.",
+    "crumbs": [
+      "Core",
+      "Common"
+    ]
+  },
+  {
+    "objectID": "reference/steps-outlier-handling.html",
+    "href": "reference/steps-outlier-handling.html",
+    "title": "Outlier handling",
+    "section": "",
+    "text": "Outlier detection and handling",
+    "crumbs": [
+      "Steps",
+      "Outlier handling"
+    ]
+  },
+  {
+    "objectID": "reference/steps-outlier-handling.html#parameters",
+    "href": "reference/steps-outlier-handling.html#parameters",
+    "title": "Outlier handling",
+    "section": "Parameters",
+    "text": "Parameters\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\ninputs\nSelectionType\nA selection of columns to analyze for outliers. All columns must be numeric.\nrequired\n\n\nmethod\nstr\nThe method to use for detecting outliers. “z-score” detects outliers based on the standard deviation from the mean for normally distributed data. “IQR” detects outliers using the interquartile range for skewed data.\n'z-score'\n\n\ntreatment\nstr\nThe treatment to apply to the outliers. capping replaces outlier values with the upper or lower bound, while trimming removes outlier rows from the dataset.\n'capping'\n\n\ndeviation_factor\nint | float\nThe magnitude of deviation from the center is used to calculate the upper and lower bound for outlier detection. For “z-score”, Upper Bound = mean + deviation_factor * standard deviation. Lower Bound =  mean - deviation_factor * standard deviation. 68% of the data lies within 1 standard deviation. 95% of the data lies within 2 standard deviations. 99.7% of the data lies within 3 standard deviations. For “IQR”, IQR = Q3 - Q1. Upper Bound = Q3 + deviation_factor * IQR. Lower Bound = Q1 - deviation_factor * IQR.\n3",
+    "crumbs": [
+      "Steps",
+      "Outlier handling"
+    ]
+  },
+  {
+    "objectID": "reference/steps-outlier-handling.html#examples",
+    "href": "reference/steps-outlier-handling.html#examples",
+    "title": "Outlier handling",
+    "section": "Examples",
+    "text": "Examples\n&gt;&gt;&gt; import ibis_ml as ml\nCapping outliers in all numeric columns using z-score method.\n&gt;&gt;&gt; step = ml.HandleUnivariateOutliers(ml.numeric())\nTrimming outliers in a specific set of columns using IQR method.\n&gt;&gt;&gt; step = ml.HandleUnivariateOutliers(\n    [\"x\", \"y\"],\n    method=\"IQR\",\n    deviation_factor=2.0,\n    treatment=\"trimming\",\n   )",
+    "crumbs": [
+      "Steps",
+      "Outlier handling"
+    ]
+  },
+  {
+    "objectID": "tutorial/pytorch.html",
+    "href": "tutorial/pytorch.html",
+    "title": "Preprocess your data with recipes",
+    "section": "",
+    "text": "sklearn\n    \n  \n  \n    \n      XGBoost\n    \n  \n  \n    \n      PyTorch"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#introduction",
+    "href": "tutorial/pytorch.html#introduction",
+    "title": "Preprocess your data with recipes",
+    "section": "Introduction",
+    "text": "Introduction\nIn this article, we’ll explore Recipes, which are designed to help you preprocess your data before training your model. Recipes are built as a series of preprocessing steps, such as:\n\nconverting qualitative predictors to indicator variables (also known as dummy variables),\ntransforming data to be on a different scale (e.g., taking the logarithm of a variable),\ntransforming whole groups of predictors together,\nextracting key features from raw variables (e.g., getting the day of the week out of a date variable),\n\nand so on. If you are familiar with scikit-learn’s dataset transformations, a lot of this might sound familiar and like what a transformer already does. Recipes can be used to do many of the same things, but they can scale your workloads on any Ibis-supported backend. This article shows how to use recipes for modeling.\nTo use code in this article, you will need to install the following packages: Ibis, IbisML, and skorch, a high-level library for PyTorch that provides full scikit-learn compatibility.\npip install 'ibis-framework[duckdb,examples]' ibis-ml skorch torch"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#the-new-york-city-flight-data",
+    "href": "tutorial/pytorch.html#the-new-york-city-flight-data",
+    "title": "Preprocess your data with recipes",
+    "section": "The New York City flight data",
+    "text": "The New York City flight data\nLet’s use the nycflights13 data to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:\n\nimport ibis\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.create_table(\n    \"flights\", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True\n)\ncon.create_table(\n    \"weather\", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True\n)\n\nYou can now see the example dataset copied over to the database:\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.list_tables()\n\n['flights', 'weather']\n\n\nWe’ll turn on interactive mode, which partially executes queries to give users a preview of the results.\n\nibis.options.interactive = True\n\n\nflights = con.table(\"flights\")\nflights = flights.mutate(\n    dep_time=(\n        flights.dep_time.lpad(4, \"0\").substr(0, 2)\n        + \":\"\n        + flights.dep_time.substr(-2, 2)\n        + \":00\"\n    ).try_cast(\"time\"),\n    arr_delay=flights.arr_delay.try_cast(int),\n    air_time=flights.air_time.try_cast(int),\n)\nflights\n\n┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ year  ┃ month ┃ day   ┃ dep_time ┃ sched_dep_time ┃ dep_delay ┃ arr_time ┃ sched_arr_time ┃ arr_delay ┃ carrier ┃ flight ┃ tailnum ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ hour  ┃ minute ┃ time_hour           ┃\n┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ int64 │ int64 │ int64 │ time     │ int64          │ string    │ string   │ int64          │ int64     │ string  │ int64  │ string  │ string │ string │ int64    │ int64    │ int64 │ int64  │ timestamp(6)        │\n├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤\n│  2013 │     1 │     1 │ 05:17:00 │            515 │ 2         │ 830      │            819 │        11 │ UA      │   1545 │ N14228  │ EWR    │ IAH    │      227 │     1400 │     5 │     15 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:33:00 │            529 │ 4         │ 850      │            830 │        20 │ UA      │   1714 │ N24211  │ LGA    │ IAH    │      227 │     1416 │     5 │     29 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:42:00 │            540 │ 2         │ 923      │            850 │        33 │ AA      │   1141 │ N619AA  │ JFK    │ MIA    │      160 │     1089 │     5 │     40 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:44:00 │            545 │ -1        │ 1004     │           1022 │       -18 │ B6      │    725 │ N804JB  │ JFK    │ BQN    │      183 │     1576 │     5 │     45 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            600 │ -6        │ 812      │            837 │       -25 │ DL      │    461 │ N668DN  │ LGA    │ ATL    │      116 │      762 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            558 │ -4        │ 740      │            728 │        12 │ UA      │   1696 │ N39463  │ EWR    │ ORD    │      150 │      719 │     5 │     58 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:55:00 │            600 │ -5        │ 913      │            854 │        19 │ B6      │    507 │ N516JB  │ EWR    │ FLL    │      158 │     1065 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 709      │            723 │       -14 │ EV      │   5708 │ N829AS  │ LGA    │ IAD    │       53 │      229 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 838      │            846 │        -8 │ B6      │     79 │ N593JB  │ JFK    │ MCO    │      140 │      944 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:58:00 │            600 │ -2        │ 753      │            745 │         8 │ AA      │    301 │ N3ALAA  │ LGA    │ ORD    │      138 │      733 │     6 │      0 │ 2013-01-01 11:00:00 │\n│     … │     … │     … │ …        │              … │ …         │ …        │              … │         … │ …       │      … │ …       │ …      │ …      │        … │        … │     … │      … │ …                   │\n└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘\n\n\n\n\nweather = con.table(\"weather\")\nweather\n\n┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ origin ┃ year  ┃ month ┃ day   ┃ hour  ┃ temp   ┃ dewp   ┃ humid  ┃ wind_dir ┃ wind_speed         ┃ wind_gust ┃ precip  ┃ pressure ┃ visib   ┃ time_hour           ┃\n┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ string │ int64 │ int64 │ int64 │ int64 │ string │ string │ string │ string   │ string             │ string    │ float64 │ string   │ float64 │ timestamp(6)        │\n├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤\n│ EWR    │  2013 │     1 │     1 │     1 │ 39.02  │ 26.06  │ 59.37  │ 270      │ 10.357019999999999 │ NA        │     0.0 │ 1012     │    10.0 │ 2013-01-01 06:00:00 │\n│ EWR    │  2013 │     1 │     1 │     2 │ 39.02  │ 26.96  │ 61.63  │ 250      │ 8.05546            │ NA        │     0.0 │ 1012.3   │    10.0 │ 2013-01-01 07:00:00 │\n│ EWR    │  2013 │     1 │     1 │     3 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.5   │    10.0 │ 2013-01-01 08:00:00 │\n│ EWR    │  2013 │     1 │     1 │     4 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 12.658579999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 09:00:00 │\n│ EWR    │  2013 │     1 │     1 │     5 │ 39.02  │ 28.04  │ 64.43  │ 260      │ 12.658579999999999 │ NA        │     0.0 │ 1011.9   │    10.0 │ 2013-01-01 10:00:00 │\n│ EWR    │  2013 │     1 │     1 │     6 │ 37.94  │ 28.04  │ 67.21  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 11:00:00 │\n│ EWR    │  2013 │     1 │     1 │     7 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 14.960139999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 12:00:00 │\n│ EWR    │  2013 │     1 │     1 │     8 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 10.357019999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 13:00:00 │\n│ EWR    │  2013 │     1 │     1 │     9 │ 39.92  │ 28.04  │ 62.21  │ 260      │ 14.960139999999999 │ NA        │     0.0 │ 1012.7   │    10.0 │ 2013-01-01 14:00:00 │\n│ EWR    │  2013 │     1 │     1 │    10 │ 41     │ 28.04  │ 59.65  │ 260      │ 13.809359999999998 │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 15:00:00 │\n│ …      │     … │     … │     … │     … │ …      │ …      │ …      │ …        │ …                  │ …         │       … │ …        │       … │ …                   │\n└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘\n\n\n\n\nflight_data = (\n    flights.mutate(\n        # Convert the arrival delay to a factor\n        # By default, PyTorch expects the target to have a Long datatype\n        arr_delay=ibis.ifelse(flights.arr_delay &gt;= 30, 1, 0).cast(\"int64\"),\n        # We will use the date (not date-time) in the recipe below\n        date=flights.time_hour.date(),\n    )\n    # Include the weather data\n    .inner_join(weather, [\"origin\", \"time_hour\"])\n    # Only retain the specific columns we will use\n    .select(\n        \"dep_time\",\n        \"flight\",\n        \"origin\",\n        \"dest\",\n        \"air_time\",\n        \"distance\",\n        \"carrier\",\n        \"date\",\n        \"arr_delay\",\n        \"time_hour\",\n    )\n    # Exclude missing data\n    .drop_null()\n)\nflight_data\n\n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ dep_time ┃ flight ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ carrier ┃ date       ┃ arr_delay ┃ time_hour           ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ time     │ int64  │ string │ string │ int64    │ int64    │ string  │ date       │ int64     │ timestamp(6)        │\n├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤\n│ 10:45:00 │     67 │ EWR    │ ORD    │      120 │      719 │ UA      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:48:00 │    373 │ LGA    │ FLL    │      179 │     1076 │ B6      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:48:00 │    764 │ EWR    │ IAH    │      207 │     1400 │ UA      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:51:00 │   2044 │ LGA    │ MIA    │      171 │     1096 │ DL      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:51:00 │   2171 │ LGA    │ DCA    │       40 │      214 │ US      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:57:00 │   1275 │ JFK    │ SLC    │      286 │     1990 │ DL      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:57:00 │    366 │ LGA    │ STL    │      135 │      888 │ WN      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:57:00 │   1550 │ EWR    │ SFO    │      338 │     2565 │ UA      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:58:00 │   4694 │ EWR    │ MKE    │      113 │      725 │ EV      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:58:00 │   1647 │ LGA    │ ATL    │      117 │      762 │ DL      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ …        │      … │ …      │ …      │        … │        … │ …       │ …          │         … │ …                   │\n└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘\n\n\n\nWe can see that about 16% of the flights in this dataset arrived more than 30 minutes late.\n\nflight_data.arr_delay.value_counts().rename(n=\"arr_delay_count\").mutate(\n    prop=ibis._.n / ibis._.n.sum()\n)\n\n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓\n┃ arr_delay ┃ n      ┃ prop     ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩\n│ int64     │ int64  │ float64  │\n├───────────┼────────┼──────────┤\n│         0 │ 273279 │ 0.838745 │\n│         1 │  52540 │ 0.161255 │\n└───────────┴────────┴──────────┘"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#data-splitting",
+    "href": "tutorial/pytorch.html#data-splitting",
+    "title": "Preprocess your data with recipes",
+    "section": "Data splitting",
+    "text": "Data splitting\nTo get started, let’s split this single dataset into two: a training set and a testing set. We’ll keep most of the rows in the original dataset (subset chosen randomly) in the training set. The training data will be used to fit the model, and the testing set will be used to measure model performance.\nBecause the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.\n\nimport ibis_ml as ml\n\n# Create data frames for the two sets:\ntrain_data, test_data = ml.train_test_split(\n    flight_data,\n    unique_key=[\"carrier\", \"flight\", \"date\"],\n    # Put 3/4 of the data into the training set\n    test_size=0.25,\n    num_buckets=4,\n    # Fix the random numbers by setting the seed\n    # This enables the analysis to be reproducible when random numbers are used\n    random_seed=222,\n)"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#create-features",
+    "href": "tutorial/pytorch.html#create-features",
+    "title": "Preprocess your data with recipes",
+    "section": "Create features",
+    "text": "Create features\n\nflights_rec = ml.Recipe(\n    ml.ExpandDate(\"date\", components=[\"dow\", \"month\"]),\n    ml.Drop(\"date\"),\n    ml.TargetEncode(ml.nominal()),\n    ml.DropZeroVariance(ml.everything()),\n    ml.MutateAt(\"dep_time\", ibis._.hour() * 60 + ibis._.minute()),\n    ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),\n    # By default, PyTorch requires that the type of `X` is `np.float32`.\n    # https://discuss.pytorch.org/t/mat1-and-mat2-must-have-the-same-dtype-but-got-double-and-float/197555/2\n    ml.Cast(ml.numeric(), \"float32\"),\n)"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#fit-a-model-with-a-recipe",
+    "href": "tutorial/pytorch.html#fit-a-model-with-a-recipe",
+    "title": "Preprocess your data with recipes",
+    "section": "Fit a model with a recipe",
+    "text": "Fit a model with a recipe\nLet’s model the flight data. We can use any scikit-learn-compatible estimator.\nWe will want to use our recipe across several steps as we train and test our model. We will:\n\nProcess the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.\nApply the recipe to the training set: We create the final predictor set on the training set.\nApply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.\n\nTo simplify this process, we can use a scikit-learn Pipeline.\n\nfrom sklearn.pipeline import Pipeline\nfrom skorch import NeuralNetClassifier\nfrom torch import nn\n\n\nclass MyModule(nn.Module):\n    def __init__(self, num_units=10, nonlin=nn.ReLU()):\n        super().__init__()\n\n        self.dense0 = nn.Linear(10, num_units)\n        self.nonlin = nonlin\n        self.dropout = nn.Dropout(0.5)\n        self.dense1 = nn.Linear(num_units, num_units)\n        self.output = nn.Linear(num_units, 2)\n        self.softmax = nn.Softmax(dim=-1)\n\n    def forward(self, X, **kwargs):\n        X = self.nonlin(self.dense0(X))\n        X = self.dropout(X)\n        X = self.nonlin(self.dense1(X))\n        X = self.softmax(self.output(X))\n        return X\n\n\nnet = NeuralNetClassifier(\n    MyModule,\n    max_epochs=10,\n    lr=0.1,\n    # Shuffle training data on each epoch\n    iterator_train__shuffle=True,\n)\n\npipe = Pipeline([(\"flights_rec\", flights_rec), (\"net\", net)])\n\nNow, there is a single function that can be used to prepare the recipe and train the model from the resulting predictors:\n\nX_train = train_data.drop(\"arr_delay\")\ny_train = train_data.arr_delay\npipe.fit(X_train, y_train)\n\n  epoch    train_loss    valid_acc    valid_loss     dur\n-------  ------------  -----------  ------------  ------\n      1        8.0979       0.8386        2.5725  2.2735\n      2        6.4196       0.8386        2.5725  2.2740\n      3        5.9480       0.8386        2.5725  2.2791\n      4        5.6919       0.8386        2.5725  2.2782\n      5        5.6333       0.8386        2.5725  2.2716\n      6        5.8793       0.8386        2.5725  2.2660\n      7        5.8706       0.8386        2.5725  2.2592\n      8        5.8897       0.8386        2.5725  2.2698\n      9        5.9288       0.8386        2.5725  2.2706\n     10        5.9022       0.8386        2.5725  2.2732\n\n\nPipeline(steps=[('flights_rec',\n                 Recipe(ExpandDate(cols(('date',)),\n                                   components=['dow', 'month']),\n                        Drop(cols(('date',))),\n                        TargetEncode(nominal(), smooth=0.0),\n                        DropZeroVariance(everything(), tolerance=0.0001),\n                        MutateAt(cols(('dep_time',)),\n                                 ((_.hour() * 60) + _.minute())),\n                        MutateAt(timestamp(), _.epoch_seconds()),\n                        Cast(numeric(), 'float32'))),\n                ('net',\n                 &lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](\n  module_=MyModule(\n    (dense0): Linear(in_features=10, out_features=10, bias=True)\n    (nonlin): ReLU()\n    (dropout): Dropout(p=0.5, inplace=False)\n    (dense1): Linear(in_features=10, out_features=10, bias=True)\n    (output): Linear(in_features=10, out_features=2, bias=True)\n    (softmax): Softmax(dim=-1)\n  ),\n))])In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.  Pipeline?Documentation for PipelineiFittedPipeline(steps=[('flights_rec',\n                 Recipe(ExpandDate(cols(('date',)),\n                                   components=['dow', 'month']),\n                        Drop(cols(('date',))),\n                        TargetEncode(nominal(), smooth=0.0),\n                        DropZeroVariance(everything(), tolerance=0.0001),\n                        MutateAt(cols(('dep_time',)),\n                                 ((_.hour() * 60) + _.minute())),\n                        MutateAt(timestamp(), _.epoch_seconds()),\n                        Cast(numeric(), 'float32'))),\n                ('net',\n                 &lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](\n  module_=MyModule(\n    (dense0): Linear(in_features=10, out_features=10, bias=True)\n    (nonlin): ReLU()\n    (dropout): Dropout(p=0.5, inplace=False)\n    (dense1): Linear(in_features=10, out_features=10, bias=True)\n    (output): Linear(in_features=10, out_features=2, bias=True)\n    (softmax): Softmax(dim=-1)\n  ),\n))]) flights_rec: RecipeRecipe(ExpandDate(cols(('date',)), components=['dow', 'month']),\n       Drop(cols(('date',))),\n       TargetEncode(nominal(), smooth=0.0),\n       DropZeroVariance(everything(), tolerance=0.0001),\n       MutateAt(cols(('dep_time',)), ((_.hour() * 60) + _.minute())),\n       MutateAt(timestamp(), _.epoch_seconds()),\n       Cast(numeric(), 'float32'))  ExpandDate?Documentation for ExpandDateExpandDate(cols(('date',)), components=['dow', 'month'])  Drop?Documentation for DropDrop(cols(('date',)))  TargetEncode?Documentation for TargetEncodeTargetEncode(nominal(), smooth=0.0)  DropZeroVariance?Documentation for DropZeroVarianceDropZeroVariance(everything(), tolerance=0.0001)  MutateAt?Documentation for MutateAtMutateAt(cols(('dep_time',)), ((_.hour() * 60) + _.minute()))  MutateAt?Documentation for MutateAtMutateAt(timestamp(), _.epoch_seconds())  Cast?Documentation for CastCast(numeric(), 'float32') NeuralNetClassifier&lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](\n  module_=MyModule(\n    (dense0): Linear(in_features=10, out_features=10, bias=True)\n    (nonlin): ReLU()\n    (dropout): Dropout(p=0.5, inplace=False)\n    (dense1): Linear(in_features=10, out_features=10, bias=True)\n    (output): Linear(in_features=10, out_features=2, bias=True)\n    (softmax): Softmax(dim=-1)\n  ),\n)"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#use-a-trained-workflow-to-predict",
+    "href": "tutorial/pytorch.html#use-a-trained-workflow-to-predict",
+    "title": "Preprocess your data with recipes",
+    "section": "Use a trained workflow to predict",
+    "text": "Use a trained workflow to predict\n…\n\nX_test = test_data.drop(\"arr_delay\")\ny_test = test_data.arr_delay\npipe.score(X_test, y_test)\n\n0.8390849833968762"
+  },
+  {
+    "objectID": "tutorial/pytorch.html#acknowledgments",
+    "href": "tutorial/pytorch.html#acknowledgments",
+    "title": "Preprocess your data with recipes",
+    "section": "Acknowledgments",
+    "text": "Acknowledgments\nThis tutorial is derived from the tidymodels article of the same name. The transformation logic is very similar, and much of the text is copied verbatim."
   },
   {
     "objectID": "tutorial/scikit-learn.html",
@@ -842,7 +953,7 @@
     "href": "tutorial/scikit-learn.html#the-new-york-city-flight-data",
     "title": "Preprocess your data with recipes",
     "section": "The New York City flight data",
-    "text": "The New York City flight data\nLet’s use the nycflights13 data to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:\n\nimport ibis\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.create_table(\n    \"flights\", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True\n)\ncon.create_table(\n    \"weather\", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True\n)\n\nYou can now see the example dataset copied over to the database:\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.list_tables()\n\n['flights', 'weather']\n\n\nWe’ll turn on interactive mode, which partially executes queries to give users a preview of the results.\n\nibis.options.interactive = True\n\n\nflights = con.table(\"flights\")\nflights = flights.mutate(\n    dep_time=(\n        flights.dep_time.lpad(4, \"0\").substr(0, 2)\n        + \":\"\n        + flights.dep_time.substr(-2, 2)\n        + \":00\"\n    ).try_cast(\"time\"),\n    arr_delay=flights.arr_delay.try_cast(int),\n    air_time=flights.air_time.try_cast(int),\n)\nflights\n\n┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ year  ┃ month ┃ day   ┃ dep_time ┃ sched_dep_time ┃ dep_delay ┃ arr_time ┃ sched_arr_time ┃ arr_delay ┃ carrier ┃ flight ┃ tailnum ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ hour  ┃ minute ┃ time_hour           ┃\n┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ int64 │ int64 │ int64 │ time     │ int64          │ string    │ string   │ int64          │ int64     │ string  │ int64  │ string  │ string │ string │ int64    │ int64    │ int64 │ int64  │ timestamp(6)        │\n├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤\n│  2013 │     1 │     1 │ 05:17:00 │            515 │ 2         │ 830      │            819 │        11 │ UA      │   1545 │ N14228  │ EWR    │ IAH    │      227 │     1400 │     5 │     15 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:33:00 │            529 │ 4         │ 850      │            830 │        20 │ UA      │   1714 │ N24211  │ LGA    │ IAH    │      227 │     1416 │     5 │     29 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:42:00 │            540 │ 2         │ 923      │            850 │        33 │ AA      │   1141 │ N619AA  │ JFK    │ MIA    │      160 │     1089 │     5 │     40 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:44:00 │            545 │ -1        │ 1004     │           1022 │       -18 │ B6      │    725 │ N804JB  │ JFK    │ BQN    │      183 │     1576 │     5 │     45 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            600 │ -6        │ 812      │            837 │       -25 │ DL      │    461 │ N668DN  │ LGA    │ ATL    │      116 │      762 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            558 │ -4        │ 740      │            728 │        12 │ UA      │   1696 │ N39463  │ EWR    │ ORD    │      150 │      719 │     5 │     58 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:55:00 │            600 │ -5        │ 913      │            854 │        19 │ B6      │    507 │ N516JB  │ EWR    │ FLL    │      158 │     1065 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 709      │            723 │       -14 │ EV      │   5708 │ N829AS  │ LGA    │ IAD    │       53 │      229 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 838      │            846 │        -8 │ B6      │     79 │ N593JB  │ JFK    │ MCO    │      140 │      944 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:58:00 │            600 │ -2        │ 753      │            745 │         8 │ AA      │    301 │ N3ALAA  │ LGA    │ ORD    │      138 │      733 │     6 │      0 │ 2013-01-01 11:00:00 │\n│     … │     … │     … │ …        │              … │ …         │ …        │              … │         … │ …       │      … │ …       │ …      │ …      │        … │        … │     … │      … │ …                   │\n└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘\n\n\n\n\nweather = con.table(\"weather\")\nweather\n\n┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ origin ┃ year  ┃ month ┃ day   ┃ hour  ┃ temp   ┃ dewp   ┃ humid  ┃ wind_dir ┃ wind_speed         ┃ wind_gust ┃ precip  ┃ pressure ┃ visib   ┃ time_hour           ┃\n┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ string │ int64 │ int64 │ int64 │ int64 │ string │ string │ string │ string   │ string             │ string    │ float64 │ string   │ float64 │ timestamp(6)        │\n├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤\n│ EWR    │  2013 │     1 │     1 │     1 │ 39.02  │ 26.06  │ 59.37  │ 270      │ 10.357019999999999 │ NA        │     0.0 │ 1012     │    10.0 │ 2013-01-01 06:00:00 │\n│ EWR    │  2013 │     1 │     1 │     2 │ 39.02  │ 26.96  │ 61.63  │ 250      │ 8.05546            │ NA        │     0.0 │ 1012.3   │    10.0 │ 2013-01-01 07:00:00 │\n│ EWR    │  2013 │     1 │     1 │     3 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.5   │    10.0 │ 2013-01-01 08:00:00 │\n│ EWR    │  2013 │     1 │     1 │     4 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 12.658579999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 09:00:00 │\n│ EWR    │  2013 │     1 │     1 │     5 │ 39.02  │ 28.04  │ 64.43  │ 260      │ 12.658579999999999 │ NA        │     0.0 │ 1011.9   │    10.0 │ 2013-01-01 10:00:00 │\n│ EWR    │  2013 │     1 │     1 │     6 │ 37.94  │ 28.04  │ 67.21  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 11:00:00 │\n│ EWR    │  2013 │     1 │     1 │     7 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 14.960139999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 12:00:00 │\n│ EWR    │  2013 │     1 │     1 │     8 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 10.357019999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 13:00:00 │\n│ EWR    │  2013 │     1 │     1 │     9 │ 39.92  │ 28.04  │ 62.21  │ 260      │ 14.960139999999999 │ NA        │     0.0 │ 1012.7   │    10.0 │ 2013-01-01 14:00:00 │\n│ EWR    │  2013 │     1 │     1 │    10 │ 41     │ 28.04  │ 59.65  │ 260      │ 13.809359999999998 │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 15:00:00 │\n│ …      │     … │     … │     … │     … │ …      │ …      │ …      │ …        │ …                  │ …         │       … │ …        │       … │ …                   │\n└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘\n\n\n\n\nflight_data = (\n    flights.mutate(\n        # Convert the arrival delay to a factor\n        arr_delay=ibis.ifelse(flights.arr_delay &gt;= 30, 1, 0),\n        # We will use the date (not date-time) in the recipe below\n        date=flights.time_hour.date(),\n    )\n    # Include the weather data\n    .inner_join(weather, [\"origin\", \"time_hour\"])\n    # Only retain the specific columns we will use\n    .select(\n        \"dep_time\",\n        \"flight\",\n        \"origin\",\n        \"dest\",\n        \"air_time\",\n        \"distance\",\n        \"carrier\",\n        \"date\",\n        \"arr_delay\",\n        \"time_hour\",\n    )\n    # Exclude missing data\n    .drop_null()\n)\nflight_data\n\n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ dep_time ┃ flight ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ carrier ┃ date       ┃ arr_delay ┃ time_hour           ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ time     │ int64  │ string │ string │ int64    │ int64    │ string  │ date       │ int8      │ timestamp(6)        │\n├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤\n│ 05:57:00 │    461 │ LGA    │ ATL    │      100 │      762 │ DL      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 05:58:00 │   4424 │ EWR    │ RDU    │       63 │      416 │ EV      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 05:58:00 │   6177 │ EWR    │ IAD    │       45 │      212 │ EV      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:00:00 │    731 │ LGA    │ DTW    │       78 │      502 │ DL      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │    684 │ EWR    │ LAX    │      316 │     2454 │ UA      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │    301 │ LGA    │ ORD    │      164 │      733 │ AA      │ 2013-06-26 │         1 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │   1837 │ LGA    │ MIA    │      148 │     1096 │ AA      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:01:00 │   1279 │ LGA    │ MEM    │      128 │      963 │ DL      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:02:00 │   1691 │ JFK    │ LAX    │      309 │     2475 │ UA      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ 06:04:00 │   1447 │ JFK    │ CLT    │       75 │      541 │ US      │ 2013-06-26 │         0 │ 2013-06-26 10:00:00 │\n│ …        │      … │ …      │ …      │        … │        … │ …       │ …          │         … │ …                   │\n└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘\n\n\n\nWe can see that about 16% of the flights in this dataset arrived more than 30 minutes late.\n\nflight_data.arr_delay.value_counts().rename(n=\"arr_delay_count\").mutate(\n    prop=ibis._.n / ibis._.n.sum()\n)\n\n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓\n┃ arr_delay ┃ n      ┃ prop     ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩\n│ int8      │ int64  │ float64  │\n├───────────┼────────┼──────────┤\n│         0 │ 273279 │ 0.838745 │\n│         1 │  52540 │ 0.161255 │\n└───────────┴────────┴──────────┘"
+    "text": "The New York City flight data\nLet’s use the nycflights13 data to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:\n\nimport ibis\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.create_table(\n    \"flights\", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True\n)\ncon.create_table(\n    \"weather\", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True\n)\n\nYou can now see the example dataset copied over to the database:\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.list_tables()\n\n['flights', 'weather']\n\n\nWe’ll turn on interactive mode, which partially executes queries to give users a preview of the results.\n\nibis.options.interactive = True\n\n\nflights = con.table(\"flights\")\nflights = flights.mutate(\n    dep_time=(\n        flights.dep_time.lpad(4, \"0\").substr(0, 2)\n        + \":\"\n        + flights.dep_time.substr(-2, 2)\n        + \":00\"\n    ).try_cast(\"time\"),\n    arr_delay=flights.arr_delay.try_cast(int),\n    air_time=flights.air_time.try_cast(int),\n)\nflights\n\n┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ year  ┃ month ┃ day   ┃ dep_time ┃ sched_dep_time ┃ dep_delay ┃ arr_time ┃ sched_arr_time ┃ arr_delay ┃ carrier ┃ flight ┃ tailnum ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ hour  ┃ minute ┃ time_hour           ┃\n┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ int64 │ int64 │ int64 │ time     │ int64          │ string    │ string   │ int64          │ int64     │ string  │ int64  │ string  │ string │ string │ int64    │ int64    │ int64 │ int64  │ timestamp(6)        │\n├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤\n│  2013 │     1 │     1 │ 05:17:00 │            515 │ 2         │ 830      │            819 │        11 │ UA      │   1545 │ N14228  │ EWR    │ IAH    │      227 │     1400 │     5 │     15 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:33:00 │            529 │ 4         │ 850      │            830 │        20 │ UA      │   1714 │ N24211  │ LGA    │ IAH    │      227 │     1416 │     5 │     29 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:42:00 │            540 │ 2         │ 923      │            850 │        33 │ AA      │   1141 │ N619AA  │ JFK    │ MIA    │      160 │     1089 │     5 │     40 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:44:00 │            545 │ -1        │ 1004     │           1022 │       -18 │ B6      │    725 │ N804JB  │ JFK    │ BQN    │      183 │     1576 │     5 │     45 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            600 │ -6        │ 812      │            837 │       -25 │ DL      │    461 │ N668DN  │ LGA    │ ATL    │      116 │      762 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            558 │ -4        │ 740      │            728 │        12 │ UA      │   1696 │ N39463  │ EWR    │ ORD    │      150 │      719 │     5 │     58 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:55:00 │            600 │ -5        │ 913      │            854 │        19 │ B6      │    507 │ N516JB  │ EWR    │ FLL    │      158 │     1065 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 709      │            723 │       -14 │ EV      │   5708 │ N829AS  │ LGA    │ IAD    │       53 │      229 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 838      │            846 │        -8 │ B6      │     79 │ N593JB  │ JFK    │ MCO    │      140 │      944 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:58:00 │            600 │ -2        │ 753      │            745 │         8 │ AA      │    301 │ N3ALAA  │ LGA    │ ORD    │      138 │      733 │     6 │      0 │ 2013-01-01 11:00:00 │\n│     … │     … │     … │ …        │              … │ …         │ …        │              … │         … │ …       │      … │ …       │ …      │ …      │        … │        … │     … │      … │ …                   │\n└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘\n\n\n\n\nweather = con.table(\"weather\")\nweather\n\n┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ origin ┃ year  ┃ month ┃ day   ┃ hour  ┃ temp   ┃ dewp   ┃ humid  ┃ wind_dir ┃ wind_speed         ┃ wind_gust ┃ precip  ┃ pressure ┃ visib   ┃ time_hour           ┃\n┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ string │ int64 │ int64 │ int64 │ int64 │ string │ string │ string │ string   │ string             │ string    │ float64 │ string   │ float64 │ timestamp(6)        │\n├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤\n│ EWR    │  2013 │     1 │     1 │     1 │ 39.02  │ 26.06  │ 59.37  │ 270      │ 10.357019999999999 │ NA        │     0.0 │ 1012     │    10.0 │ 2013-01-01 06:00:00 │\n│ EWR    │  2013 │     1 │     1 │     2 │ 39.02  │ 26.96  │ 61.63  │ 250      │ 8.05546            │ NA        │     0.0 │ 1012.3   │    10.0 │ 2013-01-01 07:00:00 │\n│ EWR    │  2013 │     1 │     1 │     3 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.5   │    10.0 │ 2013-01-01 08:00:00 │\n│ EWR    │  2013 │     1 │     1 │     4 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 12.658579999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 09:00:00 │\n│ EWR    │  2013 │     1 │     1 │     5 │ 39.02  │ 28.04  │ 64.43  │ 260      │ 12.658579999999999 │ NA        │     0.0 │ 1011.9   │    10.0 │ 2013-01-01 10:00:00 │\n│ EWR    │  2013 │     1 │     1 │     6 │ 37.94  │ 28.04  │ 67.21  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 11:00:00 │\n│ EWR    │  2013 │     1 │     1 │     7 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 14.960139999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 12:00:00 │\n│ EWR    │  2013 │     1 │     1 │     8 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 10.357019999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 13:00:00 │\n│ EWR    │  2013 │     1 │     1 │     9 │ 39.92  │ 28.04  │ 62.21  │ 260      │ 14.960139999999999 │ NA        │     0.0 │ 1012.7   │    10.0 │ 2013-01-01 14:00:00 │\n│ EWR    │  2013 │     1 │     1 │    10 │ 41     │ 28.04  │ 59.65  │ 260      │ 13.809359999999998 │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 15:00:00 │\n│ …      │     … │     … │     … │     … │ …      │ …      │ …      │ …        │ …                  │ …         │       … │ …        │       … │ …                   │\n└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘\n\n\n\n\nflight_data = (\n    flights.mutate(\n        # Convert the arrival delay to a factor\n        arr_delay=ibis.ifelse(flights.arr_delay &gt;= 30, 1, 0),\n        # We will use the date (not date-time) in the recipe below\n        date=flights.time_hour.date(),\n    )\n    # Include the weather data\n    .inner_join(weather, [\"origin\", \"time_hour\"])\n    # Only retain the specific columns we will use\n    .select(\n        \"dep_time\",\n        \"flight\",\n        \"origin\",\n        \"dest\",\n        \"air_time\",\n        \"distance\",\n        \"carrier\",\n        \"date\",\n        \"arr_delay\",\n        \"time_hour\",\n    )\n    # Exclude missing data\n    .drop_null()\n)\nflight_data\n\n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ dep_time ┃ flight ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ carrier ┃ date       ┃ arr_delay ┃ time_hour           ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ time     │ int64  │ string │ string │ int64    │ int64    │ string  │ date       │ int8      │ timestamp(6)        │\n├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤\n│ 10:45:00 │     67 │ EWR    │ ORD    │      120 │      719 │ UA      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:48:00 │    373 │ LGA    │ FLL    │      179 │     1076 │ B6      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:48:00 │    764 │ EWR    │ IAH    │      207 │     1400 │ UA      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:51:00 │   2044 │ LGA    │ MIA    │      171 │     1096 │ DL      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:51:00 │   2171 │ LGA    │ DCA    │       40 │      214 │ US      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:57:00 │   1275 │ JFK    │ SLC    │      286 │     1990 │ DL      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:57:00 │    366 │ LGA    │ STL    │      135 │      888 │ WN      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ 10:57:00 │   1550 │ EWR    │ SFO    │      338 │     2565 │ UA      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:58:00 │   4694 │ EWR    │ MKE    │      113 │      725 │ EV      │ 2013-02-14 │         0 │ 2013-02-14 15:00:00 │\n│ 10:58:00 │   1647 │ LGA    │ ATL    │      117 │      762 │ DL      │ 2013-02-14 │         0 │ 2013-02-14 16:00:00 │\n│ …        │      … │ …      │ …      │        … │        … │ …       │ …          │         … │ …                   │\n└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘\n\n\n\nWe can see that about 16% of the flights in this dataset arrived more than 30 minutes late.\n\nflight_data.arr_delay.value_counts().rename(n=\"arr_delay_count\").mutate(\n    prop=ibis._.n / ibis._.n.sum()\n)\n\n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓\n┃ arr_delay ┃ n      ┃ prop     ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩\n│ int8      │ int64  │ float64  │\n├───────────┼────────┼──────────┤\n│         0 │ 273279 │ 0.838745 │\n│         1 │  52540 │ 0.161255 │\n└───────────┴────────┴──────────┘"
   },
   {
     "objectID": "tutorial/scikit-learn.html#data-splitting",
@@ -880,59 +991,13 @@
     "text": "Acknowledgments\nThis tutorial is derived from the tidymodels article of the same name. The transformation logic is very similar, and much of the text is copied verbatim."
   },
   {
-    "objectID": "tutorial/pytorch.html",
-    "href": "tutorial/pytorch.html",
-    "title": "Preprocess your data with recipes",
+    "objectID": "faq/index.html",
+    "href": "faq/index.html",
+    "title": "Frequently asked questions",
     "section": "",
-    "text": "sklearn\n    \n  \n  \n    \n      XGBoost\n    \n  \n  \n    \n      PyTorch"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#introduction",
-    "href": "tutorial/pytorch.html#introduction",
-    "title": "Preprocess your data with recipes",
-    "section": "Introduction",
-    "text": "Introduction\nIn this article, we’ll explore Recipes, which are designed to help you preprocess your data before training your model. Recipes are built as a series of preprocessing steps, such as:\n\nconverting qualitative predictors to indicator variables (also known as dummy variables),\ntransforming data to be on a different scale (e.g., taking the logarithm of a variable),\ntransforming whole groups of predictors together,\nextracting key features from raw variables (e.g., getting the day of the week out of a date variable),\n\nand so on. If you are familiar with scikit-learn’s dataset transformations, a lot of this might sound familiar and like what a transformer already does. Recipes can be used to do many of the same things, but they can scale your workloads on any Ibis-supported backend. This article shows how to use recipes for modeling.\nTo use code in this article, you will need to install the following packages: Ibis, IbisML, and skorch, a high-level library for PyTorch that provides full scikit-learn compatibility.\npip install 'ibis-framework[duckdb,examples]' ibis-ml skorch torch"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#the-new-york-city-flight-data",
-    "href": "tutorial/pytorch.html#the-new-york-city-flight-data",
-    "title": "Preprocess your data with recipes",
-    "section": "The New York City flight data",
-    "text": "The New York City flight data\nLet’s use the nycflights13 data to predict whether a plane arrives more than 30 minutes late. This dataset contains information on 325,819 flights departing near New York City in 2013. Let’s start by loading the data and making a few changes to the variables:\n\nimport ibis\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.create_table(\n    \"flights\", ibis.examples.nycflights13_flights.fetch().to_pyarrow(), overwrite=True\n)\ncon.create_table(\n    \"weather\", ibis.examples.nycflights13_weather.fetch().to_pyarrow(), overwrite=True\n)\n\nYou can now see the example dataset copied over to the database:\n\ncon = ibis.connect(\"duckdb://nycflights13.ddb\")\ncon.list_tables()\n\n['flights', 'weather']\n\n\nWe’ll turn on interactive mode, which partially executes queries to give users a preview of the results.\n\nibis.options.interactive = True\n\n\nflights = con.table(\"flights\")\nflights = flights.mutate(\n    dep_time=(\n        flights.dep_time.lpad(4, \"0\").substr(0, 2)\n        + \":\"\n        + flights.dep_time.substr(-2, 2)\n        + \":00\"\n    ).try_cast(\"time\"),\n    arr_delay=flights.arr_delay.try_cast(int),\n    air_time=flights.air_time.try_cast(int),\n)\nflights\n\n┏━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ year  ┃ month ┃ day   ┃ dep_time ┃ sched_dep_time ┃ dep_delay ┃ arr_time ┃ sched_arr_time ┃ arr_delay ┃ carrier ┃ flight ┃ tailnum ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ hour  ┃ minute ┃ time_hour           ┃\n┡━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ int64 │ int64 │ int64 │ time     │ int64          │ string    │ string   │ int64          │ int64     │ string  │ int64  │ string  │ string │ string │ int64    │ int64    │ int64 │ int64  │ timestamp(6)        │\n├───────┼───────┼───────┼──────────┼────────────────┼───────────┼──────────┼────────────────┼───────────┼─────────┼────────┼─────────┼────────┼────────┼──────────┼──────────┼───────┼────────┼─────────────────────┤\n│  2013 │     1 │     1 │ 05:17:00 │            515 │ 2         │ 830      │            819 │        11 │ UA      │   1545 │ N14228  │ EWR    │ IAH    │      227 │     1400 │     5 │     15 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:33:00 │            529 │ 4         │ 850      │            830 │        20 │ UA      │   1714 │ N24211  │ LGA    │ IAH    │      227 │     1416 │     5 │     29 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:42:00 │            540 │ 2         │ 923      │            850 │        33 │ AA      │   1141 │ N619AA  │ JFK    │ MIA    │      160 │     1089 │     5 │     40 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:44:00 │            545 │ -1        │ 1004     │           1022 │       -18 │ B6      │    725 │ N804JB  │ JFK    │ BQN    │      183 │     1576 │     5 │     45 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            600 │ -6        │ 812      │            837 │       -25 │ DL      │    461 │ N668DN  │ LGA    │ ATL    │      116 │      762 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:54:00 │            558 │ -4        │ 740      │            728 │        12 │ UA      │   1696 │ N39463  │ EWR    │ ORD    │      150 │      719 │     5 │     58 │ 2013-01-01 10:00:00 │\n│  2013 │     1 │     1 │ 05:55:00 │            600 │ -5        │ 913      │            854 │        19 │ B6      │    507 │ N516JB  │ EWR    │ FLL    │      158 │     1065 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 709      │            723 │       -14 │ EV      │   5708 │ N829AS  │ LGA    │ IAD    │       53 │      229 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:57:00 │            600 │ -3        │ 838      │            846 │        -8 │ B6      │     79 │ N593JB  │ JFK    │ MCO    │      140 │      944 │     6 │      0 │ 2013-01-01 11:00:00 │\n│  2013 │     1 │     1 │ 05:58:00 │            600 │ -2        │ 753      │            745 │         8 │ AA      │    301 │ N3ALAA  │ LGA    │ ORD    │      138 │      733 │     6 │      0 │ 2013-01-01 11:00:00 │\n│     … │     … │     … │ …        │              … │ …         │ …        │              … │         … │ …       │      … │ …       │ …      │ …      │        … │        … │     … │      … │ …                   │\n└───────┴───────┴───────┴──────────┴────────────────┴───────────┴──────────┴────────────────┴───────────┴─────────┴────────┴─────────┴────────┴────────┴──────────┴──────────┴───────┴────────┴─────────────────────┘\n\n\n\n\nweather = con.table(\"weather\")\nweather\n\n┏━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ origin ┃ year  ┃ month ┃ day   ┃ hour  ┃ temp   ┃ dewp   ┃ humid  ┃ wind_dir ┃ wind_speed         ┃ wind_gust ┃ precip  ┃ pressure ┃ visib   ┃ time_hour           ┃\n┡━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ string │ int64 │ int64 │ int64 │ int64 │ string │ string │ string │ string   │ string             │ string    │ float64 │ string   │ float64 │ timestamp(6)        │\n├────────┼───────┼───────┼───────┼───────┼────────┼────────┼────────┼──────────┼────────────────────┼───────────┼─────────┼──────────┼─────────┼─────────────────────┤\n│ EWR    │  2013 │     1 │     1 │     1 │ 39.02  │ 26.06  │ 59.37  │ 270      │ 10.357019999999999 │ NA        │     0.0 │ 1012     │    10.0 │ 2013-01-01 06:00:00 │\n│ EWR    │  2013 │     1 │     1 │     2 │ 39.02  │ 26.96  │ 61.63  │ 250      │ 8.05546            │ NA        │     0.0 │ 1012.3   │    10.0 │ 2013-01-01 07:00:00 │\n│ EWR    │  2013 │     1 │     1 │     3 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.5   │    10.0 │ 2013-01-01 08:00:00 │\n│ EWR    │  2013 │     1 │     1 │     4 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 12.658579999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 09:00:00 │\n│ EWR    │  2013 │     1 │     1 │     5 │ 39.02  │ 28.04  │ 64.43  │ 260      │ 12.658579999999999 │ NA        │     0.0 │ 1011.9   │    10.0 │ 2013-01-01 10:00:00 │\n│ EWR    │  2013 │     1 │     1 │     6 │ 37.94  │ 28.04  │ 67.21  │ 240      │ 11.5078            │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 11:00:00 │\n│ EWR    │  2013 │     1 │     1 │     7 │ 39.02  │ 28.04  │ 64.43  │ 240      │ 14.960139999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 12:00:00 │\n│ EWR    │  2013 │     1 │     1 │     8 │ 39.92  │ 28.04  │ 62.21  │ 250      │ 10.357019999999999 │ NA        │     0.0 │ 1012.2   │    10.0 │ 2013-01-01 13:00:00 │\n│ EWR    │  2013 │     1 │     1 │     9 │ 39.92  │ 28.04  │ 62.21  │ 260      │ 14.960139999999999 │ NA        │     0.0 │ 1012.7   │    10.0 │ 2013-01-01 14:00:00 │\n│ EWR    │  2013 │     1 │     1 │    10 │ 41     │ 28.04  │ 59.65  │ 260      │ 13.809359999999998 │ NA        │     0.0 │ 1012.4   │    10.0 │ 2013-01-01 15:00:00 │\n│ …      │     … │     … │     … │     … │ …      │ …      │ …      │ …        │ …                  │ …         │       … │ …        │       … │ …                   │\n└────────┴───────┴───────┴───────┴───────┴────────┴────────┴────────┴──────────┴────────────────────┴───────────┴─────────┴──────────┴─────────┴─────────────────────┘\n\n\n\n\nflight_data = (\n    flights.mutate(\n        # Convert the arrival delay to a factor\n        # By default, PyTorch expects the target to have a Long datatype\n        arr_delay=ibis.ifelse(flights.arr_delay &gt;= 30, 1, 0).cast(\"int64\"),\n        # We will use the date (not date-time) in the recipe below\n        date=flights.time_hour.date(),\n    )\n    # Include the weather data\n    .inner_join(weather, [\"origin\", \"time_hour\"])\n    # Only retain the specific columns we will use\n    .select(\n        \"dep_time\",\n        \"flight\",\n        \"origin\",\n        \"dest\",\n        \"air_time\",\n        \"distance\",\n        \"carrier\",\n        \"date\",\n        \"arr_delay\",\n        \"time_hour\",\n    )\n    # Exclude missing data\n    .drop_null()\n)\nflight_data\n\n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃ dep_time ┃ flight ┃ origin ┃ dest   ┃ air_time ┃ distance ┃ carrier ┃ date       ┃ arr_delay ┃ time_hour           ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ time     │ int64  │ string │ string │ int64    │ int64    │ string  │ date       │ int64     │ timestamp(6)        │\n├──────────┼────────┼────────┼────────┼──────────┼──────────┼─────────┼────────────┼───────────┼─────────────────────┤\n│ 05:17:00 │   1545 │ EWR    │ IAH    │      227 │     1400 │ UA      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:33:00 │   1714 │ LGA    │ IAH    │      227 │     1416 │ UA      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:42:00 │   1141 │ JFK    │ MIA    │      160 │     1089 │ AA      │ 2013-01-01 │         1 │ 2013-01-01 10:00:00 │\n│ 05:44:00 │    725 │ JFK    │ BQN    │      183 │     1576 │ B6      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:54:00 │    461 │ LGA    │ ATL    │      116 │      762 │ DL      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:54:00 │   1696 │ EWR    │ ORD    │      150 │      719 │ UA      │ 2013-01-01 │         0 │ 2013-01-01 10:00:00 │\n│ 05:55:00 │    507 │ EWR    │ FLL    │      158 │     1065 │ B6      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:57:00 │   5708 │ LGA    │ IAD    │       53 │      229 │ EV      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:57:00 │     79 │ JFK    │ MCO    │      140 │      944 │ B6      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ 05:58:00 │    301 │ LGA    │ ORD    │      138 │      733 │ AA      │ 2013-01-01 │         0 │ 2013-01-01 11:00:00 │\n│ …        │      … │ …      │ …      │        … │        … │ …       │ …          │         … │ …                   │\n└──────────┴────────┴────────┴────────┴──────────┴──────────┴─────────┴────────────┴───────────┴─────────────────────┘\n\n\n\nWe can see that about 16% of the flights in this dataset arrived more than 30 minutes late.\n\nflight_data.arr_delay.value_counts().rename(n=\"arr_delay_count\").mutate(\n    prop=ibis._.n / ibis._.n.sum()\n)\n\n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━┓\n┃ arr_delay ┃ n      ┃ prop     ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━┩\n│ int64     │ int64  │ float64  │\n├───────────┼────────┼──────────┤\n│         0 │ 273279 │ 0.838745 │\n│         1 │  52540 │ 0.161255 │\n└───────────┴────────┴──────────┘"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#data-splitting",
-    "href": "tutorial/pytorch.html#data-splitting",
-    "title": "Preprocess your data with recipes",
-    "section": "Data splitting",
-    "text": "Data splitting\nTo get started, let’s split this single dataset into two: a training set and a testing set. We’ll keep most of the rows in the original dataset (subset chosen randomly) in the training set. The training data will be used to fit the model, and the testing set will be used to measure model performance.\nBecause the order of rows in an Ibis table is undefined, we need a unique key to split the data reproducibly. It is permissible for airlines to use the same flight number for different routes, as long as the flights do not operate on the same day. This means that the combination of the flight number and the date of travel is always unique.\n\nimport ibis_ml as ml\n\n# Create data frames for the two sets:\ntrain_data, test_data = ml.train_test_split(\n    flight_data,\n    unique_key=[\"carrier\", \"flight\", \"date\"],\n    # Put 3/4 of the data into the training set\n    test_size=0.25,\n    num_buckets=4,\n    # Fix the random numbers by setting the seed\n    # This enables the analysis to be reproducible when random numbers are used\n    random_seed=222,\n)"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#create-features",
-    "href": "tutorial/pytorch.html#create-features",
-    "title": "Preprocess your data with recipes",
-    "section": "Create features",
-    "text": "Create features\n\nflights_rec = ml.Recipe(\n    ml.ExpandDate(\"date\", components=[\"dow\", \"month\"]),\n    ml.Drop(\"date\"),\n    ml.TargetEncode(ml.nominal()),\n    ml.DropZeroVariance(ml.everything()),\n    ml.MutateAt(\"dep_time\", ibis._.hour() * 60 + ibis._.minute()),\n    ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),\n    # By default, PyTorch requires that the type of `X` is `np.float32`.\n    # https://discuss.pytorch.org/t/mat1-and-mat2-must-have-the-same-dtype-but-got-double-and-float/197555/2\n    ml.Cast(ml.numeric(), \"float32\"),\n)"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#fit-a-model-with-a-recipe",
-    "href": "tutorial/pytorch.html#fit-a-model-with-a-recipe",
-    "title": "Preprocess your data with recipes",
-    "section": "Fit a model with a recipe",
-    "text": "Fit a model with a recipe\nLet’s model the flight data. We can use any scikit-learn-compatible estimator.\nWe will want to use our recipe across several steps as we train and test our model. We will:\n\nProcess the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.\nApply the recipe to the training set: We create the final predictor set on the training set.\nApply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.\n\nTo simplify this process, we can use a scikit-learn Pipeline.\n\nfrom sklearn.pipeline import Pipeline\nfrom skorch import NeuralNetClassifier\nfrom torch import nn\n\n\nclass MyModule(nn.Module):\n    def __init__(self, num_units=10, nonlin=nn.ReLU()):\n        super().__init__()\n\n        self.dense0 = nn.Linear(10, num_units)\n        self.nonlin = nonlin\n        self.dropout = nn.Dropout(0.5)\n        self.dense1 = nn.Linear(num_units, num_units)\n        self.output = nn.Linear(num_units, 2)\n        self.softmax = nn.Softmax(dim=-1)\n\n    def forward(self, X, **kwargs):\n        X = self.nonlin(self.dense0(X))\n        X = self.dropout(X)\n        X = self.nonlin(self.dense1(X))\n        X = self.softmax(self.output(X))\n        return X\n\n\nnet = NeuralNetClassifier(\n    MyModule,\n    max_epochs=10,\n    lr=0.1,\n    # Shuffle training data on each epoch\n    iterator_train__shuffle=True,\n)\n\npipe = Pipeline([(\"flights_rec\", flights_rec), (\"net\", net)])\n\nNow, there is a single function that can be used to prepare the recipe and train the model from the resulting predictors:\n\nX_train = train_data.drop(\"arr_delay\")\ny_train = train_data.arr_delay\npipe.fit(X_train, y_train)\n\n  epoch    train_loss    valid_acc    valid_loss     dur\n-------  ------------  -----------  ------------  ------\n      1        2.5545       0.8386        2.5725  2.2475\n      2        2.5040       0.8386        2.5725  2.2364\n      3        2.5070       0.8386        2.5725  2.2447\n      4        2.5063       0.8386        2.5725  2.2569\n      5        2.5067       0.8386        2.5725  2.2547\n      6        2.5051       0.8386        2.5725  2.2503\n      7        2.5064       0.8386        2.5725  2.2495\n      8        2.5066       0.8386        2.5725  2.2585\n      9        2.5044       0.8386        2.5725  2.2640\n     10        2.5059       0.8386        2.5725  2.2712\n\n\nPipeline(steps=[('flights_rec',\n                 Recipe(ExpandDate(cols(('date',)),\n                                   components=['dow', 'month']),\n                        Drop(cols(('date',))),\n                        TargetEncode(nominal(), smooth=0.0),\n                        DropZeroVariance(everything(), tolerance=0.0001),\n                        MutateAt(cols(('dep_time',)),\n                                 ((_.hour() * 60) + _.minute())),\n                        MutateAt(timestamp(), _.epoch_seconds()),\n                        Cast(numeric(), 'float32'))),\n                ('net',\n                 &lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](\n  module_=MyModule(\n    (dense0): Linear(in_features=10, out_features=10, bias=True)\n    (nonlin): ReLU()\n    (dropout): Dropout(p=0.5, inplace=False)\n    (dense1): Linear(in_features=10, out_features=10, bias=True)\n    (output): Linear(in_features=10, out_features=2, bias=True)\n    (softmax): Softmax(dim=-1)\n  ),\n))])In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.  Pipeline?Documentation for PipelineiFittedPipeline(steps=[('flights_rec',\n                 Recipe(ExpandDate(cols(('date',)),\n                                   components=['dow', 'month']),\n                        Drop(cols(('date',))),\n                        TargetEncode(nominal(), smooth=0.0),\n                        DropZeroVariance(everything(), tolerance=0.0001),\n                        MutateAt(cols(('dep_time',)),\n                                 ((_.hour() * 60) + _.minute())),\n                        MutateAt(timestamp(), _.epoch_seconds()),\n                        Cast(numeric(), 'float32'))),\n                ('net',\n                 &lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](\n  module_=MyModule(\n    (dense0): Linear(in_features=10, out_features=10, bias=True)\n    (nonlin): ReLU()\n    (dropout): Dropout(p=0.5, inplace=False)\n    (dense1): Linear(in_features=10, out_features=10, bias=True)\n    (output): Linear(in_features=10, out_features=2, bias=True)\n    (softmax): Softmax(dim=-1)\n  ),\n))]) flights_rec: RecipeRecipe(ExpandDate(cols(('date',)), components=['dow', 'month']),\n       Drop(cols(('date',))),\n       TargetEncode(nominal(), smooth=0.0),\n       DropZeroVariance(everything(), tolerance=0.0001),\n       MutateAt(cols(('dep_time',)), ((_.hour() * 60) + _.minute())),\n       MutateAt(timestamp(), _.epoch_seconds()),\n       Cast(numeric(), 'float32'))  ExpandDate?Documentation for ExpandDateExpandDate(cols(('date',)), components=['dow', 'month'])  Drop?Documentation for DropDrop(cols(('date',)))  TargetEncode?Documentation for TargetEncodeTargetEncode(nominal(), smooth=0.0)  DropZeroVariance?Documentation for DropZeroVarianceDropZeroVariance(everything(), tolerance=0.0001)  MutateAt?Documentation for MutateAtMutateAt(cols(('dep_time',)), ((_.hour() * 60) + _.minute()))  MutateAt?Documentation for MutateAtMutateAt(timestamp(), _.epoch_seconds())  Cast?Documentation for CastCast(numeric(), 'float32') NeuralNetClassifier&lt;class 'skorch.classifier.NeuralNetClassifier'&gt;[initialized](\n  module_=MyModule(\n    (dense0): Linear(in_features=10, out_features=10, bias=True)\n    (nonlin): ReLU()\n    (dropout): Dropout(p=0.5, inplace=False)\n    (dense1): Linear(in_features=10, out_features=10, bias=True)\n    (output): Linear(in_features=10, out_features=2, bias=True)\n    (softmax): Softmax(dim=-1)\n  ),\n)"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#use-a-trained-workflow-to-predict",
-    "href": "tutorial/pytorch.html#use-a-trained-workflow-to-predict",
-    "title": "Preprocess your data with recipes",
-    "section": "Use a trained workflow to predict",
-    "text": "Use a trained workflow to predict\n…\n\nX_test = test_data.drop(\"arr_delay\")\ny_test = test_data.arr_delay\npipe.score(X_test, y_test)\n\n0.8390849833968762"
-  },
-  {
-    "objectID": "tutorial/pytorch.html#acknowledgments",
-    "href": "tutorial/pytorch.html#acknowledgments",
-    "title": "Preprocess your data with recipes",
-    "section": "Acknowledgments",
-    "text": "Acknowledgments\nThis tutorial is derived from the tidymodels article of the same name. The transformation logic is very similar, and much of the text is copied verbatim."
+    "text": "Can I define my own IbisML step?\nIf IbisML does not support the step you need out of the box, you can create a custom step.\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Frequently asked questions"
+    ]
   }
 ]
