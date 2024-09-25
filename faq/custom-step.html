@@ -355,7 +355,7 @@ window.Quarto = {
 <section id="install-and-import-necessary-modules" class="level2">
 <h2 class="anchored" data-anchor-id="install-and-import-necessary-modules">Install and import necessary modules</h2>
 <p>Before starting off, ensure that you have installed all the necessary modules and imported them in your development environment. To manage modules and dependencies effectively, it is recommended to create a virtual environment using either <code>venv</code> or <code>conda</code>.</p>
-<div id="865319bb" class="cell" data-execution_count="1">
+<div id="d44f24ba" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install ibis and ibisML</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># !pip install 'ibis-framework[duckdb]' ibis-ml </span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis</span>
@@ -402,7 +402,7 @@ window.Quarto = {
 <li><span class="math inline">\(\text{IQR}(X)\)</span> is the interquartile range of the feature values, defined as the difference between the 75th percentile (Q3) and the 25th percentile (Q1).</li>
 </ul>
 <p>As a starting point, the following code snippet outlines the structure of the CustomRobustScaler class, including its constructor and methods.</p>
-<div id="090a5227" class="cell" data-execution_count="2">
+<div id="7cb880a3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomRobustScaler(Step):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs: SelectionType):</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">pass</span>  <span class="co"># Initialize the constructor of the class</span></span>
@@ -415,7 +415,7 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="step-1-define-the-constructor-1">Step 1: Define the Constructor</h3>
 <p>To construct our <code>CustomRobustScaler</code> transformation, we need to specify which columns will be scaled. IbisML provides a rich set of <a href="https://ibis-project.github.io/ibis-ml/reference/selectors.html">Selectors</a>, allowing you to select columns by data type, names, and other patterns.</p>
 <p>We begin defining the <code>__init__</code> method with these considerations:</p>
-<div id="386be184" class="cell" data-execution_count="3">
+<div id="bf3111a2" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs: SelectionType):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select the columns that will be involved in the transformation</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.inputs <span class="op">=</span> selector(inputs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -435,7 +435,7 @@ window.Quarto = {
 <li>For each column, calculate the <code>median</code> and <code>IQR</code> (<code>p75</code> - <code>p25</code>) by building an Ibis expression, which can be lazily evaluated on your chosen Ibis-supported backend.</li>
 <li>Save the statistics in a dictionary, which will be used during the transformation process.</li>
 </ul>
-<div id="2be0ad8f" class="cell" data-execution_count="4">
+<div id="403324f1" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_table(<span class="va">self</span>, table: ir.Table, metadata: Metadata) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 1: Get the column names that match the selector</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    columns <span class="op">=</span> <span class="va">self</span>.inputs.select_columns(table, metadata)</span>
@@ -469,7 +469,7 @@ window.Quarto = {
 <section id="step-3-implement-transform_table-1" class="level3">
 <h3 class="anchored" data-anchor-id="step-3-implement-transform_table-1">Step 3: Implement <code>transform_table</code></h3>
 <p>The <code>transform_table</code> method applies the learned transformation to the input data. This method takes the input table and transforms it based on the previously calculated statistics. Here’s how to implement transform_table:</p>
-<div id="d1628372" class="cell" data-execution_count="5">
+<div id="30ed4bde" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> transform_table(<span class="va">self</span>, table):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply the transformation to each column </span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> table.mutate(</span>
@@ -484,7 +484,7 @@ window.Quarto = {
 <section id="step-4-test-the-transformer-1" class="level3">
 <h3 class="anchored" data-anchor-id="step-4-test-the-transformer-1">Step 4: Test the Transformer</h3>
 <p>Let’s put the code together and perform some simple tests to verify the results.</p>
-<div id="5f4256e1" class="cell" data-execution_count="6">
+<div id="4b499930" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomRobustScaler(Step):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs: SelectionType):</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Select the columns that will be involved in the transformation</span></span>
@@ -528,7 +528,7 @@ window.Quarto = {
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This code creates sample data for four columns: “string_col”, “int_col”, “floating_col”, and “target_col”, each containing 10 rows of data. The train_table variable holds the created Ibis memory table.</p>
-<div id="4332ab8e" class="cell" data-execution_count="7">
+<div id="c7749369" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable interactive mode for Ibis</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ibis.options.interactive <span class="op">=</span> <span class="va">True</span></span>
@@ -562,7 +562,7 @@ window.Quarto = {
 </div>
 </div>
 <p>This code initializes a transformer instance of <code>CustomRobustScaler</code> with the specified columns to scale. Then, it creates a <code>Metadata</code> object with target columns. The transformer is fitted to the training data and metadata using the <code>fit_table</code> method. Finally, the <code>transform_table</code> method is used to transform the training table with the fitted transformer.</p>
-<div id="2be66e62" class="cell" data-execution_count="8">
+<div id="cc3961f2" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate CustomRobustScaler transformer with the specified columns to scale</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># # Select only one column: "int_col"</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>robust_scaler <span class="op">=</span> CustomRobustScaler([<span class="st">"int_col"</span>])</span>
@@ -596,7 +596,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Access the calculated statistics for each column</p>
-<div id="cf964e2d" class="cell" data-execution_count="9">
+<div id="eb95383b" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>robust_scaler.stats_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>{'int_col': (4.5, 2.25, 6.75)}</code></pre>
