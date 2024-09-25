@@ -1,5 +1,6 @@
 ---
 title: "Frequently asked questions"
+sidebar: false
 ---
 
 ### Can I define my own IbisML step?
