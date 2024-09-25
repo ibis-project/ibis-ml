@@ -11,6 +11,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
 
 _DOCS_PAGE_NAME = "standardization"
+# a small epsilon value to handle near-constant columns during normalization
+_APPROX_EPS = 10e-7
 
 
 class ScaleMinMax(Step):
@@ -68,7 +70,11 @@ class ScaleMinMax(Step):
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
             [
-                ((table[c] - min) / (max - min)).name(c)  # type: ignore
+                # for near-constant column, set the scale to 1.0
+                (
+                    (table[c] - min)
+                    / (1.0 if abs(max - min) < _APPROX_EPS else max - min)
+                ).name(c)
                 for c, (max, min) in self.stats_.items()
             ]
         )
@@ -128,7 +134,10 @@ class ScaleStandard(Step):
     def transform_table(self, table: ir.Table) -> ir.Table:
         return table.mutate(
             [
-                ((table[c] - center) / scale).name(c)  # type: ignore
+                # for near-constant column, set the scale to 1.0
+                (
+                    (table[c] - center) / (1.0 if abs(scale) < _APPROX_EPS else scale)
+                ).name(c)
                 for c, (center, scale) in self.stats_.items()
             ]
         )
