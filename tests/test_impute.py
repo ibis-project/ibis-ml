@@ -9,7 +9,7 @@ import pytest
 import ibis_ml as ml
 
 
-@pytest.fixture()
+@pytest.fixture
 def train_table():
     return ibis.memtable(
         {

@@ -22,7 +22,7 @@ class Shuffle(ml.Step):
         return table.order_by(ibis.random())
 
 
-@pytest.fixture()
+@pytest.fixture
 def df():
     return pd.DataFrame(
         {
@@ -34,7 +34,7 @@ def df():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def table(df):
     return ibis.memtable(df)
 
@@ -410,12 +410,12 @@ def test_set_params_passes_all_parameters():
 def test_set_params_updates_valid_params():
     # Check that set_params tries to set `replacement_mutateat.inputs`, not
     # `original_mutateat.inputs`.
-    original_mutateat = ml.MutateAt("dep_time", ibis._.hour() * 60 + ibis._.minute())  # noqa: SLF001
+    original_mutateat = ml.MutateAt("dep_time", ibis._.hour() * 60 + ibis._.minute())
     rec = ml.Recipe(
         original_mutateat,
-        ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),  # noqa: SLF001
+        ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),
     )
-    replacement_mutateat = ml.MutateAt("arr_time", ibis._.hour() * 60 + ibis._.minute())  # noqa: SLF001
+    replacement_mutateat = ml.MutateAt("arr_time", ibis._.hour() * 60 + ibis._.minute())
     rec.set_params(
         **{"mutateat-1": replacement_mutateat, "mutateat-1__inputs": ml.cols("arrival")}
     )

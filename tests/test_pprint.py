@@ -3,7 +3,7 @@ import pytest
 import ibis_ml as ml
 
 
-@pytest.fixture()
+@pytest.fixture
 def rec():
     imputer = ml.ImputeMean(ml.numeric())
     scaler = ml.ScaleStandard(ml.numeric())
@@ -11,7 +11,7 @@ def rec():
     return ml.Recipe(imputer, scaler, encoder)
 
 
-@pytest.fixture()
+@pytest.fixture
 def pipe(rec):
     pytest.importorskip("sklearn")
     from sklearn.pipeline import Pipeline

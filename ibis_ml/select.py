@@ -30,7 +30,7 @@ class Selector:
         return f"{name}({args})"
 
     def __eq__(self, other):
-        return type(self) == type(other) and all(
+        return isinstance(other, type(self)) and all(
             getattr(self, name) == getattr(other, name) for name in self._fields
         )
 

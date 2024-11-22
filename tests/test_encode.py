@@ -8,7 +8,7 @@ from sklearn.preprocessing import TargetEncoder
 import ibis_ml as ml
 
 
-@pytest.fixture()
+@pytest.fixture
 def t_train():
     return ibis.memtable(
         {
@@ -27,7 +27,7 @@ def t_train():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def t_test():
     return ibis.memtable(
         {
