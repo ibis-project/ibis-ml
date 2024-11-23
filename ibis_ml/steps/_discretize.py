@@ -30,7 +30,7 @@ class DiscretizeKBins(Step):
 
 
     Raises
-    ----------
+    ------
     ValueError
         If `n_bins` is less than or equal to 1 or if an unsupported
         `strategy` is provided.
