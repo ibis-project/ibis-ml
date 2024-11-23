@@ -412,8 +412,7 @@ def test_set_params_updates_valid_params():
     # `original_mutateat.inputs`.
     original_mutateat = ml.MutateAt("dep_time", ibis._.hour() * 60 + ibis._.minute())
     rec = ml.Recipe(
-        original_mutateat,
-        ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds()),
+        original_mutateat, ml.MutateAt(ml.timestamp(), ibis._.epoch_seconds())
     )
     replacement_mutateat = ml.MutateAt("arr_time", ibis._.hour() * 60 + ibis._.minute())
     rec.set_params(

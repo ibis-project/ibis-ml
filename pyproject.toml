@@ -86,7 +86,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "docs/**/*.py" = ["INP001"]
-"examples/*.ipynb" = ["ERA001", "I001", "T201"]
+"examples/*.ipynb" = ["E501", "ERA001", "I001", "T201"]
+"tests/*.py" = ["PT001", "RUF100", "SLF001"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
