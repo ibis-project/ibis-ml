@@ -478,7 +478,7 @@ def _name_estimators(estimators):
     for i in reversed(range(len(estimators))):
         name = names[i]
         if name in namecount:
-            names[i] += "-%d" % namecount[name]
+            names[i] += f"-{namecount[name]}"
             namecount[name] -= 1
 
     return list(zip(names, estimators))
