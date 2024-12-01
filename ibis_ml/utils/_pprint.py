@@ -111,7 +111,7 @@ def _safe_repr(self, object, context, maxlevels, level):
             if krecur or vrecur:
                 recursive = True
         del context[objid]
-        return "{%s}" % ", ".join(components), readable, recursive
+        return f"{{{', '.join(components)}}}", readable, recursive
 
     if (issubclass(typ, list) and r is list.__repr__) or (
         issubclass(typ, tuple) and r is tuple.__repr__

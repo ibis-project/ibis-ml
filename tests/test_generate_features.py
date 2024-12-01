@@ -5,7 +5,7 @@ import pytest
 import ibis_ml as ml
 
 
-@pytest.fixture()
+@pytest.fixture
 def train_table():
     N = 100
     return ibis.memtable({"x": list(range(N)), "y": [10] * N, "z": ["s"] * N})
