@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -36,12 +70,12 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-cf7929f4d66a2bdccc4ecf0c4d40c672.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-db4c4b48896e4c803b727a947ce76e30.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d6018d07bde54c5753badd13f6dab456.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-77b6319fad0eece11e4df3d047432856.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -393,7 +427,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/reference/selectors.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/core.html">Core</a></li><li class="breadcrumb-item"><a href="../reference/selectors.html">Selectors</a></li></ol></nav></header>
 
 
 
@@ -404,10 +438,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.cols" class="level1">
 <h1>cols</h1>
-<p><code>cols(self, *columns)</code></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>cols(<span class="va">self</span>, <span class="op">*</span>columns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select columns by name.</p>
-<section id="parameters" class="level2">
-<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -419,7 +453,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>columns</code></td>
+<td>columns</td>
 <td>str</td>
 <td>Names of the columns to select.</td>
 <td><code>()</code></td>
@@ -430,15 +464,15 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.contains" class="level1">
 <h1>contains</h1>
-<p><code>contains(self, pattern)</code></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>contains(<span class="va">self</span>, pattern)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns whose names contain a specific string.</p>
-<section id="parameters-1" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-1">Parameters</h2>
+<section id="parameters-1" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 14%">
-<col style="width: 10%">
-<col style="width: 58%">
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 59%">
 <col style="width: 16%">
 </colgroup>
 <thead>
@@ -451,7 +485,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>pattern</code></td>
+<td>pattern</td>
 <td>str</td>
 <td>The string to search for in column names.</td>
 <td><em>required</em></td>
@@ -462,10 +496,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.endswith" class="level1">
 <h1>endswith</h1>
-<p><code>endswith(self, suffix)</code></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>endswith(<span class="va">self</span>, suffix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns whose names end with a specific string.</p>
-<section id="parameters-2" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-2">Parameters</h2>
+<section id="parameters-2" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -477,7 +511,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>suffix</code></td>
+<td>suffix</td>
 <td>str</td>
 <td>The column name suffix to match.</td>
 <td><em>required</em></td>
@@ -488,10 +522,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.startswith" class="level1">
 <h1>startswith</h1>
-<p><code>startswith(self, prefix)</code></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>startswith(<span class="va">self</span>, prefix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns whose names start with a specific string.</p>
-<section id="parameters-3" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-3">Parameters</h2>
+<section id="parameters-3" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -503,7 +537,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>prefix</code></td>
+<td>prefix</td>
 <td>str</td>
 <td>The column name prefix to match.</td>
 <td><em>required</em></td>
@@ -514,15 +548,15 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.matches" class="level1">
 <h1>matches</h1>
-<p><code>matches(self, pattern)</code></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>matches(<span class="va">self</span>, pattern)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns whose names match a specific regex.</p>
-<section id="parameters-4" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-4">Parameters</h2>
+<section id="parameters-4" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 14%">
+<col style="width: 12%">
 <col style="width: 10%">
-<col style="width: 58%">
+<col style="width: 60%">
 <col style="width: 16%">
 </colgroup>
 <thead>
@@ -535,7 +569,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>pattern</code></td>
+<td>pattern</td>
 <td>str</td>
 <td>The pattern to search for in column names.</td>
 <td><em>required</em></td>
@@ -546,66 +580,66 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.numeric" class="level1">
 <h1>numeric</h1>
-<p><code>numeric()</code></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>numeric()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all numeric columns</p>
 </section>
 <section id="ibis_ml.nominal" class="level1">
 <h1>nominal</h1>
-<p><code>nominal()</code></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nominal()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all nominal (string or categorical) columns</p>
 </section>
 <section id="ibis_ml.categorical" class="level1">
 <h1>categorical</h1>
-<p><code>categorical()</code></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>categorical()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all categorical columns.</p>
 </section>
 <section id="ibis_ml.string" class="level1">
 <h1>string</h1>
-<p><code>string()</code></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>string()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all string columns</p>
 </section>
 <section id="ibis_ml.integer" class="level1">
 <h1>integer</h1>
-<p><code>integer()</code></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>integer()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all integral columns</p>
 </section>
 <section id="ibis_ml.floating" class="level1">
 <h1>floating</h1>
-<p><code>floating()</code></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>floating()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all floating columns</p>
 </section>
 <section id="ibis_ml.temporal" class="level1">
 <h1>temporal</h1>
-<p><code>temporal()</code></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>temporal()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all temporal columns</p>
 </section>
 <section id="ibis_ml.date" class="level1">
 <h1>date</h1>
-<p><code>date()</code></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>date()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all date columns</p>
 </section>
 <section id="ibis_ml.time" class="level1">
 <h1>time</h1>
-<p><code>time()</code></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>time()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all time columns</p>
 </section>
 <section id="ibis_ml.timestamp" class="level1">
 <h1>timestamp</h1>
-<p><code>timestamp()</code></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>timestamp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all timestamp columns</p>
 </section>
 <section id="ibis_ml.has_type" class="level1">
 <h1>has_type</h1>
-<p><code>has_type(self, dtype)</code></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>has_type(<span class="va">self</span>, dtype)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns matching a specified dtype.</p>
-<section id="parameters-5" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-5">Parameters</h2>
+<section id="parameters-5" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
 <col style="width: 32%">
 <col style="width: 52%">
-<col style="width: 8%">
+<col style="width: 9%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -617,7 +651,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>dtype</code></td>
+<td>dtype</td>
 <td>dt.DataType | str | type[dt.DataType]</td>
 <td>The dtype to match. May be a dtype instance, string, or dtype class.</td>
 <td><em>required</em></td>
@@ -628,15 +662,15 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.where" class="level1">
 <h1>where</h1>
-<p><code>where(self, predicate)</code></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>where(<span class="va">self</span>, predicate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns matching a specific predicate function.</p>
-<section id="parameters-6" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-6">Parameters</h2>
+<section id="parameters-6" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 7%">
+<col style="width: 6%">
 <col style="width: 18%">
-<col style="width: 67%">
+<col style="width: 68%">
 <col style="width: 6%">
 </colgroup>
 <thead>
@@ -649,7 +683,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>predicate</code></td>
+<td>predicate</td>
 <td>Callable[[ir.Column], bool]</td>
 <td>A predicate function from <code>Column</code> to <code>bool</code>. Only columns where <code>predicate</code> returns <code>True</code> will be selected.</td>
 <td><em>required</em></td>
@@ -660,12 +694,12 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.everything" class="level1">
 <h1>everything</h1>
-<p><code>everything()</code></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>everything()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Select all columns</p>
 </section>
 <section id="ibis_ml.selector" class="level1">
 <h1>selector</h1>
-<p><code>selector(obj)</code></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>selector(obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Convert <code>obj</code> to a Selector</p>
 
 
@@ -898,8 +932,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1010,7 +1042,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

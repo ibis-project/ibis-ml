@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -36,12 +70,12 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-cf7929f4d66a2bdccc4ecf0c4d40c672.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-db4c4b48896e4c803b727a947ce76e30.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d6018d07bde54c5753badd13f6dab456.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-77b6319fad0eece11e4df3d047432856.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -376,7 +410,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="toc-actions"><ul><li><a href="https://github.com/ibis-project/ibis-ml/edit/main/docs/reference/core.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/ibis-project/ibis-ml/issues" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reference/core.html">Core</a></li><li class="breadcrumb-item"><a href="../reference/core.html">Common</a></li></ol></nav></header>
 
 
 
@@ -387,7 +421,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe" class="level1">
 <h1>Recipe</h1>
-<p><code>Recipe(self, *steps)</code></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Recipe(<span class="va">self</span>, <span class="op">*</span>steps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="attributes" class="level2">
 <h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
 <table class="caption-top table">
@@ -483,10 +517,10 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <section id="ibis_ml.Recipe.fit" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.fit">fit</h3>
-<p><code>fit(X, y=None)</code></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fit(X, y<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Fit a recipe.</p>
-<section id="parameters" class="level4">
-<h4 class="anchored" data-anchor-id="parameters">Parameters</h4>
+<section id="parameters" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -498,13 +532,13 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>Training data.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>y</code></td>
+<td>y</td>
 <td>column - like</td>
 <td>Training targets.</td>
 <td><code>None</code></td>
@@ -512,17 +546,19 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns" class="level4">
-<h4 class="anchored" data-anchor-id="returns">Returns</h4>
+<section id="returns" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
+<th>Name</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td></td>
 <td>self</td>
 <td>Returns the same instance.</td>
 </tr>
@@ -532,10 +568,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.fit_transform" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.fit_transform">fit_transform</h3>
-<p><code>fit_transform(X, y=None)</code></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fit_transform(X, y<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Fit and transform in one step.</p>
-<section id="parameters-1" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-1">Parameters</h4>
+<section id="parameters-1" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -547,13 +583,13 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>Training data.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>y</code></td>
+<td>y</td>
 <td>column - like</td>
 <td>Training targets.</td>
 <td><code>None</code></td>
@@ -561,17 +597,19 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns-1" class="level4">
-<h4 class="anchored" data-anchor-id="returns-1">Returns</h4>
+<section id="returns-1" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
+<th>Name</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td></td>
 <td>Xt</td>
 <td>Transformed training data.</td>
 </tr>
@@ -581,11 +619,11 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.get_params" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.get_params">get_params</h3>
-<p><code>get_params(deep=True)</code></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>get_params(deep<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Get parameters for this recipe.</p>
 <p>Returns the parameters given in the constructor as well as the steps contained within the <code>steps</code> of the <code>Recipe</code>.</p>
-<section id="parameters-2" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-2">Parameters</h4>
+<section id="parameters-2" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -603,7 +641,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>deep</code></td>
+<td>deep</td>
 <td>bool</td>
 <td>If True, will return the parameters for this recipe and contained steps.</td>
 <td><code>True</code></td>
@@ -611,48 +649,55 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns-2" class="level4">
-<h4 class="anchored" data-anchor-id="returns-2">Returns</h4>
+<section id="returns-2" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-2">Returns</h4>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 34%">
+<col style="width: 54%">
+</colgroup>
 <thead>
 <tr class="header">
+<th>Name</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>params</td>
 <td>mapping of string to any</td>
 <td>Parameter names mapped to their values.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="notes" class="level4">
-<h4 class="anchored" data-anchor-id="notes">Notes</h4>
+<section id="notes" class="level4 doc-section doc-section-notes">
+<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
 <p>Derived from [1]_.</p>
 </section>
-<section id="references" class="level4">
-<h4 class="anchored" data-anchor-id="references">References</h4>
+<section id="references" class="level4 doc-section doc-section-references">
+<h4 class="doc-section doc-section-references anchored" data-anchor-id="references">References</h4>
 <p>.. [1] https://github.com/scikit-learn/scikit-learn/blob/ee5a1b6/sklearn/utils/metaestimators.py#L30-L50</p>
 </section>
 </section>
 <section id="ibis_ml.Recipe.is_fitted" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.is_fitted">is_fitted</h3>
-<p><code>is_fitted()</code></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>is_fitted()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Check if this recipe has already been fit.</p>
 </section>
 <section id="ibis_ml.Recipe.set_output" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.set_output">set_output</h3>
-<p><code>set_output(transform=None)</code></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>set_output(transform<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Set output type returned by <code>transform</code>.</p>
-<section id="parameters-3" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-3">Parameters</h4>
+<section id="parameters-3" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 4%">
-<col style="width: 7%">
-<col style="width: 83%">
+<col style="width: 3%">
+<col style="width: 9%">
+<col style="width: 82%">
 <col style="width: 4%">
 </colgroup>
 <thead>
@@ -665,8 +710,8 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>transform</code></td>
-<td>(‘default’, ‘pandas’)</td>
+<td>transform</td>
+<td>('default', 'pandas')</td>
 <td>Configure output of <code>transform</code> and <code>fit_transform</code>. - <code>"default"</code>: Default output format of a transformer - <code>"pandas"</code>: Pandas dataframe - <code>"polars"</code>: Polars dataframe - <code>"pyarrow"</code>: PyArrow table - <code>None</code>: Transform configuration is unchanged</td>
 <td><code>"default"</code></td>
 </tr>
@@ -676,16 +721,16 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.set_params" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.set_params">set_params</h3>
-<p><code>set_params(**params)</code></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>set_params(<span class="op">**</span>params)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Set the parameters of this recipe.</p>
 <p>Valid parameter keys can be listed with <code>get_params()</code>. Note that you can directly set the parameters of the steps contained in <code>steps</code>.</p>
-<section id="parameters-4" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-4">Parameters</h4>
+<section id="parameters-4" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 6%">
+<col style="width: 5%">
 <col style="width: 4%">
-<col style="width: 84%">
+<col style="width: 85%">
 <col style="width: 5%">
 </colgroup>
 <thead>
@@ -698,7 +743,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>**params</code></td>
+<td>**params</td>
 <td>dict</td>
 <td>Parameters of this recipe or parameters of steps contained in <code>steps</code>. Parameters of the steps may be set using its name and the parameter name separated by a ’__’.</td>
 <td><code>{}</code></td>
@@ -706,43 +751,45 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns-3" class="level4">
-<h4 class="anchored" data-anchor-id="returns-3">Returns</h4>
+<section id="returns-3" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-3">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
+<th>Name</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>self</td>
 <td>object</td>
 <td>Recipe class instance.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="notes-1" class="level4">
-<h4 class="anchored" data-anchor-id="notes-1">Notes</h4>
+<section id="notes-1" class="level4 doc-section doc-section-notes">
+<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes-1">Notes</h4>
 <p>Derived from [1]_ and [2]_.</p>
 </section>
-<section id="references-1" class="level4">
-<h4 class="anchored" data-anchor-id="references-1">References</h4>
+<section id="references-1" class="level4 doc-section doc-section-references">
+<h4 class="doc-section doc-section-references anchored" data-anchor-id="references-1">References</h4>
 <p>.. [1] https://github.com/scikit-learn/scikit-learn/blob/ff1c6f3/sklearn/utils/metaestimators.py#L51-L70 .. [2] https://github.com/scikit-learn/scikit-learn/blob/74016ab/sklearn/base.py#L214-L256</p>
 </section>
 </section>
 <section id="ibis_ml.Recipe.to_dask_dataframe" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dask_dataframe">to_dask_dataframe</h3>
-<p><code>to_dask_dataframe(X, categories=False)</code></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>to_dask_dataframe(X, categories<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>dask.dataframe.DataFrame</code>.</p>
-<section id="parameters-5" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-5">Parameters</h4>
+<section id="parameters-5" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 82%">
+<col style="width: 6%">
+<col style="width: 83%">
 <col style="width: 5%">
 </colgroup>
 <thead>
@@ -755,13 +802,13 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>categories</code></td>
+<td>categories</td>
 <td>bool</td>
 <td>Whether to return any categorical columns as dask categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
 <td><code>False</code></td>
@@ -772,10 +819,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_dask_dmatrix" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dask_dmatrix">to_dask_dmatrix</h3>
-<p><code>to_dask_dmatrix(X)</code></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>to_dask_dmatrix(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>xgboost.dask.DMatrix</code></p>
-<section id="parameters-6" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-6">Parameters</h4>
+<section id="parameters-6" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -787,7 +834,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
@@ -798,10 +845,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_dmatrix" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_dmatrix">to_dmatrix</h3>
-<p><code>to_dmatrix(X)</code></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>to_dmatrix(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>xgboost.DMatrix</code></p>
-<section id="parameters-7" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-7">Parameters</h4>
+<section id="parameters-7" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -813,7 +860,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
@@ -824,10 +871,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_ibis" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_ibis">to_ibis</h3>
-<p><code>to_ibis(X)</code></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>to_ibis(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return an ibis table.</p>
-<section id="parameters-8" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-8">Parameters</h4>
+<section id="parameters-8" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -839,7 +886,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
@@ -850,10 +897,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_numpy" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_numpy">to_numpy</h3>
-<p><code>to_numpy(X)</code></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>to_numpy(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>numpy.ndarray</code>.</p>
-<section id="parameters-9" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-9">Parameters</h4>
+<section id="parameters-9" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-9">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -865,7 +912,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
@@ -876,10 +923,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_pandas" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pandas">to_pandas</h3>
-<p><code>to_pandas(X, categories=False)</code></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>to_pandas(X, categories<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>pandas.DataFrame</code>.</p>
-<section id="parameters-10" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-10">Parameters</h4>
+<section id="parameters-10" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-10">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -897,13 +944,13 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>categories</code></td>
+<td>categories</td>
 <td>bool</td>
 <td>Whether to return any categorical columns as pandas categorical series. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
 <td><code>False</code></td>
@@ -914,10 +961,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_polars" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_polars">to_polars</h3>
-<p><code>to_polars(X)</code></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>to_polars(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>polars.DataFrame</code>.</p>
-<section id="parameters-11" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-11">Parameters</h4>
+<section id="parameters-11" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-11">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -929,7 +976,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
@@ -940,10 +987,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_pyarrow" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pyarrow">to_pyarrow</h3>
-<p><code>to_pyarrow(X, categories=False)</code></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>to_pyarrow(X, categories<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>pyarrow.Table</code>.</p>
-<section id="parameters-12" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-12">Parameters</h4>
+<section id="parameters-12" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-12">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -961,13 +1008,13 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>categories</code></td>
+<td>categories</td>
 <td>bool</td>
 <td>Whether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
 <td><code>False</code></td>
@@ -978,10 +1025,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.to_pyarrow_batches" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.to_pyarrow_batches">to_pyarrow_batches</h3>
-<p><code>to_pyarrow_batches(X, categories=False)</code></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>to_pyarrow_batches(X, categories<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform X and return a <code>pyarrow.RecordBatchReader</code>.</p>
-<section id="parameters-13" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-13">Parameters</h4>
+<section id="parameters-13" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-13">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -999,13 +1046,13 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>The input data to transform.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
-<td><code>categories</code></td>
+<td>categories</td>
 <td>bool</td>
 <td>Whether to return any categorical columns as dictionary-encoded columns. If False (the default) these columns will be returned as numeric columns containing only their integral categorical codes.</td>
 <td><code>False</code></td>
@@ -1016,10 +1063,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ibis_ml.Recipe.transform" class="level3">
 <h3 class="anchored" data-anchor-id="ibis_ml.Recipe.transform">transform</h3>
-<p><code>transform(X)</code></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>transform(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Transform the data.</p>
-<section id="parameters-14" class="level4">
-<h4 class="anchored" data-anchor-id="parameters-14">Parameters</h4>
+<section id="parameters-14" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-14">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1031,7 +1078,7 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>X</code></td>
+<td>X</td>
 <td>table - like</td>
 <td>Data to transform.</td>
 <td><em>required</em></td>
@@ -1039,17 +1086,19 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 </section>
-<section id="returns-4" class="level4">
-<h4 class="anchored" data-anchor-id="returns-4">Returns</h4>
+<section id="returns-4" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-4">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
+<th>Name</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td></td>
 <td>Xt</td>
 <td>Transformed data.</td>
 </tr>
@@ -1289,8 +1338,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1401,7 +1448,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
