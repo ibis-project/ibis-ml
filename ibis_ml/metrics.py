@@ -18,8 +18,8 @@ def accuracy_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
 
     Examples
     --------
-    >>> from ibis_ml.metrics import accuracy_score
     >>> import ibis
+    >>> from ibis_ml.metrics import accuracy_score
     >>> ibis.options.interactive = True
     >>> t = ibis.memtable(
     ...     {
@@ -29,9 +29,11 @@ def accuracy_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     ...     }
     ... )
     >>> accuracy_score(t.actual, t.prediction)
-    0.5833333333333334
+    ┌──────────┐
+    │ 0.583333 │
+    └──────────┘
     """
-    return (y_true == y_pred).mean().to_pyarrow().as_py()
+    return (y_true == y_pred).mean()  # .to_pyarrow().as_py()
 
 
 def precision_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
@@ -62,11 +64,13 @@ def precision_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     ...     }
     ... )
     >>> precision_score(t.actual, t.prediction)
-    0.6666666666666666
+    ┌──────────┐
+    │ 0.666667 │
+    └──────────┘
     """
     true_positive = (y_true & y_pred).sum()
     predicted_positive = y_pred.sum()
-    return (true_positive / predicted_positive).to_pyarrow().as_py()
+    return true_positive / predicted_positive
 
 
 def recall_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
@@ -83,6 +87,7 @@ def recall_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     -------
     float
         The recall score, representing the fraction of true positive predictions.
+
     Examples
     --------
     >>> from ibis_ml.metrics import recall_score
@@ -96,11 +101,13 @@ def recall_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     ...     }
     ... )
     >>> recall_score(t.actual, t.prediction)
-    0.5714285714285714
+    ┌──────────┐
+    │ 0.571429 │
+    └──────────┘
     """
     true_positive = (y_true & y_pred).sum()
     actual_positive = y_true.sum()
-    return (true_positive / actual_positive).to_pyarrow().as_py()
+    return true_positive / actual_positive
 
 
 def f1_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
@@ -131,7 +138,9 @@ def f1_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     ...     }
     ... )
     >>> f1_score(t.actual, t.prediction)
-    0.6153846153846154
+    ┌──────────┐
+    │ 0.615385 │
+    └──────────┘
     """
     precision = precision_score(y_true, y_pred)
     recall = recall_score(y_true, y_pred)

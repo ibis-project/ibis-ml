@@ -1,11 +1,8 @@
 import ibis
 import pytest
-from sklearn.metrics import accuracy_score as sk_accuracy_score
-from sklearn.metrics import f1_score as sk_f1_score
-from sklearn.metrics import precision_score as sk_precision_score
-from sklearn.metrics import recall_score as sk_recall_score
+import sklearn.metrics
 
-from ibis_ml.metrics import accuracy_score, f1_score, precision_score, recall_score
+import ibis_ml.metrics
 
 
 @pytest.fixture
@@ -19,33 +16,20 @@ def results_table():
     )
 
 
-def test_accuracy_score(results_table):
+@pytest.mark.parametrize(
+    "metric_name",
+    [
+        pytest.param("accuracy_score", id="accuracy_score"),
+        pytest.param("precision_score", id="precision_score"),
+        pytest.param("recall_score", id="recall_score"),
+        pytest.param("f1_score", id="f1_score"),
+    ],
+)
+def test_classification_metrics(results_table, metric_name):
+    ibis_ml_func = getattr(ibis_ml.metrics, metric_name)
+    sklearn_func = getattr(sklearn.metrics, metric_name)
     t = results_table
     df = t.to_pandas()
-    result = accuracy_score(t.actual, t.prediction)
-    expected = sk_accuracy_score(df["actual"], df["prediction"])
-    assert result == pytest.approx(expected, abs=1e-4)
-
-
-def test_precision_score(results_table):
-    t = results_table
-    df = t.to_pandas()
-    result = precision_score(t.actual, t.prediction)
-    expected = sk_precision_score(df["actual"], df["prediction"])
-    assert result == pytest.approx(expected, abs=1e-4)
-
-
-def test_recall_score(results_table):
-    t = results_table
-    df = t.to_pandas()
-    result = recall_score(t.actual, t.prediction)
-    expected = sk_recall_score(df["actual"], df["prediction"])
-    assert result == pytest.approx(expected, abs=1e-4)
-
-
-def test_f1_score(results_table):
-    t = results_table
-    df = t.to_pandas()
-    result = f1_score(t.actual, t.prediction)
-    expected = sk_f1_score(df["actual"], df["prediction"])
+    result = ibis_ml_func(t.actual, t.prediction).to_pyarrow().as_py()
+    expected = sklearn_func(df["actual"], df["prediction"])
     assert result == pytest.approx(expected, abs=1e-4)
