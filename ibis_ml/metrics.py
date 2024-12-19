@@ -36,6 +36,7 @@ def accuracy_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
 
 def precision_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     """Calculate the precision score of predicted values against true values.
+
     Parameters
     ----------
     y_true
@@ -47,6 +48,7 @@ def precision_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     -------
     float
         The precision score, representing the fraction of true positive predictions.
+
     Examples
     --------
     >>> from ibis_ml.metrics import precision_score
@@ -69,6 +71,7 @@ def precision_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
 
 def recall_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     """Calculate the recall score of predicted values against true values.
+
     Parameters
     ----------
     y_true
@@ -102,6 +105,7 @@ def recall_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
 
 def f1_score(y_true: dt.Integer, y_pred: dt.Integer) -> float:
     """Calculate the F1 score of predicted values against true values.
+
     Parameters
     ----------
     y_true
