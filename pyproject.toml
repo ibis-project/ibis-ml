@@ -20,7 +20,7 @@ doc = [
   "itables",
   "jupyter",
   "quartodoc", 
-  "scikit-learn",
+  "scikit-learn<1.6.0",
   "skorch", 
   "torch",
   "xgboost",
