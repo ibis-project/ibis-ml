@@ -40,7 +40,9 @@ pprint.PrettyPrinter._safe_repr = _safe_repr  # noqa: SLF001
 def _auto_patch_skorch() -> None:
     try:
         import skorch.net
-    except ImportError:
+    except (ImportError, AttributeError):
+        # ImportError: skorch not installed
+        # AttributeError: Python 3.13 docstring parsing issue in skorch
         return
 
     import ibis.expr.types as ir
