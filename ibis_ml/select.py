@@ -254,7 +254,10 @@ class matches(Selector):
 
 
 class has_type(Selector):
-    """Select all columns matching a specified dtype.
+    """Select all columns matching a specified dtype that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
 
     Parameters
     ----------
@@ -291,56 +294,88 @@ class _TypeSelector(Selector):
 
 
 class integer(_TypeSelector):
-    """Select all integral columns"""
+    """Select all integral columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Integer
 
 
 class floating(_TypeSelector):
-    """Select all floating columns"""
+    """Select all floating columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Floating
 
 
 class numeric(_TypeSelector):
-    """Select all numeric columns"""
+    """Select all numeric columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Numeric
 
 
 class temporal(_TypeSelector):
-    """Select all temporal columns"""
+    """Select all temporal columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Temporal
 
 
 class date(_TypeSelector):
-    """Select all date columns"""
+    """Select all date columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Date
 
 
 class time(_TypeSelector):
-    """Select all time columns"""
+    """Select all time columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Time
 
 
 class timestamp(_TypeSelector):
-    """Select all timestamp columns"""
+    """Select all timestamp columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.Timestamp
 
 
 class string(_TypeSelector):
-    """Select all string columns"""
+    """Select all string columns that are not categorical.
+
+    Use `categorical` to select the columns an encoder marked as categorical,
+    such as the output of `OrdinalEncode`.
+    """
 
     __slots__ = ()
     _type = dt.String
