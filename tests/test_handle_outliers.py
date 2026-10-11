@@ -103,7 +103,11 @@ def test_handle_univariate_outliers(
     step.fit_table(train_table, ml.core.Metadata())
     assert step.is_fitted()
 
-    result = step.transform_table(test_table)
+    result = step.transform_table(test_table).execute()
     expected = pd.DataFrame(expected)
+    if treatment == "trimming":
+        # filtering does not preserve row order
+        result = result.sort_values(list(result.columns)).reset_index(drop=True)
+        expected = expected.sort_values(list(expected.columns)).reset_index(drop=True)
 
-    tm.assert_frame_equal(result.execute(), expected, check_dtype=False)
+    tm.assert_frame_equal(result, expected, check_dtype=False)

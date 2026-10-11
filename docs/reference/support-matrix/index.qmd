@@ -81,7 +81,7 @@ def custom_replace(value):
 
 
 show(
-    matrix.applymap(custom_replace),
+    matrix.map(custom_replace),
     ordering=False,
     paging=False,
     buttons=["copy", "excel", "csv"],

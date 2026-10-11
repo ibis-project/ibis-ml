@@ -143,18 +143,22 @@ class DiscretizeKBins(Step):
         for col_name, edges in self.bins_edge_.items():
             edges = edges[1:-1]
             col = table[col_name]
-            case_builder = ibis.case()
+            branches = []
             if len(edges) >= 1:
-                case_builder = case_builder.when(col <= edges[0], 0)
-                case_builder = case_builder.when(col > edges[-1], len(edges))
+                branches.append((col <= edges[0], 0))
+                branches.append((col > edges[-1], len(edges)))
             for i, cutoff in enumerate(edges):
                 if i == 0:
                     continue
                 prev_cutoff = edges[i - 1]
-                case_builder = case_builder.when(
-                    (col > prev_cutoff) & (col <= cutoff), i
-                )
-            case_builder = case_builder.end()
+                branches.append(((col > prev_cutoff) & (col <= cutoff), i))
+            if hasattr(ibis, "cases"):
+                case_builder = ibis.cases(*branches)
+            else:  # ibis < 10
+                case_builder = ibis.case()
+                for cond, value in branches:
+                    case_builder = case_builder.when(cond, value)
+                case_builder = case_builder.end()
             col_name = f"{col_name}_{self.n_bins}_bin_{self.strategy}"
             aggs.append({col_name: case_builder})
 

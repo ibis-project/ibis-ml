@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     import polars as pl
     import pyarrow as pa
     import xgboost as xgb
-    from sklearn.utils._estimator_html_repr import _VisualBlock
+    from sklearn.utils._repr_html.estimator import _VisualBlock
 
 _DOC_LINK_TEMPLATE = "https://ibis-project.github.io/ibis-ml/reference/steps-{docs_page_name}.html#ibis_ml.{step_name}"
 
@@ -652,7 +652,10 @@ class Recipe:
         ----------
         .. [1] https://github.com/scikit-learn/scikit-learn/blob/82df48934eba1df9a1ed3be98aaace8eada59e6e/sklearn/pipeline.py#L667-L684
         """
-        from sklearn.utils._estimator_html_repr import _VisualBlock
+        try:
+            from sklearn.utils._repr_html.estimator import _VisualBlock
+        except ImportError:  # scikit-learn < 1.7
+            from sklearn.utils._estimator_html_repr import _VisualBlock
 
         names, estimators = zip(
             *[

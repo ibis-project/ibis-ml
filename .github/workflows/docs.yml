@@ -20,11 +20,20 @@ jobs:
           python-version: "3.11.8" # TODO(deepyaman): Update Python version when Ibis supports `dask>=2024.4.1`, which added https://github.com/dask/dask/pull/11035.
           cache: "pip"
 
+      # quarto-dev/quarto-actions is not on the ibis-project allowed-actions list
       - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo quarto-dev/quarto-cli --pattern '*linux-amd64.deb' --output quarto.deb
+          sudo dpkg -i quarto.deb
+          quarto --version
 
       - name: Install IbisML and docs dependencies
         run: |
+          # mysqlclient, pulled in by ibis-framework[mysql], builds from source
+          sudo apt-get update
+          sudo apt-get install -y libmysqlclient-dev pkg-config
           pip install '.[doc]'
 
       - name: Build Docs
@@ -34,9 +43,11 @@ jobs:
           quarto render
           popd
 
+      # peaceiris/actions-gh-pages is not on the ibis-project allowed-actions list
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/_site
+        run: |
+          pip install ghp-import
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ghp-import --no-jekyll --push --force docs/_site
