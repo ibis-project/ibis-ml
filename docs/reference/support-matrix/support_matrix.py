@@ -4,11 +4,14 @@ from datetime import date, datetime, time
 from pathlib import Path
 
 import ibis
+import ibis.backends.sql.compilers as sc
 import numpy as np
 import pandas as pd
 import yaml
 
 import ibis_ml as ml
+
+_EXECUTED_BACKENDS = ("pandas", "polars", "dask")
 
 
 def get_leaf_classes(op):
@@ -20,7 +23,7 @@ def get_leaf_classes(op):
 
 
 def check_backend(backend, exprs):
-    if backend in ("pandas", "polars", "dask"):
+    if backend in _EXECUTED_BACKENDS:
         try:
             con = ibis.connect(f"{backend}://")
             for expr in exprs:
@@ -79,7 +82,13 @@ def make_support_matrix():
                 ]
             )
 
-    backends = sorted(ep.name for ep in ibis.util.backend_entry_points())
+    # skip backends without a SQL compiler of the same name (e.g. singlestoredb)
+    # that check_backend cannot exercise
+    backends = sorted(
+        ep.name
+        for ep in ibis.util.backend_entry_points()
+        if ep.name in _EXECUTED_BACKENDS or hasattr(sc, ep.name)
+    )
     alltypes = {
         "string": np.array(["a", None, "b"], dtype="str"),
         "int": np.array([1, 2, 3], dtype="int64"),
