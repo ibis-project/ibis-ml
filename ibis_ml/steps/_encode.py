@@ -15,7 +15,16 @@ from ibis_ml.steps._impute import FillNA
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+    import pandas as pd
+
 _DOCS_PAGE_NAME = "encoding"
+
+
+def _to_categories(values: pd.Series) -> list[Any]:
+    import pandas as pd
+
+    # pandas >= 3 returns missing strings as NaN rather than None
+    return [None if pd.isna(v) else v for v in values.sort_values().to_list()]
 
 
 def _compute_categories(
@@ -24,9 +33,6 @@ def _compute_categories(
     min_frequency: int | float | None = None,
     max_categories: int | None = None,
 ) -> dict[str, list[Any]]:
-    if TYPE_CHECKING:
-        import pandas as pd
-
     # We execute once for each type kind in the inputs. In the common case
     # (only string inputs) this means a single execution even for multiple
     # columns.
@@ -58,7 +64,7 @@ def _compute_categories(
                 total = df["count"].sum()
                 df = df[(df["count"] / total) >= min_frequency]
 
-            return df["value"].sort_values().to_list()
+            return _to_categories(df["value"])
 
     else:
 
@@ -66,7 +72,7 @@ def _compute_categories(
             return table.select(value=col, column=ibis.literal(col)).distinct()
 
         def process(df: pd.DataFrame) -> list[Any]:
-            return df["value"].sort_values().to_list()
+            return _to_categories(df["value"])
 
     for group_cols in groups.values():
         query = ibis.union(*(collect(col) for col in group_cols))
@@ -247,7 +253,7 @@ class OrdinalEncode(Step):
             table = pa.Table.from_pydict(
                 {f"key_{suffix}": cats, col: list(range(len(cats)))}
             )
-            tables[col] = ibis.memtable(table, name=f"{col}_cats_{suffix}")
+            tables[col] = ibis.memtable(table)
 
         self.category_tables_ = tables
 

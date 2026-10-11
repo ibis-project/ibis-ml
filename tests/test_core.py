@@ -65,7 +65,10 @@ def test_sklearn_clone(table):
 
 def test_get_visual_block_recipe():
     pytest.importorskip("sklearn")
-    from sklearn.utils._estimator_html_repr import _get_visual_block
+    try:
+        from sklearn.utils._repr_html.estimator import _get_visual_block
+    except ImportError:  # scikit-learn < 1.7
+        from sklearn.utils._estimator_html_repr import _get_visual_block
 
     rec = ml.Recipe(ml.ImputeMean(ml.numeric()), ml.ScaleStandard(ml.numeric()))
     est_html_info = _get_visual_block(rec)
